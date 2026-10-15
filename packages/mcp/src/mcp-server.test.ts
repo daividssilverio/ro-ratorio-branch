@@ -1,7 +1,7 @@
 import { execFile } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { answerLine, answerMessage, errorCodes, supportedProtocolVersions } from "./mcp-server.ts";
 import { createToolContext, tools } from "./tools.ts";
 
@@ -59,6 +59,11 @@ describe("the protocol", () => {
 });
 
 describe("the tools", () => {
+    // The context loads the engine and the name index on first use; doing it here keeps each test to its own work on a slow machine.
+    beforeAll(async () => {
+        await Promise.all([context.engine(), context.nameSearch()]);
+    }, 60_000);
+
     it("search finds a name and gives its ratorio ID", async () => {
         const found = await call("search", { query: "meron meisu", kinds: ["item"], limit: 3 });
 
