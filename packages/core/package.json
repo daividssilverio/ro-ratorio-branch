@@ -1,0 +1,26 @@
+{
+    "name": "@ro-ratorio-branch/core",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "license": "PolyForm-Noncommercial-1.0.0",
+    "exports": {
+        ".": "./src/index.ts",
+        "./browser": "./src/browser.ts",
+        "./platform-neutral": "./src/platform-neutral.ts",
+        "./example-trees/*": "./src/tree/example-trees/*",
+        "./text/*": "./src/text/*"
+    },
+    "scripts": {
+        "golden-build": "node scripts/write-golden-build.ts",
+        "panels": "node scripts/write-upstream-panels.ts",
+        "schema": "node scripts/write-schemas.ts",
+        "upstream-rules": "node scripts/write-upstream-rules.ts",
+        "test": "vitest run",
+        "typecheck": "tsc --project tsconfig.json"
+    },
+    "dependencies": {
+        "happy-dom": "^20.14.6",
+        "typebox": "^1.3.36"
+    }
+}

@@ -1,0 +1,194 @@
+{
+    "rules": [
+        {
+            "catalog": "itemsForSlot",
+            "what": "Which gear a slot offers a job",
+            "upstream": [
+                {
+                    "file": "engine/equip/equip.js",
+                    "function": "RebuildArmsRightSelect",
+                    "fingerprint": "61909ad2c360ec9b"
+                },
+                {
+                    "file": "engine/equip/equip.js",
+                    "function": "RebuildArmsLeftSelect",
+                    "fingerprint": "16fd03dc15d0707b"
+                },
+                {
+                    "file": "engine/equip/equip.js",
+                    "function": "RebuildArmorsSelect",
+                    "fingerprint": "feca57dedaec5531"
+                },
+                {
+                    "file": "engine/equip/CShadowEquipController.js",
+                    "function": "rebuildAll",
+                    "fingerprint": "f14d94813eff284a"
+                }
+            ],
+            "test": "packages/core/src/engine-adapter/engine-catalog.test.ts"
+        },
+        {
+            "catalog": "slotsOfItem",
+            "what": "Which slots an item fits",
+            "upstream": [
+                {
+                    "file": "engine/equip/equip.js",
+                    "function": "RebuildArmorsSelect",
+                    "fingerprint": "feca57dedaec5531"
+                },
+                {
+                    "file": "engine/equip/CShadowEquipController.js",
+                    "function": "rebuildAll",
+                    "fingerprint": "f14d94813eff284a"
+                }
+            ],
+            "test": "packages/core/src/engine-adapter/engine-catalog.test.ts"
+        },
+        {
+            "catalog": "leftHandItemKindsOfJob",
+            "what": "Which jobs hold a weapon in the left hand, of which kinds, and next to which right-hand weapon",
+            "upstream": [
+                {
+                    "file": "engine/equip/equip.js",
+                    "function": "OnChangeArmsTypeRight",
+                    "fingerprint": "db37b74b95b59211"
+                },
+                {
+                    "file": "engine/equip/equip.js",
+                    "function": "OnChangeArmsTypeLeft",
+                    "fingerprint": "2b684256eb194878"
+                }
+            ],
+            "test": "packages/core/src/build/left-hand.test.ts"
+        },
+        {
+            "catalog": "costumesOfJob",
+            "what": "Which costumes a job is offered for its lower headgear",
+            "upstream": [
+                {
+                    "file": "engine/equip/hmcostume.js",
+                    "function": "BuildUpCostumeSlotsCostume",
+                    "fingerprint": "d6cf51843bffac51"
+                }
+            ],
+            "test": "packages/core/src/build/costume.test.ts"
+        },
+        {
+            "catalog": "statPointsOf",
+            "what": "The stat points a character has earned and spent",
+            "upstream": [
+                {
+                    "file": "engine/chara/hmjob.js",
+                    "function": "CalcStatusPoint",
+                    "fingerprint": "955ff0eeb283b699"
+                }
+            ],
+            "test": "packages/core/src/engine-adapter/engine-catalog.test.ts"
+        },
+        {
+            "catalog": "socketChoicesOfItem",
+            "what": "Which cards and enchants each socket of an item takes",
+            "upstream": [
+                {
+                    "file": "engine/equip/hmcard.js",
+                    "function": "RebuildCardSelect",
+                    "fingerprint": "a1d777704c0b43f8"
+                },
+                {
+                    "file": "engine/equip/hmcard.js",
+                    "function": "BuildUpCardSlotsMIG",
+                    "fingerprint": "70a778dee7d0b1ed"
+                },
+                {
+                    "file": "engine/equip/CShadowEquipController.js",
+                    "function": "#changeShadowItem",
+                    "fingerprint": "5470d11f644c1f23"
+                }
+            ],
+            "test": "packages/core/src/build/socket-choices.test.ts"
+        },
+        {
+            "catalog": "randomOptionsOfItem",
+            "what": "Which random options an item rolls at each position, and in which range",
+            "upstream": [
+                {
+                    "file": "engine/equip/hmrndopt.js",
+                    "function": "RebuildRndOptSelect",
+                    "fingerprint": "3566dbc3924e3ba6"
+                },
+                {
+                    "file": "engine/equip/hmrndopt.js",
+                    "function": "SetUpRndOptKind",
+                    "fingerprint": "d4c5ebdbf469712e"
+                },
+                {
+                    "file": "engine/equip/hmrndopt.js",
+                    "function": "SetUpRndOptValue",
+                    "fingerprint": "608bf827a36bb1be"
+                }
+            ],
+            "test": "packages/core/src/build/random-options.test.ts"
+        },
+        {
+            "catalog": "arrowsOfJob",
+            "what": "Which ammunition a job is offered",
+            "upstream": [
+                {
+                    "file": "engine/equip/equip.js",
+                    "function": "OnChangeArmsTypeRight",
+                    "fingerprint": "db37b74b95b59211"
+                }
+            ],
+            "test": "packages/core/src/build/weapon-element-and-arrow.test.ts"
+        },
+        {
+            "catalog": "limitsOfJob",
+            "what": "Level and stat limits of a job; trait stats for fourth jobs only",
+            "upstream": [
+                {
+                    "file": "engine/equip/equip.js",
+                    "function": "changeJobSettings",
+                    "fingerprint": "e45c5b8c2105fe27"
+                },
+                {
+                    "file": "engine/chara/hmjob.js",
+                    "function": "RebuildStatusSelect",
+                    "fingerprint": "91806e8fd74c2e94"
+                }
+            ],
+            "test": "packages/core/src/engine-adapter/engine-catalog.test.ts"
+        },
+        {
+            "catalog": "learnedSkillsGearRewards",
+            "what": "Which learned skills worn gear and cards do something more for",
+            "upstream": [
+                {
+                    "file": "engine/skill/learnedskill.js",
+                    "function": "IsLearnedSkillTarget",
+                    "fingerprint": "c9047386a452bc8c"
+                }
+            ],
+            "test": "packages/core/src/engine-adapter/engine-catalog.test.ts"
+        }
+    ],
+    "dataReaders": {
+        "jobs": "The JOB_ID_* constants and GetJobName()",
+        "monsters": "MonsterObjNew",
+        "attackSkillsOfJob": "The job data's GetAttackSkillIdArray()",
+        "learnableSkillsOfJob": "The job data's GetLearnSkillIdArray() and each skill's highest level",
+        "selfBuffsOfJob": "The job data's GetPassiveSkillIdArray(), with ranges and labels from upstream-panels.json",
+        "supportBuffs": "The confDataObj rows of the five CCharaConf* classes, with choices from upstream-panels.json",
+        "autoSpells": "AutoSpellSkill, in the order of BuildUpSettingHtmlAutoSpell() (skill name, then level)",
+        "autoSpellChances": "AUTO_SPELL_PROB_ARRAY",
+        "customizations": "The confDataObj rows of the five CCharaConfCustom* classes, with choices from upstream-panels.json",
+        "targetSettings": "MobConfPlayerOBJ, MobConfDebufOBJ and MobConfBufOBJ, with choices from upstream-panels.json",
+        "positionalBuffs": "The guild, item and other panels of upstream-panels.json",
+        "timedItems": "ITEM_SP_TIME_OBJ_SORT, the list the page fills its dropdowns from, with names from ITEM_SP_TIME_OBJ",
+        "speedPotions": "SpeedPotName",
+        "weaponElements": "The ELM_ID_* constants and GetElementText()",
+        "effectsOfItem": "The effect pairs of an ItemObjNew row put into words by GetItemExplainText(), then the row's free text",
+        "effectsOfCardOrEnchant": "The same for a CardObjNew row",
+        "wordingOfRandomOption": "The effect of a g_rndOptArray row put into words by GetItemExplainText()",
+        "itemsNamed": "The names and card slot counts of ItemObjNew"
+    }
+}

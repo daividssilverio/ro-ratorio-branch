@@ -1,0 +1,18 @@
+{
+    "description": "Level 200 Mechanic, Arms Cannon 5 with soul cannonballs, against セリア=アルデ（A）（MD）.",
+    "upstreamCommit": "6cfd20f",
+    "targetMonsterId": 1644,
+    "status": { "jobId": 51, "baseLv": 200, "jobLv": 70, "str": 110, "agi": 110, "vit": 100, "dex": 110, "int": 100, "luk": 78, "speedPot": 3 },
+    "weapon": { "type": 8, "zokusei": 0, "atkPlus": 9, "transcendence": 0, "weapon2Type": 0, "weapon2AtkPlus": 0, "weapon2Transcendence": 0 },
+    "defPlus": { "head": 7, "body": 7, "shield": 6, "shoulder": 7, "shoes": 7 },
+    "defTranscendence": { "head": 0, "body": 0, "shield": 0, "shoulder": 0, "shoes": 0 },
+    "arrow": 0,
+    "attackMethod": { "skillId": 554, "sourceType": 0, "skillLv": 5, "optionValueArray": [4] },
+    "positions": {
+        "equip": { "0": 4411, "2": 3431, "3": 4444, "4": 5220, "5": 4936, "6": 4106, "7": 4359, "8": 4685, "9": 5571, "10": 4947 },
+        "card": { "0": 46, "1": 665, "2": 1381, "3": 1297, "8": 1262, "10": 231, "11": 136 },
+        "learnedSkill": { "30": 5, "48": 5, "67": 3 }
+    },
+    "shownByUpstreamPage": { "averageDamagePerAttack": 368935, "averageDamagePerSecond": 1844675 },
+    "calculatedOnUpstreamPage": { "averageDamagePerAttack": 368935, "averageDamagePerSecond": 1844675, "attacksToKill": 37, "secondsToKill": 7.4 }
+}

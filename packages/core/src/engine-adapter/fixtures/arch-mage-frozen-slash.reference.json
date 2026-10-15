@@ -1,0 +1,20 @@
+{
+    "description": "Level 260 Arch Mage, Frozen Slash 5, against 怒りの九尾狐.",
+    "upstreamCommit": "6cfd20f",
+    "targetMonsterId": 1154,
+    "status": { "jobId": 70, "baseLv": 260, "jobLv": 50, "str": 30, "agi": 95, "vit": 100, "dex": 130, "int": 130, "luk": 1, "speedPot": 3 },
+    "weapon": { "type": 9, "zokusei": 0, "atkPlus": 7, "transcendence": 0, "weapon2Type": 0, "weapon2AtkPlus": 0, "weapon2Transcendence": 0 },
+    "defPlus": { "head": 7, "body": 4, "shield": 0, "shoulder": 9, "shoes": 9 },
+    "defTranscendence": { "head": 0, "body": 0, "shield": 0, "shoulder": 0, "shoes": 0 },
+    "arrow": 0,
+    "attackMethod": { "skillId": 1070, "sourceType": 0, "skillLv": 5, "optionValueArray": [] },
+    "positions": {
+        "equip": { "0": 5476, "2": 5457, "3": 4984, "4": 5234, "5": 305, "6": 4436, "7": 4231, "8": 4995, "9": 5462, "10": 4078 },
+        "card": { "1": 661, "2": 3520, "3": 2510, "9": 1540, "11": 134, "12": 1293, "13": 1550, "15": 1432, "26": 888, "27": 3520, "28": 2594, "29": 2145, "30": 1678, "31": 1381, "33": 1179, "34": 3116, "35": 888, "43": 1245, "44": 1179, "46": 2874, "47": 1245, "48": 1428, "49": 3520, "50": 2680, "51": 888, "52": 680, "53": 1848 },
+        "passiveSkill": { "8": 1 },
+        "pureStatus": { "7": 15, "9": 110, "10": 110 },
+        "learnedSkill": { "16": 1, "37": 3, "38": 5, "40": 5, "44": 5, "50": 5, "51": 5, "60": 5 }
+    },
+    "shownByUpstreamPage": { "averageDamagePerAttack": 20295274, "averageDamagePerSecond": 92251245 },
+    "calculatedOnUpstreamPage": { "averageDamagePerAttack": 20295274, "averageDamagePerSecond": 92251245, "attacksToKill": 1, "secondsToKill": 0.22 }
+}

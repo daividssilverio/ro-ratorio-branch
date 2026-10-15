@@ -1,0 +1,8 @@
+# Texts the privacy check may ignore. One exact text per line; a finding that
+# contains it is dropped. Say above each entry why it is safe to publish.
+
+# Co-author trailer added to commits written with Claude Code.
+noreply@anthropic.com
+
+# The licence's copyright line: the author publishes under this name (approved 2026-10-15).
+Copyright (c) 2026 Daivid S. Silverio

@@ -1,0 +1,17 @@
+{
+    "name": "@ro-ratorio-branch/cli",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "license": "PolyForm-Noncommercial-1.0.0",
+    "bin": {
+        "rocalc": "./src/rocalc.ts"
+    },
+    "scripts": {
+        "test": "vitest run",
+        "typecheck": "tsc --project tsconfig.json"
+    },
+    "dependencies": {
+        "@ro-ratorio-branch/core": "workspace:*"
+    }
+}

@@ -1,0 +1,25 @@
+{
+    "formatVersion": 1,
+    "character": {
+        "jobId": 63,
+        "baseLevel": 200,
+        "jobLevel": 60,
+        "baseStats": { "str": 110, "agi": 90, "vit": 100, "int": 110, "dex": 120, "luk": 52 },
+        "selfBuffs": { "908": 1, "934": 1, "935": 22, "939": 1, "943": 3 },
+        "supportBuffs": { "ARCLOUSE_DASH": 4 },
+        "speedPotion": 2,
+        "equipment": {
+            "rightHand": { "itemId": 4630, "sockets": [1078] },
+            "headTop": { "itemId": 4994, "refine": 7, "sockets": [null, null, 2831, 2824] },
+            "headMid": { "itemId": 4229 },
+            "headLow": { "itemId": 4999 },
+            "shield": { "itemId": 4936, "refine": 6, "sockets": [231] },
+            "armor": { "itemId": 4583, "refine": 7, "sockets": [137, null, null, 1662] },
+            "garment": { "itemId": 4693, "refine": 8, "sockets": [1293, null, 1297, 1179] },
+            "shoes": { "itemId": 4685, "refine": 7, "sockets": [1232, null, 1348, 2170] },
+            "accessory1": { "itemId": 3751, "sockets": [1859, 1848, 2169, 1247] },
+            "accessory2": { "itemId": 3752, "sockets": [1859, 1848, 2169, 1247] }
+        }
+    },
+    "scenario": { "skillId": 933, "skillLevel": 5, "targetMonsterId": 513 }
+}

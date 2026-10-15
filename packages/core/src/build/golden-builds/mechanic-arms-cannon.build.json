@@ -1,0 +1,26 @@
+{
+    "formatVersion": 1,
+    "character": {
+        "jobId": 51,
+        "baseLevel": 200,
+        "jobLevel": 70,
+        "baseStats": { "str": 110, "agi": 110, "vit": 100, "int": 100, "dex": 110, "luk": 78 },
+        "learnedSkills": { "66": 1, "152": 5, "155": 5, "327": 5, "544": 5, "550": 3, "554": 5, "566": 3 },
+        "supportBuffs": { "ADRENALINE_RUSH": 1 },
+        "timedItems": [143, 152],
+        "speedPotion": 3,
+        "equipment": {
+            "rightHand": { "itemId": 4411, "refine": 9, "transcendence": 4, "sockets": [null, 659, 1381, 1297] },
+            "headTop": { "itemId": 3431, "refine": 6 },
+            "headMid": { "itemId": 4444 },
+            "headLow": { "itemId": 4999 },
+            "shield": { "itemId": 4936, "refine": 7, "sockets": [231] },
+            "armor": { "itemId": 4106, "refine": 7, "sockets": [136] },
+            "garment": { "itemId": 4359, "refine": 7 },
+            "shoes": { "itemId": 4685, "refine": 9, "sockets": [null, null, 1348, 2170] },
+            "accessory1": { "itemId": 3407, "sockets": [1262, 689, 662, 1592] },
+            "accessory2": { "itemId": 3407, "sockets": [null, 685, 639, 659] }
+        }
+    },
+    "scenario": { "skillId": 554, "skillLevel": 5, "targetMonsterId": 850, "skillOptions": [1] }
+}

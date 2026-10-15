@@ -1,0 +1,15 @@
+{
+    "formatVersion": 1,
+    "scenario": { "skillId": 0, "skillLevel": 1, "targetMonsterId": 272 },
+    "root": {
+        "jobId": 0,
+        "baseLevel": 1,
+        "jobLevel": 1,
+        "baseStats": { "str": 1, "agi": 1, "vit": 1, "int": 1, "dex": 1, "luk": 1 },
+        "equipment": {
+            "rightHand": { "itemId": 1 },
+            "armor": { "itemId": 281 }
+        }
+    },
+    "nodes": []
+}

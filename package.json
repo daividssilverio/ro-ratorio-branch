@@ -1,0 +1,26 @@
+{
+    "name": "ro-ratorio-branch",
+    "private": true,
+    "type": "module",
+    "license": "PolyForm-Noncommercial-1.0.0",
+    "engines": {
+        "node": ">=26.0.0",
+        "pnpm": ">=10.0.0"
+    },
+    "scripts": {
+        "prepare": "git config core.hooksPath .githooks",
+        "test": "pnpm --recursive run test",
+        "typecheck": "pnpm --recursive run typecheck",
+        "rocalc": "node packages/cli/src/rocalc.ts",
+        "rocalc-mcp": "node packages/mcp/src/rocalc-mcp.ts",
+        "web": "pnpm --filter @ro-ratorio-branch/web dev",
+        "web:build": "pnpm --filter @ro-ratorio-branch/web build",
+        "text-index": "node scripts/build-text-index/build-text-index.ts"
+    },
+    "devDependencies": {
+        "@types/node": "^26.6.5",
+        "kuromoji": "0.1.2",
+        "typescript": "^7.0.2",
+        "vitest": "^5.0.3"
+    }
+}

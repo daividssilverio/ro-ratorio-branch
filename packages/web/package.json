@@ -1,0 +1,28 @@
+{
+    "name": "@ro-ratorio-branch/web",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "license": "PolyForm-Noncommercial-1.0.0",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "test": "vitest run",
+        "typecheck": "tsc --project tsconfig.json"
+    },
+    "dependencies": {
+        "@fontsource-variable/noto-sans-jp": "5.2.9",
+        "@fontsource/ibm-plex-mono": "5.2.7",
+        "@fontsource/ibm-plex-sans": "5.2.8",
+        "@ro-ratorio-branch/core": "workspace:*",
+        "react": "^19.3.0",
+        "react-dom": "^19.3.0"
+    },
+    "devDependencies": {
+        "@types/react": "^19.3.0",
+        "@types/react-dom": "^19.3.0",
+        "@vitejs/plugin-react": "^6.1.2",
+        "vite": "^8.3.4"
+    }
+}

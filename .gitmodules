@@ -1,0 +1,4 @@
+[submodule "vendor/ratorio"]
+	path = vendor/ratorio
+	url = https://github.com/roratorio-hub/ratorio
+	branch = master

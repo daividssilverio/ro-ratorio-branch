@@ -1,0 +1,19 @@
+{
+    "description": "Level 200 Summoner, Carrot Beat 5, against アイアンフィスト.",
+    "upstreamCommit": "6cfd20f",
+    "targetMonsterId": 513,
+    "status": { "jobId": 63, "baseLv": 200, "jobLv": 60, "str": 110, "agi": 90, "vit": 100, "dex": 120, "int": 110, "luk": 52, "speedPot": 2 },
+    "weapon": { "type": 9, "zokusei": 0, "atkPlus": 0, "transcendence": 0, "weapon2Type": 0, "weapon2AtkPlus": 0, "weapon2Transcendence": 0 },
+    "defPlus": { "head": 7, "body": 7, "shield": 6, "shoulder": 8, "shoes": 7 },
+    "defTranscendence": { "head": 0, "body": 0, "shield": 0, "shoulder": 0, "shoes": 0 },
+    "arrow": 0,
+    "attackMethod": { "skillId": 933, "sourceType": 0, "skillLv": 5, "optionValueArray": [] },
+    "positions": {
+        "equip": { "0": 4630, "2": 4994, "3": 4229, "4": 4999, "5": 4936, "6": 4583, "7": 4693, "8": 4685, "9": 3751, "10": 3752 },
+        "card": { "0": 1078, "10": 231, "11": 137, "12": 1293, "13": 1232, "14": 1859, "15": 1859, "27": 2831, "28": 2824, "41": 1662, "43": 1297, "44": 1179, "46": 1348, "47": 2170, "48": 1848, "49": 2169, "50": 1247, "51": 1848, "52": 2169, "53": 1247 },
+        "passiveSkill": { "0": 1, "6": 1, "7": 22, "10": 1, "15": 3 },
+        "confSanzi": { "20": 4 }
+    },
+    "shownByUpstreamPage": { "averageDamagePerAttack": 267399, "averageDamagePerSecond": 835572 },
+    "calculatedOnUpstreamPage": { "averageDamagePerAttack": 267399, "averageDamagePerSecond": 835572, "attacksToKill": 1, "secondsToKill": 0.32001886810253094 }
+}

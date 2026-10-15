@@ -1,0 +1,17 @@
+{
+    "version": "0.0.1",
+    "configurations": [
+        {
+            "name": "web",
+            "runtimeExecutable": "mise",
+            "runtimeArgs": ["exec", "--", "pnpm", "--filter", "@ro-ratorio-branch/web", "dev", "--port", "5179", "--strictPort"],
+            "port": 5179
+        },
+        {
+            "name": "web-built",
+            "runtimeExecutable": "mise",
+            "runtimeArgs": ["exec", "--", "pnpm", "--filter", "@ro-ratorio-branch/web", "preview", "--port", "5180", "--strictPort"],
+            "port": 5180
+        }
+    ]
+}

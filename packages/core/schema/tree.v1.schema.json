@@ -1,0 +1,1176 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "ROラトリオ Branch upgrade tree, format version 1",
+    "type": "object",
+    "required": [
+        "formatVersion",
+        "scenario",
+        "root",
+        "nodes"
+    ],
+    "properties": {
+        "formatVersion": {
+            "type": "number",
+            "const": 1
+        },
+        "scenario": {
+            "type": "object",
+            "required": [
+                "skillId",
+                "skillLevel",
+                "targetMonsterId"
+            ],
+            "properties": {
+                "skillId": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "ratorio skill ID of the attack."
+                },
+                "skillName": {
+                    "type": "string",
+                    "description": "Written on export for readers. Ignored on import; the ID next to it decides."
+                },
+                "skillSource": {
+                    "anyOf": [
+                        {
+                            "type": "string",
+                            "const": "gear"
+                        },
+                        {
+                            "type": "string",
+                            "const": "autoSpell"
+                        }
+                    ],
+                    "description": "Where the character has the attack from when not from its job: something it wears (gear, a card, a scroll), or an auto-spell looked at on its own."
+                },
+                "skillLevel": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "skillOptions": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "description": "Skill-specific choices in upstream order, for example the cannonball of Arms Cannon. One that is left out takes the skill's default."
+                },
+                "targetMonsterId": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "ratorio monster ID of the target."
+                },
+                "targetMonsterName": {
+                    "type": "string",
+                    "description": "Written on export for readers. Ignored on import; the ID next to it decides."
+                },
+                "targetSettings": {
+                    "type": "object",
+                    "properties": {
+                        "asPlayer": {
+                            "type": "object",
+                            "patternProperties": {
+                                "^[A-Z][A-Z0-9_]*$": {
+                                    "type": "integer"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "description": "The target taken as a player: its HP, defense, resistances and the kind of battle."
+                        },
+                        "ailments": {
+                            "type": "object",
+                            "patternProperties": {
+                                "^[A-Z][A-Z0-9_]*$": {
+                                    "type": "integer"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "description": "Ailments and debuffs on the target."
+                        },
+                        "buffs": {
+                            "type": "object",
+                            "patternProperties": {
+                                "^[A-Z][A-Z0-9_]*$": {
+                                    "type": "integer"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "description": "The target's own buffs."
+                        }
+                    },
+                    "additionalProperties": false,
+                    "description": "The original's monster settings, by part and then by the upstream constant name without its MOB_CONF_…_ID_ prefix (for example buffs.ASSUMPTIO)."
+                }
+            },
+            "additionalProperties": false,
+            "description": "What is attacked and with what. Kept apart from the character on purpose."
+        },
+        "root": {
+            "type": "object",
+            "required": [
+                "jobId",
+                "baseLevel",
+                "jobLevel",
+                "baseStats",
+                "equipment"
+            ],
+            "properties": {
+                "jobId": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "ratorio job ID."
+                },
+                "jobName": {
+                    "type": "string",
+                    "description": "Written on export for readers. Ignored on import; the ID next to it decides."
+                },
+                "baseLevel": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "jobLevel": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "baseStats": {
+                    "type": "object",
+                    "required": [
+                        "str",
+                        "agi",
+                        "vit",
+                        "int",
+                        "dex",
+                        "luk"
+                    ],
+                    "properties": {
+                        "str": {
+                            "type": "integer",
+                            "minimum": 1
+                        },
+                        "agi": {
+                            "type": "integer",
+                            "minimum": 1
+                        },
+                        "vit": {
+                            "type": "integer",
+                            "minimum": 1
+                        },
+                        "int": {
+                            "type": "integer",
+                            "minimum": 1
+                        },
+                        "dex": {
+                            "type": "integer",
+                            "minimum": 1
+                        },
+                        "luk": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    "additionalProperties": false,
+                    "description": "Base stat points as allocated, without job or gear bonuses."
+                },
+                "traitStats": {
+                    "type": "object",
+                    "required": [
+                        "pow",
+                        "sta",
+                        "wis",
+                        "spl",
+                        "con",
+                        "crt"
+                    ],
+                    "properties": {
+                        "pow": {
+                            "type": "integer",
+                            "minimum": 0
+                        },
+                        "sta": {
+                            "type": "integer",
+                            "minimum": 0
+                        },
+                        "wis": {
+                            "type": "integer",
+                            "minimum": 0
+                        },
+                        "spl": {
+                            "type": "integer",
+                            "minimum": 0
+                        },
+                        "con": {
+                            "type": "integer",
+                            "minimum": 0
+                        },
+                        "crt": {
+                            "type": "integer",
+                            "minimum": 0
+                        }
+                    },
+                    "additionalProperties": false,
+                    "description": "Trait stat points as allocated. Defaults to all 0."
+                },
+                "learnedSkills": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^(0|[1-9][0-9]*)$": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    "additionalProperties": false,
+                    "description": "ratorio skill ID to learned level. A skill that is not listed is not learned."
+                },
+                "selfBuffs": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^(0|[1-9][0-9]*)$": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    "additionalProperties": false,
+                    "description": "ratorio skill ID to active level, for the job's own buffs and toggles."
+                },
+                "supportBuffs": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^[A-Z][A-Z0-9_]*$": {
+                            "type": "integer"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "description": "Buffs and debuffs from the first- to fourth-job support panels and the debuff panel, keyed by the upstream constant name without its CONF_ID_ prefix (for example BLESSING)."
+                },
+                "autoSpells": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "autoSpellId",
+                            "chancePerMille"
+                        ],
+                        "properties": {
+                            "autoSpellId": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "description": "ratorio auto-spell ID: a skill at the level some item casts it."
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "Written on export for readers. Ignored on import; the ID next to it decides."
+                            },
+                            "level": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 10,
+                                "description": "The level it is cast at. Defaults to 0: the level the auto-spell has."
+                            },
+                            "chancePerMille": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 1000,
+                                "description": "How often it goes off, in per mille; one of the values the original offers."
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "maxItems": 20,
+                    "description": "Auto-spells that go off on a plain attack."
+                },
+                "customization": {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "object",
+                            "patternProperties": {
+                                "^[A-Z][A-Z0-9_]*$": {
+                                    "type": "integer"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "description": "Base stats, HP, SP and the like."
+                        },
+                        "attack": {
+                            "type": "object",
+                            "patternProperties": {
+                                "^[A-Z][A-Z0-9_]*$": {
+                                    "type": "integer"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "description": "Attack, damage bonuses and weapon overrides."
+                        },
+                        "defense": {
+                            "type": "object",
+                            "patternProperties": {
+                                "^[A-Z][A-Z0-9_]*$": {
+                                    "type": "integer"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "description": "Defense and resistances."
+                        },
+                        "skill": {
+                            "type": "object",
+                            "patternProperties": {
+                                "^[A-Z][A-Z0-9_]*$": {
+                                    "type": "integer"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "description": "Skill damage, cast time and delays."
+                        },
+                        "traitStatus": {
+                            "type": "object",
+                            "patternProperties": {
+                                "^[A-Z][A-Z0-9_]*$": {
+                                    "type": "integer"
+                                }
+                            },
+                            "additionalProperties": false,
+                            "description": "Trait stats and what follows from them."
+                        }
+                    },
+                    "additionalProperties": false,
+                    "description": "The original's performance customisation: numbers added on top of what the character has, by part and then by the upstream constant name without its CONF_ID_ prefix (for example attack.ATK_PLUS)."
+                },
+                "guildBuffs": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^(0|[1-9][0-9]*)$": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    "additionalProperties": false,
+                    "description": "Guild skills, gospel and stat-swap boosts, keyed by the buff's position in the original's panel, to its level or choice."
+                },
+                "itemBuffs": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^(0|[1-9][0-9]*)$": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    "additionalProperties": false,
+                    "description": "Consumables and food, keyed by the buff's position in the original's panel, to its level or choice."
+                },
+                "otherBuffs": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^(0|[1-9][0-9]*)$": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    "additionalProperties": false,
+                    "description": "Pet, manuals, party and other settings, keyed by the setting's position in the original's panel, to its level or choice."
+                },
+                "timedItems": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "ratorio timed-item ID."
+                    },
+                    "maxItems": 20,
+                    "description": "Active time-limited items. The same one can be listed more than once."
+                },
+                "weaponElement": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "ratorio element ID the weapon is endowed with. Defaults to 0, no endow: the weapon keeps its own element."
+                },
+                "costumeId": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "ratorio ID of the costume worn over the lower headgear. Defaults to 0, none."
+                },
+                "arrowId": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "ratorio ID of the arrow, bullet or other ammunition. Defaults to 0, none."
+                },
+                "speedPotion": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "ratorio attack-speed potion setting. Defaults to 0, none."
+                },
+                "equipment": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^(rightHand|leftHand|headTop|headMid|headLow|shield|armor|garment|shoes|accessory1|accessory2|shadowWeapon|shadowShield|shadowArmor|shadowShoes|shadowAccessory1|shadowAccessory2)$": {
+                            "type": "object",
+                            "required": [
+                                "itemId"
+                            ],
+                            "properties": {
+                                "itemId": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "description": "ratorio item ID."
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "description": "Written on export for readers. Ignored on import; the ID next to it decides."
+                                },
+                                "refine": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "description": "Refine level (+n). Defaults to 0."
+                                },
+                                "transcendence": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "description": "Transcendence stage. Defaults to 0."
+                                },
+                                "sockets": {
+                                    "type": "array",
+                                    "items": {
+                                        "anyOf": [
+                                            {
+                                                "type": "integer",
+                                                "minimum": 0,
+                                                "description": "ratorio card or enchant ID."
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ]
+                                    },
+                                    "maxItems": 4,
+                                    "description": "Cards and enchants in slot order, null for an empty slot. Armor takes its card in the first slot and enchants in the other three."
+                                },
+                                "element": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "description": "ratorio element ID a random option gives a weapon (\"武器に聖属性を付与する\"). Taken for a weapon in the right hand when the character is not endowed with an element; the original keeps it only as that endowment."
+                                },
+                                "randomOptions": {
+                                    "type": "array",
+                                    "items": {
+                                        "anyOf": [
+                                            {
+                                                "type": "object",
+                                                "required": [
+                                                    "optionId",
+                                                    "value"
+                                                ],
+                                                "properties": {
+                                                    "optionId": {
+                                                        "type": "integer",
+                                                        "minimum": 0,
+                                                        "description": "ratorio random option ID."
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "description": "Written on export for readers. Ignored on import; the ID next to it decides."
+                                                    },
+                                                    "value": {
+                                                        "type": "integer",
+                                                        "description": "The rolled value, in the unit the option uses."
+                                                    }
+                                                },
+                                                "additionalProperties": false
+                                            },
+                                            {
+                                                "type": "null"
+                                            }
+                                        ]
+                                    },
+                                    "maxItems": 5,
+                                    "description": "Random options rolled on this piece, by position, null for an empty position. Which options a position can hold depends on the item."
+                                },
+                                "note": {
+                                    "type": "string"
+                                },
+                                "zenyCost": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "description": "What this piece costs to obtain, in zeny."
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false,
+                    "description": "One gear piece per slot. A missing slot is empty."
+                }
+            },
+            "additionalProperties": false
+        },
+        "nodes": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "parentId",
+                    "label",
+                    "changes"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Unique within the tree."
+                    },
+                    "parentId": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "description": "The node this one builds on, or null when it builds directly on the root."
+                    },
+                    "label": {
+                        "type": "string"
+                    },
+                    "zenyCost": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "What this step costs, in zeny. A step without a cost is unpriced."
+                    },
+                    "favorite": {
+                        "type": "boolean"
+                    },
+                    "changes": {
+                        "type": "array",
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "object",
+                                    "required": [
+                                        "kind",
+                                        "slot",
+                                        "gearPiece"
+                                    ],
+                                    "properties": {
+                                        "kind": {
+                                            "type": "string",
+                                            "const": "setGearPiece"
+                                        },
+                                        "slot": {
+                                            "enum": [
+                                                "rightHand",
+                                                "leftHand",
+                                                "headTop",
+                                                "headMid",
+                                                "headLow",
+                                                "shield",
+                                                "armor",
+                                                "garment",
+                                                "shoes",
+                                                "accessory1",
+                                                "accessory2",
+                                                "shadowWeapon",
+                                                "shadowShield",
+                                                "shadowArmor",
+                                                "shadowShoes",
+                                                "shadowAccessory1",
+                                                "shadowAccessory2"
+                                            ]
+                                        },
+                                        "gearPiece": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "itemId"
+                                                    ],
+                                                    "properties": {
+                                                        "itemId": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "description": "ratorio item ID."
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "description": "Written on export for readers. Ignored on import; the ID next to it decides."
+                                                        },
+                                                        "refine": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "description": "Refine level (+n). Defaults to 0."
+                                                        },
+                                                        "transcendence": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "description": "Transcendence stage. Defaults to 0."
+                                                        },
+                                                        "sockets": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "anyOf": [
+                                                                    {
+                                                                        "type": "integer",
+                                                                        "minimum": 0,
+                                                                        "description": "ratorio card or enchant ID."
+                                                                    },
+                                                                    {
+                                                                        "type": "null"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "maxItems": 4,
+                                                            "description": "Cards and enchants in slot order, null for an empty slot. Armor takes its card in the first slot and enchants in the other three."
+                                                        },
+                                                        "element": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "description": "ratorio element ID a random option gives a weapon (\"武器に聖属性を付与する\"). Taken for a weapon in the right hand when the character is not endowed with an element; the original keeps it only as that endowment."
+                                                        },
+                                                        "randomOptions": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "anyOf": [
+                                                                    {
+                                                                        "type": "object",
+                                                                        "required": [
+                                                                            "optionId",
+                                                                            "value"
+                                                                        ],
+                                                                        "properties": {
+                                                                            "optionId": {
+                                                                                "type": "integer",
+                                                                                "minimum": 0,
+                                                                                "description": "ratorio random option ID."
+                                                                            },
+                                                                            "name": {
+                                                                                "type": "string",
+                                                                                "description": "Written on export for readers. Ignored on import; the ID next to it decides."
+                                                                            },
+                                                                            "value": {
+                                                                                "type": "integer",
+                                                                                "description": "The rolled value, in the unit the option uses."
+                                                                            }
+                                                                        },
+                                                                        "additionalProperties": false
+                                                                    },
+                                                                    {
+                                                                        "type": "null"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "maxItems": 5,
+                                                            "description": "Random options rolled on this piece, by position, null for an empty position. Which options a position can hold depends on the item."
+                                                        },
+                                                        "note": {
+                                                            "type": "string"
+                                                        },
+                                                        "zenyCost": {
+                                                            "type": "integer",
+                                                            "minimum": 0,
+                                                            "description": "What this piece costs to obtain, in zeny."
+                                                        }
+                                                    },
+                                                    "additionalProperties": false
+                                                },
+                                                {
+                                                    "type": "null"
+                                                }
+                                            ],
+                                            "description": "The piece to put in the slot, or null to empty it."
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "required": [
+                                        "kind",
+                                        "slot",
+                                        "expectedItemId",
+                                        "refine"
+                                    ],
+                                    "properties": {
+                                        "kind": {
+                                            "type": "string",
+                                            "const": "setRefine"
+                                        },
+                                        "slot": {
+                                            "enum": [
+                                                "rightHand",
+                                                "leftHand",
+                                                "headTop",
+                                                "headMid",
+                                                "headLow",
+                                                "shield",
+                                                "armor",
+                                                "garment",
+                                                "shoes",
+                                                "accessory1",
+                                                "accessory2",
+                                                "shadowWeapon",
+                                                "shadowShield",
+                                                "shadowArmor",
+                                                "shadowShoes",
+                                                "shadowAccessory1",
+                                                "shadowAccessory2"
+                                            ]
+                                        },
+                                        "expectedItemId": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "description": "The item this change was made for. When the slot holds a different item, the change no longer applies and its node is stale."
+                                        },
+                                        "refine": {
+                                            "type": "integer",
+                                            "minimum": 0
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "required": [
+                                        "kind",
+                                        "slot",
+                                        "expectedItemId",
+                                        "transcendence"
+                                    ],
+                                    "properties": {
+                                        "kind": {
+                                            "type": "string",
+                                            "const": "setTranscendence"
+                                        },
+                                        "slot": {
+                                            "enum": [
+                                                "rightHand",
+                                                "leftHand",
+                                                "headTop",
+                                                "headMid",
+                                                "headLow",
+                                                "shield",
+                                                "armor",
+                                                "garment",
+                                                "shoes",
+                                                "accessory1",
+                                                "accessory2",
+                                                "shadowWeapon",
+                                                "shadowShield",
+                                                "shadowArmor",
+                                                "shadowShoes",
+                                                "shadowAccessory1",
+                                                "shadowAccessory2"
+                                            ]
+                                        },
+                                        "expectedItemId": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "description": "The item this change was made for. When the slot holds a different item, the change no longer applies and its node is stale."
+                                        },
+                                        "transcendence": {
+                                            "type": "integer",
+                                            "minimum": 0
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "required": [
+                                        "kind",
+                                        "slot",
+                                        "expectedItemId",
+                                        "socket",
+                                        "cardOrEnchantId"
+                                    ],
+                                    "properties": {
+                                        "kind": {
+                                            "type": "string",
+                                            "const": "setSocket"
+                                        },
+                                        "slot": {
+                                            "enum": [
+                                                "rightHand",
+                                                "leftHand",
+                                                "headTop",
+                                                "headMid",
+                                                "headLow",
+                                                "shield",
+                                                "armor",
+                                                "garment",
+                                                "shoes",
+                                                "accessory1",
+                                                "accessory2",
+                                                "shadowWeapon",
+                                                "shadowShield",
+                                                "shadowArmor",
+                                                "shadowShoes",
+                                                "shadowAccessory1",
+                                                "shadowAccessory2"
+                                            ]
+                                        },
+                                        "expectedItemId": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "description": "The item this change was made for. When the slot holds a different item, the change no longer applies and its node is stale."
+                                        },
+                                        "socket": {
+                                            "type": "integer",
+                                            "minimum": 1,
+                                            "maximum": 4,
+                                            "description": "1 is the first socket."
+                                        },
+                                        "cardOrEnchantId": {
+                                            "anyOf": [
+                                                {
+                                                    "type": "integer",
+                                                    "minimum": 0,
+                                                    "description": "ratorio card or enchant ID."
+                                                },
+                                                {
+                                                    "type": "null"
+                                                }
+                                            ],
+                                            "description": "The card or enchant to place, or null to empty the socket."
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "required": [
+                                        "kind",
+                                        "stat",
+                                        "value"
+                                    ],
+                                    "properties": {
+                                        "kind": {
+                                            "type": "string",
+                                            "const": "setBaseStat"
+                                        },
+                                        "stat": {
+                                            "enum": [
+                                                "str",
+                                                "agi",
+                                                "vit",
+                                                "int",
+                                                "dex",
+                                                "luk"
+                                            ]
+                                        },
+                                        "value": {
+                                            "type": "integer",
+                                            "minimum": 1
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "required": [
+                                        "kind",
+                                        "stat",
+                                        "value"
+                                    ],
+                                    "properties": {
+                                        "kind": {
+                                            "type": "string",
+                                            "const": "setTraitStat"
+                                        },
+                                        "stat": {
+                                            "enum": [
+                                                "pow",
+                                                "sta",
+                                                "wis",
+                                                "spl",
+                                                "con",
+                                                "crt"
+                                            ]
+                                        },
+                                        "value": {
+                                            "type": "integer",
+                                            "minimum": 0
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "required": [
+                                        "kind",
+                                        "skillId",
+                                        "level"
+                                    ],
+                                    "properties": {
+                                        "kind": {
+                                            "type": "string",
+                                            "const": "setLearnedSkill"
+                                        },
+                                        "skillId": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "description": "ratorio skill ID."
+                                        },
+                                        "level": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "description": "0 removes it."
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "required": [
+                                        "kind",
+                                        "skillId",
+                                        "level"
+                                    ],
+                                    "properties": {
+                                        "kind": {
+                                            "type": "string",
+                                            "const": "setSelfBuff"
+                                        },
+                                        "skillId": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "description": "ratorio skill ID."
+                                        },
+                                        "level": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "description": "0 removes it."
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "required": [
+                                        "kind",
+                                        "name",
+                                        "value"
+                                    ],
+                                    "properties": {
+                                        "kind": {
+                                            "type": "string",
+                                            "const": "setSupportBuff"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "pattern": "^[A-Z][A-Z0-9_]*$",
+                                            "description": "Upstream constant name without its CONF_ID_ prefix."
+                                        },
+                                        "value": {
+                                            "type": "integer",
+                                            "description": "0 removes it."
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "required": [
+                                        "kind",
+                                        "panel",
+                                        "position",
+                                        "value"
+                                    ],
+                                    "properties": {
+                                        "kind": {
+                                            "type": "string",
+                                            "const": "setPanelBuff"
+                                        },
+                                        "panel": {
+                                            "enum": [
+                                                "guildBuffs",
+                                                "itemBuffs",
+                                                "otherBuffs"
+                                            ]
+                                        },
+                                        "position": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "description": "The buff's position in the original's panel."
+                                        },
+                                        "value": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "description": "0 removes it."
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "required": [
+                                        "kind",
+                                        "section",
+                                        "name",
+                                        "value"
+                                    ],
+                                    "properties": {
+                                        "kind": {
+                                            "type": "string",
+                                            "const": "setCustomization"
+                                        },
+                                        "section": {
+                                            "enum": [
+                                                "status",
+                                                "attack",
+                                                "defense",
+                                                "skill",
+                                                "traitStatus"
+                                            ]
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "pattern": "^[A-Z][A-Z0-9_]*$"
+                                        },
+                                        "value": {
+                                            "type": "integer",
+                                            "description": "0 removes it."
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "required": [
+                                        "kind",
+                                        "timedItems"
+                                    ],
+                                    "properties": {
+                                        "kind": {
+                                            "type": "string",
+                                            "const": "setTimedItems"
+                                        },
+                                        "timedItems": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "integer",
+                                                "minimum": 0,
+                                                "description": "ratorio timed-item ID."
+                                            },
+                                            "maxItems": 20,
+                                            "description": "Active time-limited items. The same one can be listed more than once."
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "required": [
+                                        "kind",
+                                        "autoSpells"
+                                    ],
+                                    "properties": {
+                                        "kind": {
+                                            "type": "string",
+                                            "const": "setAutoSpells"
+                                        },
+                                        "autoSpells": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "required": [
+                                                    "autoSpellId",
+                                                    "chancePerMille"
+                                                ],
+                                                "properties": {
+                                                    "autoSpellId": {
+                                                        "type": "integer",
+                                                        "minimum": 0,
+                                                        "description": "ratorio auto-spell ID: a skill at the level some item casts it."
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "description": "Written on export for readers. Ignored on import; the ID next to it decides."
+                                                    },
+                                                    "level": {
+                                                        "type": "integer",
+                                                        "minimum": 0,
+                                                        "maximum": 10,
+                                                        "description": "The level it is cast at. Defaults to 0: the level the auto-spell has."
+                                                    },
+                                                    "chancePerMille": {
+                                                        "type": "integer",
+                                                        "minimum": 0,
+                                                        "maximum": 1000,
+                                                        "description": "How often it goes off, in per mille; one of the values the original offers."
+                                                    }
+                                                },
+                                                "additionalProperties": false
+                                            },
+                                            "maxItems": 20,
+                                            "description": "Auto-spells that go off on a plain attack."
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "required": [
+                                        "kind",
+                                        "speedPotion"
+                                    ],
+                                    "properties": {
+                                        "kind": {
+                                            "type": "string",
+                                            "const": "setSpeedPotion"
+                                        },
+                                        "speedPotion": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "description": "0 is none."
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "required": [
+                                        "kind",
+                                        "elementId"
+                                    ],
+                                    "properties": {
+                                        "kind": {
+                                            "type": "string",
+                                            "const": "setWeaponElement"
+                                        },
+                                        "elementId": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "description": "ratorio element ID. 0 is no endow."
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "required": [
+                                        "kind",
+                                        "arrowId"
+                                    ],
+                                    "properties": {
+                                        "kind": {
+                                            "type": "string",
+                                            "const": "setArrow"
+                                        },
+                                        "arrowId": {
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "description": "ratorio ID of the ammunition. 0 is none."
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            ]
+                        },
+                        "description": "Applied in order on top of the parent's build."
+                    }
+                },
+                "additionalProperties": false
+            }
+        }
+    },
+    "additionalProperties": false
+}

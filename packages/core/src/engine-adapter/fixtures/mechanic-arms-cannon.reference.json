@@ -1,0 +1,20 @@
+{
+    "description": "Level 200 Mechanic, Arms Cannon 5 with iron cannonballs, against fff・ジターバグ.",
+    "upstreamCommit": "6cfd20f",
+    "targetMonsterId": 850,
+    "status": { "jobId": 51, "baseLv": 200, "jobLv": 70, "str": 110, "agi": 110, "vit": 100, "dex": 110, "int": 100, "luk": 78, "speedPot": 3 },
+    "weapon": { "type": 8, "zokusei": 0, "atkPlus": 9, "transcendence": 4, "weapon2Type": 0, "weapon2AtkPlus": 0, "weapon2Transcendence": 0 },
+    "defPlus": { "head": 6, "body": 7, "shield": 7, "shoulder": 7, "shoes": 9 },
+    "defTranscendence": { "head": 0, "body": 0, "shield": 0, "shoulder": 0, "shoes": 0 },
+    "arrow": 0,
+    "attackMethod": { "skillId": 554, "sourceType": 0, "skillLv": 5, "optionValueArray": [1] },
+    "positions": {
+        "equip": { "0": 4411, "2": 3431, "3": 4444, "4": 4999, "5": 4936, "6": 4106, "7": 4359, "8": 4685, "9": 3407, "10": 3407 },
+        "card": { "1": 659, "2": 1381, "3": 1297, "10": 231, "11": 136, "14": 1262, "46": 1348, "47": 2170, "48": 689, "49": 662, "50": 1592, "51": 685, "52": 639, "53": 659 },
+        "confNizi": { "9": 1 },
+        "timeItemConf": { "0": 143, "1": 152 },
+        "learnedSkill": { "12": 1, "30": 5, "33": 5, "36": 5, "48": 5, "51": 3, "53": 5, "67": 3 }
+    },
+    "shownByUpstreamPage": { "averageDamagePerAttack": 911001, "averageDamagePerSecond": 6507149 },
+    "calculatedOnUpstreamPage": { "averageDamagePerAttack": 911001, "averageDamagePerSecond": 6507149, "attacksToKill": 15, "secondsToKill": 2.1 }
+}
