@@ -95,3 +95,5 @@ The `working-modes` skill (`.claude/skills/working-modes`) defines the modes (qu
 ## Upstream bumps
 
 Follow `docs/upstream-bump.md`: bump the submodule pin, diff `engine/runtime/calc-model.js`, rerun golden tests, explain any changed number.
+
+Tests load the engine's files natively (`vitest.shared.ts` externalises `vendor/ratorio`); through Vitest's transform every calculation is several times slower.
