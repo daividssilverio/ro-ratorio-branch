@@ -1,0 +1,26 @@
+{
+    "description": "Level 200 Spirit Handler, Tiger Slash 7, against ファイアループ: a real character in +8 デイブレイク・スターゲイザー with 星座の印章 and its three enchants.",
+    "upstreamCommit": "47f40e3",
+    "targetMonsterId": 2373,
+    "status": { "jobId": 85, "baseLv": 200, "jobLv": 30, "str": 110, "agi": 90, "vit": 111, "dex": 120, "int": 110, "luk": 1, "speedPot": 0 },
+    "weapon": { "type": 9, "zokusei": 0, "atkPlus": 4, "transcendence": 0, "weapon2Type": 0, "weapon2AtkPlus": 0, "weapon2Transcendence": 0 },
+    "defPlus": { "head": 4, "body": 4, "shield": 4, "shoulder": 4, "shoes": 8 },
+    "defTranscendence": { "head": 0, "shield": 0, "body": 0, "shoulder": 0, "shoes": 0 },
+    "arrow": 0,
+    "attackMethod": { "skillId": 1221, "sourceType": 0, "skillLv": 7, "optionValueArray": [] },
+    "positions": {
+        "equip": { "0": 5468, "2": 5457, "3": 4949, "4": 4999, "5": 692, "6": 5459, "7": 5461, "8": 5222, "9": 5003, "10": 5462 },
+        "card": { "1": 659, "2": 3537, "3": 2902, "10": 231, "26": 1297, "27": 3537, "28": 2904, "39": 1659, "40": 3537, "42": 3569, "43": 3537, "47": 1245, "48": 2886, "49": 2311, "50": 3406, "51": 1425, "52": 3537, "53": 3336 },
+        "passiveSkill": { "6": 1, "10": 1, "17": 10 }
+    },
+    "notRepresentedInTheModel": {
+        "musicalBuffs": {},
+        "shadowEquipItems": {},
+        "shadowEquipRefines": {},
+        "shadowEquipRandomOptions": {},
+        "timeItemsSwitchedOff": {},
+        "bonusStatus": { "6": 2, "7": 3, "8": 2, "9": 4, "10": 2, "11": 3 }
+    },
+    "shownByUpstreamPage": { "averageDamagePerAttack": 437362, "averageDamagePerSecond": 539953 },
+    "calculatedOnUpstreamPage": { "averageDamagePerAttack": 437362, "averageDamagePerSecond": 539953, "attacksToKill": 39, "secondsToKill": 31.590000000000003 }
+}

@@ -79,6 +79,7 @@ Mobile-first static web app (PWA) for Ragnarok Online Japan that answers: **whic
 - A tree is a root character, one shared scenario and a flat node list linked by `parentId`. A node holds only its changes against its parent, and a change to a gear piece names the item it was made for (`expectedItemId`), which is what stale detection compares against.
 - The workspace (`packages/core/src/workspace/workspace-format.ts`) is what the app stores: a locker of gear pieces, characters that wear them by ID, trees, and optional gear and stat loadouts (`workspace/loadouts.ts`; applying a gear loadout sets the slots it lists and leaves the others). Builds and trees stay inline and self-contained; `treeOf()` and `characterOf()` resolve a workspace into them. `commitNodeToLocker()` is the only operation that writes a tree's changes back into locker pieces (refine, transcendence and socket changes, and whole pieces a node holds), and it runs only when the user asks.
 - Changing a field is a change to the public format: ask first. Adding an optional field needs no version bump; anything else does.
+- Real trees: `packages/core/src/tree/real-trees/` holds trees players keep for real characters, each as the build code the app shared and as a tree file, with a damage-per-second reference for the root and every node. The reference is this project's own calculation on the pinned engine, not the original page's: it tells when a number moves, and a moved number is traced (upstream commit or our change) before the reference is rewritten.
 - Golden builds: `scripts/extract-reference-build.browser.js` on the upstream page gives `engine-adapter/fixtures/<name>.reference.json`; `pnpm --filter @ro-ratorio-branch/core run golden-build <name>` derives `build/golden-builds/<name>.build.json`; then list both in the two golden tests. Flow in `docs/diagrams/build-conversion.md`.
 - IDs are ratorio's own numbers. Anything upstream stores by array position is keyed by a stable name or ID in the format, never by position. The one exception is `guildBuffs`, `itemBuffs` and `otherBuffs`: upstream has nothing but the position for those (its controls and saves use it), so the position is the key, and `upstream-panels.json` says what each one is.
 
@@ -99,6 +100,6 @@ The `working-modes` skill (`.claude/skills/working-modes`) defines the modes (qu
 
 ## Upstream bumps
 
-Follow `docs/upstream-bump.md`: bump the submodule pin, diff `engine/runtime/calc-model.js`, rerun golden tests, explain any changed number.
+Follow `docs/upstream-bump.md`: bump the submodule pin, diff `engine/runtime/calc-model.js`, rerun golden tests and the real trees, explain any changed number.
 
 Tests load the engine's files natively (`vitest.shared.ts` externalises `vendor/ratorio`); through Vitest's transform every calculation is several times slower.

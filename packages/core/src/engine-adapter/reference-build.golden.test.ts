@@ -4,6 +4,11 @@ import archMageFrozenSlash from "./fixtures/arch-mage-frozen-slash.reference.jso
 import mechanicArmsCannon from "./fixtures/mechanic-arms-cannon.reference.json" with { type: "json" };
 import mechanicArmsCannonSoulCannonball from "./fixtures/mechanic-arms-cannon-soul-cannonball.reference.json" with { type: "json" };
 import summonerCarrotBeat from "./fixtures/summoner-carrot-beat.reference.json" with { type: "json" };
+import spiritHandlerTigerSlash from "./fixtures/spirit-handler-tiger-slash.reference.json" with { type: "json" };
+import spiritHandlerEverythingPlus5 from "./fixtures/spirit-handler-everything-plus5.reference.json" with { type: "json" };
+import spiritHandlerAbyssArmor from "./fixtures/spirit-handler-abyss-armor.reference.json" with { type: "json" };
+import spiritHandlerConstellationSeal from "./fixtures/spirit-handler-constellation-seal.reference.json" with { type: "json" };
+import spiritHandlerSatanFoxTail from "./fixtures/spirit-handler-satan-fox-tail.reference.json" with { type: "json" };
 import { loadRatorioEngine } from "./load-ratorio-engine-in-node.ts";
 import { calcModelOfReferenceBuild, type ReferenceBuild } from "./reference-build.ts";
 
@@ -12,6 +17,11 @@ const referenceBuilds: readonly ReferenceBuild[] = [
     mechanicArmsCannonSoulCannonball,
     archMageFrozenSlash,
     summonerCarrotBeat,
+    spiritHandlerTigerSlash,
+    spiritHandlerEverythingPlus5,
+    spiritHandlerAbyssArmor,
+    spiritHandlerConstellationSeal,
+    spiritHandlerSatanFoxTail,
 ];
 
 describe.each(referenceBuilds)("reference build: $description", (referenceBuild) => {

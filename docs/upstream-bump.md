@@ -77,6 +77,8 @@ The golden tests in `reference-build.golden.test.ts` compare whole builds agains
 
 If the adapter and the upstream page disagree at the same commit, the bump did not cause it: a headless gap did. Write it up in `docs/upstream/` before going further.
 
+The real trees in `packages/core/src/tree/real-trees/` hold a damage reference for every node, calculated by this project at the old pin rather than read off the upstream page. When one moves, trace it the same way, to the upstream commit or to our own change, and only then rewrite its reference file.
+
 ## 8. Commit
 
 Commit the pin by itself, then anything it required (model types, paths, fixtures) in the same or a following commit, with the explanation from step 7.
