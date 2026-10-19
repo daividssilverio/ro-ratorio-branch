@@ -21,11 +21,11 @@ The engine runs headless, builds and upgrade trees are JSON files, a command-lin
 | Forgiving search (typos, kana, romaji, readings of kanji, English words, aliases) and search by effect with damage previews | Working |
 | English menu, furigana, English names of game things | Working; English names are put together from a glossary and marked with a question mark until someone checks them |
 | Extras: a link from a name to the official tool's search, pictures from an image pack you load yourself (the app ships none), build codes read from a gist | Working |
-| `rocalc search` and the MCP server for agents (`search`, `calc`, `apply_change`, `compare_nodes`, `rank_leaves`) | Working |
+| `rocalc search` and the MCP server for agents: ten tools, from search and calculation to ranking the choices for a slot or a socket ([guide](docs/mcp-guide.md), [日本語](docs/mcp-guide.ja.md)) | Working |
 
 ## How accurate is it
 
-The engine is upstream's, pinned to one commit and never modified. Four reference builds (two Mechanics, an Arch Mage and a Summoner) are calculated from JSON build files and must match the numbers the upstream page shows, to the last digit. Those tests run on every change and on every upstream update.
+The engine is upstream's, pinned to one commit and never modified. Nine reference builds (two Mechanics, an Arch Mage, a Summoner and five builds of a real Spirit Handler) are calculated from JSON build files and must match the numbers the upstream page shows, to the last digit. Those tests run on every change and on every upstream update.
 
 ## Try it
 
@@ -102,6 +102,8 @@ mise exec -- pnpm --silent rocalc search sensha --kind cardOrEnchant --limit 2
 ```
 
 ## For agents
+
+To set it up and ask Claude for upgrades, follow the guide: [English](docs/mcp-guide.md), [日本語](docs/mcp-guide.ja.md).
 
 `packages/mcp` is a [Model Context Protocol](https://modelcontextprotocol.io/) server over standard input and output. It keeps nothing between calls: the agent holds its builds and trees as JSON in the formats above, and every tool takes the document it works on.
 
