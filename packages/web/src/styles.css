@@ -134,6 +134,28 @@ input {
     min-width: 64px;
 }
 
+/* A node's change against the root is a filled badge; against the node it builds on, an outlined one. */
+.gain-badges {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.gain-badges.stacked {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+}
+
+.badge.parent-gain {
+    background: transparent;
+    box-shadow: inset 0 0 0 1px currentColor;
+}
+
+.badge.parent-gain.flat {
+    box-shadow: inset 0 0 0 1px var(--line-2);
+}
+
 .good {
     background: var(--gain-bg);
     color: var(--gain);
@@ -1178,6 +1200,44 @@ svg.i {
     gap: 20px;
     padding: 20px;
     align-content: flex-start;
+}
+
+/* Desktop screens whose columns are dragged keep them side by side, with a handle in the gap between. */
+.wide-main.resizable {
+    flex-wrap: nowrap;
+}
+
+.column-resizer {
+    flex: none;
+    align-self: stretch;
+    position: relative;
+    width: 12px;
+    margin: 0 -14px;
+    cursor: col-resize;
+    touch-action: none;
+    z-index: 1;
+}
+
+.column-resizer::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 5px;
+    width: 2px;
+    border-radius: 1px;
+    background: transparent;
+    transition: background 0.15s;
+}
+
+.column-resizer:hover::after,
+.column-resizer:focus-visible::after,
+.column-resizer:active::after {
+    background: var(--accent);
+}
+
+.column-resizer:focus-visible {
+    outline: none;
 }
 
 .wide-primary {
@@ -3000,6 +3060,48 @@ rt {
     border-top: 0;
 }
 
+.copy-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: none;
+    min-width: 32px;
+    min-height: 32px;
+    padding: 0 6px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--fg-3);
+    font-size: 10.5px;
+    font-weight: 600;
+}
+
+.copy-button:hover {
+    color: var(--accent);
+}
+
+.copy-button.copied {
+    color: var(--gain);
+}
+
+.copy-button.refused {
+    color: var(--loss);
+}
+
+.piece-copy,
+.effect-head {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+/* Effect text outside buttons can be selected by hand as well. */
+.effect,
+.effect-line {
+    user-select: text;
+}
+
 .official-link {
     display: inline-flex;
     align-items: center;
@@ -3051,6 +3153,17 @@ rt {
 .wide-main .node-actions {
     padding: 12px 0 0;
     max-width: 520px;
+}
+
+.node-id-line {
+    font-size: 11.5px;
+    color: var(--fg-3);
+}
+
+.node-id-line code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    color: var(--fg-2);
+    user-select: all;
 }
 
 .node-actions-hint {
@@ -3185,6 +3298,53 @@ rt {
 /* A double tap must not zoom the page before it reaches the line. */
 .mini-line {
     touch-action: manipulation;
+}
+
+/* A line of the mini tree with the toggle that folds what hangs under it; lines without one keep its room, so the guides line up. */
+.mini-order {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    padding: 4px 8px 2px;
+    font-size: 11px;
+    color: var(--fg-3);
+}
+
+.mini-order select {
+    font: inherit;
+    font-size: 11.5px;
+    color: var(--fg-2);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 2px 6px;
+}
+
+.mini-row {
+    display: flex;
+    align-items: stretch;
+}
+
+.mini-row > .mini-line {
+    flex: 1;
+    min-width: 0;
+}
+
+.mini-fold {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--fg-3);
+}
+
+button.mini-fold:hover {
+    color: var(--fg);
 }
 
 .mini-line.renaming {
@@ -3367,3 +3527,151 @@ rt {
     width: 100%;
     justify-content: center;
 }
+
+/* What the gear adds up to and what each piece does, set against the build a node builds on. */
+.effects-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.effects-against {
+    font-size: 11.5px;
+    color: var(--fg-3);
+}
+
+.effects-only-changes {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--fg-2);
+}
+
+.effects-group {
+    border-top: 1px solid var(--line);
+    padding-top: 8px;
+}
+
+.effects-group > summary {
+    cursor: pointer;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--fg-2);
+    padding: 4px 0;
+}
+
+.effects-group > summary .num {
+    color: var(--fg-3);
+    font-weight: 500;
+    margin-left: 4px;
+}
+
+.effects-list {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.effect-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 3px 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    user-select: text;
+}
+
+.effect-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.effect-tag {
+    flex: none;
+    font-size: 10px;
+    color: var(--fg-3);
+    border: 1px solid var(--line-2);
+    border-radius: 4px;
+    padding: 0 5px;
+}
+
+.effect-before {
+    flex: none;
+    font-size: 11px;
+    color: var(--fg-3);
+}
+
+.effect-mark {
+    flex: none;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+}
+
+.effect-mark.added {
+    background: var(--gain-bg);
+    color: var(--gain);
+}
+
+.effect-mark.changed {
+    background: var(--accent-bg);
+    color: var(--accent);
+}
+
+.effect-mark.lost {
+    background: var(--loss-bg);
+    color: var(--loss);
+}
+
+.effect-row.lost .effect-text,
+.effect-source.lost b,
+.effect-source.lost .effect-source-line {
+    text-decoration: line-through;
+    color: var(--fg-3);
+}
+
+.effect-source {
+    padding: 8px 0;
+    border-top: 1px dashed var(--line);
+    user-select: text;
+}
+
+.effect-source:first-of-type {
+    border-top: 0;
+}
+
+.effect-source-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+}
+
+.effect-source-head small {
+    color: var(--fg-3);
+    font-size: 11px;
+}
+
+.effect-source-line {
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--fg-2);
+    padding-left: 2px;
+}
+
+.effect-source.cardOrEnchant,
+.effect-source.randomOption {
+    padding-left: 12px;
+}
+
+.piece-effects {
+    margin-top: 4px;
+}
+

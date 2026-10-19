@@ -51,6 +51,15 @@ describe("engine catalog", () => {
         expect(engine.catalog.effectsOfCardOrEnchant(unknownId)).toEqual([]);
     });
 
+    it("words a bonus as upstream words the same effect of a random option, and nothing it cannot word", () => {
+        const atkOptionId = 20;
+
+        expect(engine.catalog.wordingOfBonus("ATK_PLUS", 30)).toBe(engine.catalog.wordingOfRandomOption(atkOptionId, 30));
+        expect(engine.catalog.wordingOfBonus("ATK_PLUS", 30)).not.toBe("");
+        expect(engine.catalog.wordingOfBonus("NO_SUCH_BONUS", 30)).toBe("");
+        expect(engine.catalog.wordingOfBonus("LEARNED_SKILL_EFFECT", 5580)).toBe("");
+    });
+
     it("names the learned skills that worn gear and cards do something more for, as the original marks them", () => {
         const concentrationSkillId = engine.catalog.learnedSkillsGearRewards([4359], [])[0];
 

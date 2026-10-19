@@ -13,6 +13,7 @@ import { RightsFooter } from "./RightsFooter.tsx";
 import { useWorkspaceGearData, type WorkspaceGearData } from "./use-engine-data.ts";
 import type { TreeWorkspace } from "./use-tree-workspace.ts";
 import { t } from "./text/ui-text.ts";
+import { ColumnResizer, useColumnWidth } from "./ColumnResizer.tsx";
 
 const slotGroupLabels: Readonly<Record<SlotGroup, string>> = {
     weapon: t("武器"),
@@ -34,6 +35,7 @@ export function LockerScreen({ workspace, isWide }: { workspace: TreeWorkspace; 
     const [nameQuery, setNameQuery] = useState("");
     const [selectedPieceId, setSelectedPieceId] = useState<string | null>(null);
     const [isAdding, setIsAdding] = useState(false);
+    const piecePanel = useColumnWidth("locker-piece", 360, { narrowest: 300, widest: 680 }, "right");
 
     const { characters, gearPieces } = workspace.workspace;
     const rowsFor = (rowFilter: LockerFilter) => lockerRowsOf(workspace.workspace, gearData.gearFacts, rowFilter);
@@ -77,7 +79,7 @@ export function LockerScreen({ workspace, isWide }: { workspace: TreeWorkspace; 
 
     if (isWide) {
         return (
-            <main className="wide-main locker-main">
+            <main className="wide-main locker-main resizable">
                 <aside className="locker-aside">
                     <button type="button" className="btn btn-p" onClick={() => setIsAdding(true)}>
                         <PlusIcon />
@@ -134,7 +136,8 @@ export function LockerScreen({ workspace, isWide }: { workspace: TreeWorkspace; 
                     </div>
                 </section>
 
-                <aside className="card locker-detail">{editor || <p className="empty-note">{t("ギアを選ぶと、ここで精錬・カード・価格・メモを編集できます。")}</p>}</aside>
+                <ColumnResizer column={piecePanel} label={t("列の幅")} />
+                <aside className="card locker-detail" style={piecePanel.style}>{editor || <p className="empty-note">{t("ギアを選ぶと、ここで精錬・カード・価格・メモを編集できます。")}</p>}</aside>
                 {addGearPicker}
             </main>
         );

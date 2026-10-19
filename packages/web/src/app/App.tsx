@@ -1,4 +1,4 @@
-import { addEmptyTreeNode, descendantCountOf, type InexpressibleDifference } from "@ro-ratorio-branch/core/platform-neutral";
+import { addEmptyTreeNode, descendantCountOf, type InexpressibleDifference, shareCodeInFragment } from "@ro-ratorio-branch/core/platform-neutral";
 import { type ReactNode, useState } from "react";
 import { BuildScreen, type EditedNode } from "./BuildScreen.tsx";
 import { CompareSheet } from "./CompareSheet.tsx";
@@ -10,7 +10,6 @@ import { RightsFooter } from "./RightsFooter.tsx";
 import { useNodeWorkspace } from "./use-node-workspace.ts";
 import { LockerScreen } from "./LockerScreen.tsx";
 import { RankingScreen } from "./RankingScreen.tsx";
-import { shareCodeInFragment } from "./share-export-model.ts";
 import { ShareScreen } from "./ShareScreen.tsx";
 import { type OpenTab, TabBar } from "./TabBar.tsx";
 import { TreeScreen } from "./TreeScreen.tsx";
@@ -161,9 +160,14 @@ function SelectedBuildScreen({ stored, nodeId, isWide, treeStrip, onSelect }: Se
         return <UneditableNodeScreen label={node.label} isWide={isWide} treeStrip={treeStrip} onRemove={() => stored.removeNode(nodeId)} />;
     }
     const editedNode: EditedNode = {
+        id: nodeId,
         label: node.label,
         parentLabel: parentNode?.label ?? rootLabel,
         parentDamagePerSecond: parentResult?.state === "ready" ? parentResult.battleSummary.averageDamagePerSecond : null,
+        parentEvaluation: (() => {
+            const parentEvaluation = parentNode === undefined ? stored.evaluation?.root : stored.evaluation?.nodes.get(parentNode.id);
+            return parentEvaluation?.state === "ready" ? parentEvaluation : null;
+        })(),
         refused,
         descendantCount: descendantCountOf(stored.workspace, stored.activeTreeId, nodeId),
         onRename: (label) => stored.renameNode(nodeId, label),

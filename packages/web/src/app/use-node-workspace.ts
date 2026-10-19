@@ -1,4 +1,4 @@
-import { type InexpressibleDifference, type NodeEdit, rankingMetrics, startNodeEdit, storeNodeEdit, type TreeComparison, treeOf } from "@ro-ratorio-branch/core/platform-neutral";
+import { type InexpressibleDifference, type NodeEdit, rankingMetrics, startNodeEdit, storeNodeEdit, type TreeComparison, type TreeEvaluation, treeOf } from "@ro-ratorio-branch/core/platform-neutral";
 import { useMemo } from "react";
 import type { TreeWorkspace } from "./use-tree-workspace.ts";
 
@@ -27,6 +27,10 @@ export function useNodeWorkspace(stored: TreeWorkspace, nodeId: string | null, o
             ? null
             : { root: result.state === "ready" ? { state: "ready", battleSummary: result.battleSummary } : { state: "notCalculable", issues: result.issues }, nodes: [], rankings: noRankings };
 
+    // The editor shows the node's build as its root, so the node's calculation stands as the root's too.
+    const nodeEvaluation = nodeId === null ? undefined : stored.evaluation?.nodes.get(nodeId);
+    const evaluation: TreeEvaluation | null = nodeEvaluation === undefined || nodeEvaluation.state === "stale" ? null : { root: nodeEvaluation, nodes: new Map() };
+
     function storeEdited(editedWorkspace: TreeWorkspace["workspace"]) {
         if (edit === undefined) {
             return;
@@ -36,5 +40,5 @@ export function useNodeWorkspace(stored: TreeWorkspace, nodeId: string | null, o
         onInexpressible(storedEdit.inexpressible);
     }
 
-    return { ...stored, workspace: edit.workspace, tree, comparison, updateWorkspace: storeEdited, takeWorkspace: storeEdited };
+    return { ...stored, workspace: edit.workspace, tree, comparison, evaluation, updateWorkspace: storeEdited, takeWorkspace: storeEdited };
 }

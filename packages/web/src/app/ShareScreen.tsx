@@ -1,19 +1,11 @@
-import { type Build, encodeShareCode, type InexpressibleDifference, type NotImportedPart, type PositionalBuffPanel } from "@ro-ratorio-branch/core/platform-neutral";
+import { type Build, encodeShareCode, type InexpressibleDifference, type NotImportedPart, type PositionalBuffPanel, shareLinkOf, type ImportRecognition, type ImportRefusal, type RecognizedImport, recognizeImport } from "@ro-ratorio-branch/core/platform-neutral";
 import { type ChangeEvent, type DragEvent, useEffect, useId, useMemo, useRef, useState } from "react";
 import { type Descriptions, noDescriptions, type SaveWritten } from "../engine-host/host-protocol.ts";
 import { CopyIcon, DownloadIcon, ImportIcon, LinkIcon, OpenOutsideIcon, WarningIcon } from "./Icons.tsx";
 import { slotLabels } from "./labels.ts";
 import { RightsFooter } from "./RightsFooter.tsx";
-import { type ExportScope, exportContentOf, exportScopes, kilobytesOf, shareLinkOf } from "./share-export-model.ts";
-import {
-    applyImport,
-    type ImportMode,
-    type ImportRecognition,
-    type ImportRefusal,
-    importModesFor,
-    type RecognizedImport,
-    recognizeImport,
-} from "./share-import-model.ts";
+import { type ExportScope, exportContentOf, exportScopes, kilobytesOf } from "./share-export-model.ts";
+import { applyImport, type ImportMode, importModesFor } from "./share-import-model.ts";
 import { engineHost, type TreeWorkspace } from "./use-tree-workspace.ts";
 import { t } from "./text/ui-text.ts";
 import { ImagePackCard } from "../image-pack/ImagePackCard.tsx";
@@ -493,7 +485,7 @@ function ImportCard({ workspace, importText, onImportTextChange, onShowTree }: I
                                 <input type="radio" name={`${textFieldId}-mode`} checked={mode === candidate} onChange={() => setMode(candidate)} />
                                 <span>
                                     {modeLabel(candidate, recognized)}
-                                    <small>{modeHints[candidate]}</small>
+                                    <small>{modeHint(candidate, recognized)}</small>
                                 </span>
                             </label>
                         ))}
@@ -630,6 +622,13 @@ function modeLabel(mode: ImportMode, recognized: RecognizedImport): string {
         return recognized.kind === "tree" ? t("新しいツリーとして追加") : t("新しいキャラとして追加");
     }
     return mode === "addAsBranch" ? t("現在のツリーに子ノードとして追加") : t("すべて置き換え");
+}
+
+function modeHint(mode: ImportMode, recognized: RecognizedImport): string {
+    if (mode === "addAsBranch" && recognized.kind === "tree") {
+        return t("ツリーの分岐をそのまま加えます。ROOT が違うときは、その差分の分岐の下に入ります");
+    }
+    return modeHints[mode];
 }
 
 const modeHints: Readonly<Record<ImportMode, string>> = {

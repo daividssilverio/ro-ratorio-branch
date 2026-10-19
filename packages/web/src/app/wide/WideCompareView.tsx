@@ -8,6 +8,7 @@ import { rootLabel } from "../labels.ts";
 import { treeRowsOf } from "../tree-view-model.ts";
 import type { TreeWorkspace } from "../use-tree-workspace.ts";
 import { t } from "../text/ui-text.ts";
+import { ColumnResizer, useColumnWidth } from "../ColumnResizer.tsx";
 
 interface WideCompareViewProps {
     readonly workspace: TreeWorkspace;
@@ -22,13 +23,14 @@ export function WideCompareView({ workspace, nodeId, onSelect, onBackToTree }: W
     const { tree, comparison: treeComparison, descriptions } = workspace;
     const [baseline, setBaseline] = useState<Baseline>("root");
     const [isSwapped, setIsSwapped] = useState(false);
+    const treePanel = useColumnWidth("compare-tree", 340, { narrowest: 260, widest: 640 }, "left");
     const comparison = comparisonOf(workspace, nodeId, baseline, isSwapped);
     const rootDamagePerSecond = treeComparison?.root.state === "ready" ? treeComparison.root.battleSummary.averageDamagePerSecond : null;
     const rows = treeComparison === null ? [] : treeRowsOf(tree, treeComparison, "damagePerSecondGain");
 
     return (
-        <main className="wide-main" style={{ alignItems: "flex-start" }}>
-            <aside className="card mini-tree">
+        <main className="wide-main resizable" style={{ alignItems: "flex-start" }}>
+            <aside className="card mini-tree" style={treePanel.style}>
                 <div className="mini-tree-head">
                     <span className="eyebrow">{t("ツリー · クリックで B を指定")}</span>
                 </div>
@@ -75,6 +77,7 @@ export function WideCompareView({ workspace, nodeId, onSelect, onBackToTree }: W
                     </button>
                 ))}
             </aside>
+            <ColumnResizer column={treePanel} label={t("列の幅")} />
 
             <section className="wide-primary">
                 <div className="view-head">

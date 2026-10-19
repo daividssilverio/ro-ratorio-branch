@@ -78,6 +78,20 @@ describe("handleHostRequest", () => {
         });
     });
 
+    it("words bonuses in the order asked, and leaves one it cannot word empty", async () => {
+        const response = await handleHostRequest(engine, {
+            kind: "wordBonuses",
+            requestId: 20,
+            bonuses: [
+                { name: "ATK_PLUS", value: 30 },
+                { name: "NO_SUCH_BONUS", value: 1 },
+            ],
+        });
+
+        expect(response).toEqual({ kind: "bonusesWorded", requestId: 20, wordings: [engine.catalog.wordingOfBonus("ATK_PLUS", 30), ""] });
+        expect(response.kind === "bonusesWorded" && response.wordings[0]).not.toBe("");
+    });
+
     it("lists the skills and buffs a job can set", async () => {
         const response = await handleHostRequest(engine, { kind: "listJobSettings", requestId: 14, jobId: 51 });
         const jobSettings = response.kind === "jobSettingsListed" ? response.jobSettings : undefined;

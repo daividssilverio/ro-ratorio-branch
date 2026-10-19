@@ -1,11 +1,13 @@
 import type { GearPiece } from "@ro-ratorio-branch/core/platform-neutral";
 import type { Descriptions } from "../engine-host/host-protocol.ts";
 import type { Baseline, Comparison } from "./compare-model.ts";
-import { effectTextLines, type GearDiffRow } from "./compare-view-model.ts";
+import type { GearDiffRow } from "./compare-view-model.ts";
 import { formatInteger, formatSeconds, formatSignedInteger, formatSignedPercent, formatSignedSeconds, formatZeny } from "./format.ts";
 import { SwapIcon } from "./Icons.tsx";
 import { cardOrEnchantNameIn, itemNameIn, randomOptionTextIn, sectionLabels, slotLabels } from "./labels.ts";
 import { t } from "./text/ui-text.ts";
+import { CopyButton } from "./CopyButton.tsx";
+import { effectLinesOf } from "./effects-view-model.ts";
 
 const badgeToneOf = (difference: number, lowerIsBetter = false) =>
     difference === 0 ? "flat" : difference > 0 !== lowerIsBetter ? "good" : "bad";
@@ -143,13 +145,13 @@ export function EffectsSection({ comparison, descriptions }: { comparison: Compa
             </div>
             {itemIds.length + cardOrEnchantIds.length === 0 && <p className="empty-note">{t("B で新しく装備するものはありません。")}</p>}
             {itemIds.map((itemId) => (
-                <EffectText key={`item-${itemId}`} name={itemNameIn(descriptions, itemId)} effectText={descriptions.items[itemId]?.effectText ?? ""} />
+                <EffectText key={`item-${itemId}`} name={itemNameIn(descriptions, itemId)} lines={effectLinesOf(descriptions.items[itemId])} />
             ))}
             {cardOrEnchantIds.map((cardOrEnchantId) => (
                 <EffectText
                     key={`card-${cardOrEnchantId}`}
                     name={cardOrEnchantNameIn(descriptions, cardOrEnchantId)}
-                    effectText={descriptions.cardsOrEnchants[cardOrEnchantId]?.effectText ?? ""}
+                    lines={effectLinesOf(descriptions.cardsOrEnchants[cardOrEnchantId])}
                 />
             ))}
         </section>
@@ -310,11 +312,13 @@ function StatRow({ name, before, after }: { name: string; before: number; after:
     );
 }
 
-function EffectText({ name, effectText }: { name: string; effectText: string }) {
-    const lines = effectTextLines(effectText);
+function EffectText({ name, lines }: { name: string; lines: readonly string[] }) {
     return (
         <div className="effect">
-            <b>{name}</b>
+            <span className="effect-head">
+                <b>{name}</b>
+                <CopyButton text={[name, ...lines].join("\n")} label={t("効果をコピー")} />
+            </span>
             {lines.length === 0 ? t("（説明なし）") : lines.map((line, index) => <div key={index}>{line}</div>)}
         </div>
     );

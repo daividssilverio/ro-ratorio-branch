@@ -40,12 +40,13 @@ import { engineHost, type TreeWorkspace } from "./use-tree-workspace.ts";
 import { t } from "./text/ui-text.ts";
 import { EnglishName } from "./text/EnglishName.tsx";
 import { GearListingDialog } from "./GearListingDialog.tsx";
-import type { InexpressibleDifference } from "@ro-ratorio-branch/core/platform-neutral";
+import { buildWearingItem, type InexpressibleDifference, type ReadyNodeEvaluation } from "@ro-ratorio-branch/core/platform-neutral";
 import type { ReactNode } from "react";
-import { ConfirmedAction, NodeMergeButtons, RemoveNodeButton } from "./NodeActions.tsx";
+import { ConfirmedAction, NodeIdLine, NodeMergeButtons, RemoveNodeButton } from "./NodeActions.tsx";
 import { Picture } from "../image-pack/Picture.tsx";
-import { buildWearingItem } from "./damage-preview-model.ts";
 import type { PickerPreview } from "./use-damage-previews.ts";
+import { ColumnResizer, useColumnWidth } from "./ColumnResizer.tsx";
+import { EffectsCard } from "./EffectsCard.tsx";
 
 /** Used until the job's own limits have loaded. */
 const widestLimits = { lowest: 0, highest: 999 };
@@ -56,11 +57,14 @@ type OpenPicker = "attackSkill" | "targetMonster" | "targetSettings" | "newChara
 /** The build editor: the open tree's root character, what it wears, and what it attacks. Every change recalculates the tree. */
 /** The node of the tree an editor is open on, in place of the root. */
 export interface EditedNode {
+    readonly id: string;
     readonly label: string;
     /** What the node builds on, as the tree names it. */
     readonly parentLabel: string;
     /** The damage per second of what the node builds on, when that is known. */
     readonly parentDamagePerSecond: number | null;
+    /** What the node builds on, calculated; `null` while it is calculated or when it cannot be. */
+    readonly parentEvaluation: ReadyNodeEvaluation | null;
     /** What the last change tried to set that a node cannot hold. */
     readonly refused: readonly InexpressibleDifference[];
     /** How many nodes build on this one and would go with it. */
@@ -99,6 +103,7 @@ export function BuildScreen({ workspace, isWide, treeStrip, editedNode }: BuildS
     const [expandedSlot, setExpandedSlot] = useState<EquipmentSlot | null>(null);
     const [slotBeingChosen, setSlotBeingChosen] = useState<EquipmentSlot | null>(null);
     const [openPicker, setOpenPicker] = useState<OpenPicker | null>(null);
+    const sideColumn = useColumnWidth("build-side", 400, { narrowest: 300, widest: 720 }, "left");
 
     const { trees, characters } = workspace.workspace;
     const openTree = trees[workspace.activeTreeId];
@@ -193,6 +198,7 @@ export function BuildScreen({ workspace, isWide, treeStrip, editedNode }: BuildS
                         {t("ノード名")}
                         <CommittedTextField value={editedNode.label} ariaLabel={t("ノード名")} onCommit={(label) => label.trim() !== "" && editedNode.onRename(label.trim())} />
                     </label>
+                    <NodeIdLine nodeId={editedNode.id} />
                     <div className="editor-hint num">
                         Base Lv {character.baseLevel} · Job Lv {character.jobLevel} · {t("レベルと衣装は ROOT で変えます")}
                     </div>
@@ -352,6 +358,15 @@ export function BuildScreen({ workspace, isWide, treeStrip, editedNode }: BuildS
         </button>
     );
 
+    const shownEvaluation = workspace.evaluation?.root.state === "ready" ? workspace.evaluation.root : null;
+    const effectsCard = (
+        <EffectsCard
+            evaluation={shownEvaluation}
+            parent={editedNode?.parentEvaluation == null ? null : { label: editedNode.parentLabel, evaluation: editedNode.parentEvaluation }}
+            descriptions={descriptions}
+        />
+    );
+
     const equipmentCard = (
         <section className="card build-card equipment-card">
             <h2>
@@ -473,8 +488,8 @@ export function BuildScreen({ workspace, isWide, treeStrip, editedNode }: BuildS
 
     if (isWide) {
         return (
-            <main className="wide-main build-main">
-                <div className="build-column narrow">
+            <main className="wide-main build-main resizable">
+                <div className="build-column narrow" style={sideColumn.style}>
                     <div className="build-sticky">
                         {treeStrip}
                         <RootResult workspace={workspace} editedNode={editedNode} />
@@ -483,8 +498,10 @@ export function BuildScreen({ workspace, isWide, treeStrip, editedNode }: BuildS
                     {characterCard}
                     {settingsCard}
                 </div>
-                <div className="build-column">{equipmentCard}</div>
-                <div className="build-column narrow">
+                <ColumnResizer column={sideColumn} label={t("列の幅")} />
+                <div className="build-column">
+                    {equipmentCard}
+                    {effectsCard}
                     {scenarioCard}
                     {editedNode === undefined && <LoadoutsCard workspace={workspace} characterId={characterId} />}
                 </div>
@@ -508,6 +525,7 @@ export function BuildScreen({ workspace, isWide, treeStrip, editedNode }: BuildS
                     {editedNode === undefined && treeSwitcher}
                     {characterCard}
                     {equipmentCard}
+                    {effectsCard}
                     {settingsCard}
                     {scenarioCard}
                     {editedNode === undefined && <LoadoutsCard workspace={workspace} characterId={characterId} />}

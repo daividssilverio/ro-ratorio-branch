@@ -12,12 +12,13 @@ import type {
     ItemDescription,
     JobLimits,
     NotExportedPart,
-    RatorioSaveImport,
     SkillLevelSetting,
     StatPointBudget,
     PositionalBuffSetting, SupportBuffSetting,
-    UnreadableSaveFlaw,
+    SaveReadOutcome,
 } from "@ro-ratorio-branch/core/platform-neutral";
+
+export type { SaveReadOutcome };
 
 /** The IDs whose upstream names the app wants to show. */
 export interface IdsToDescribe {
@@ -30,12 +31,17 @@ export interface IdsToDescribe {
 }
 
 /** Upstream names by ID. An ID the engine does not have is simply absent. */
+/** An item's or a card's name and upstream's note on it, with everything it does put into words, one effect per line. */
+export interface GearDescription extends ItemDescription {
+    readonly effects: readonly string[];
+}
+
 export interface Descriptions {
     readonly jobNames: Readonly<Record<number, string>>;
     readonly skillNames: Readonly<Record<number, string>>;
     readonly monsterNames: Readonly<Record<number, string>>;
-    readonly items: Readonly<Record<number, ItemDescription>>;
-    readonly cardsOrEnchants: Readonly<Record<number, ItemDescription>>;
+    readonly items: Readonly<Record<number, GearDescription>>;
+    readonly cardsOrEnchants: Readonly<Record<number, GearDescription>>;
     readonly randomOptionNames: Readonly<Record<number, string>>;
 }
 
@@ -48,10 +54,6 @@ export const noDescriptions: Descriptions = {
     randomOptionNames: {},
 };
 
-/** What reading a ratorio save gave: its content as a character and scenario, or why it could not be read. */
-export type SaveReadOutcome =
-    | { readonly state: "read"; readonly saveImport: RatorioSaveImport }
-    | { readonly state: "unreadable"; readonly flaw: UnreadableSaveFlaw };
 
 /** A build as a ratorio save URL, and what the save could not carry. */
 export interface SaveWritten {
@@ -143,6 +145,7 @@ export type HostRequest =
     /** Reads the text of a market listing as a gear piece; for a piece whose item is already chosen, the text may leave the item out. */
     | { readonly kind: "readGearListing"; readonly requestId: number; readonly text: string; readonly itemId?: number }
     /** The skills that the given gear and cards do something more for when they are learned. */
+    | { readonly kind: "wordBonuses"; readonly requestId: number; readonly bonuses: readonly BonusAtValue[] }
     | { readonly kind: "listSkillsGearRewards"; readonly requestId: number; readonly itemIds: readonly number[]; readonly cardOrEnchantIds: readonly number[] }
     /** The attacks the build's character can use, whatever its scenario attacks with. None for a character that cannot be calculated. */
     | { readonly kind: "listAttackMethods"; readonly requestId: number; readonly build: Build };
@@ -159,15 +162,22 @@ export type HostResponse =
     | { readonly kind: "attackMethodsListed"; readonly requestId: number; readonly attackMethods: readonly AttackMethod[] }
     | { readonly kind: "statPointsCounted"; readonly requestId: number; readonly statPoints: StatPointBudget | null }
     | { readonly kind: "skillsGearRewardsListed"; readonly requestId: number; readonly skillIds: readonly number[] }
+    | { readonly kind: "bonusesWorded"; readonly requestId: number; readonly wordings: readonly string[] }
     | { readonly kind: "gearListingRead"; readonly requestId: number; readonly listingRead: GearListingRead }
     | { readonly kind: "failed"; readonly requestId: number; readonly reason: string };
 
+/** A bonus of a stat snapshot at a value, to put into words. */
+export interface BonusAtValue {
+    readonly name: string;
+    readonly value: number;
+}
+
 export function isHostRequest(message: unknown): message is HostRequest {
-    return hasKind(message, ["calculate", "describe", "readSave", "writeSave", "listCatalog", "listJobSettings", "checkGear", "listAttackMethods", "countStatPoints", "listSkillsGearRewards", "readGearListing"]) && typeof Reflect.get(message, "requestId") === "number";
+    return hasKind(message, ["calculate", "describe", "readSave", "writeSave", "listCatalog", "listJobSettings", "checkGear", "listAttackMethods", "countStatPoints", "listSkillsGearRewards", "readGearListing", "wordBonuses"]) && typeof Reflect.get(message, "requestId") === "number";
 }
 
 export function isHostResponse(message: unknown): message is HostResponse {
-    return hasKind(message, ["ready", "calculated", "described", "saveRead", "saveWritten", "catalogListed", "jobSettingsListed", "gearChecked", "attackMethodsListed", "statPointsCounted", "skillsGearRewardsListed", "gearListingRead", "failed"]);
+    return hasKind(message, ["ready", "calculated", "described", "saveRead", "saveWritten", "catalogListed", "jobSettingsListed", "gearChecked", "attackMethodsListed", "statPointsCounted", "skillsGearRewardsListed", "gearListingRead", "bonusesWorded", "failed"]);
 }
 
 function hasKind(message: unknown, kinds: readonly string[]): message is object {

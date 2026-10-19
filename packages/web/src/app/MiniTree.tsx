@@ -1,9 +1,29 @@
 import { useEffect, useRef, useState } from "react";
-import { formatInteger, formatSignedPercent } from "./format.ts";
+import { formatInteger } from "./format.ts";
+import { GainBadges, useGainDisplay } from "./GainBadges.tsx";
 import { ChevronDownIcon, ChevronRightIcon, PlusIcon } from "./Icons.tsx";
 import { rootLabel } from "./labels.ts";
 import { t } from "./text/ui-text.ts";
-import { doubleTapWindowInMilliseconds, isSecondTapOfDouble, type Tap, type TreeLine, treeLinesOf } from "./tree-view-model.ts";
+import { loadMiniTreeOrder, storeMiniTreeOrder } from "../storage/workspace-store.ts";
+import {
+    doubleTapWindowInMilliseconds,
+    type GainDisplay,
+    isSecondTapOfDouble,
+    linesShown,
+    type SiblingOrder,
+    siblingOrders,
+    type Tap,
+    type TreeLine,
+    treeLinesOf,
+} from "./tree-view-model.ts";
+
+const siblingOrderLabels: Readonly<Record<SiblingOrder, string>> = {
+    created: t("作成順"),
+    damagePerSecondGain: "DPS",
+    secondsToKill: t("討伐時間"),
+    cumulativeZenyCost: t("コスト"),
+    valueForMoney: "DPS / M z",
+};
 import type { TreeWorkspace } from "./use-tree-workspace.ts";
 
 interface MiniTreeProps {
@@ -20,18 +40,32 @@ interface MiniTreeProps {
 
 /**
  * The tree at a glance while a build is edited: one line per node, each
- * with what it does against the root. A tap on a line makes the editor
- * show that build; a double tap on a node's line renames the node there.
+ * with what it does against the root and against the node it builds on, as
+ * the tree screen shows them. A tap on a line makes the editor show that
+ * build; a double tap on a node's line renames the node there; a node with
+ * nodes under it folds them away.
  */
 export function MiniTree({ workspace, selectedNodeId, isWide, onSelect, onAddBranch }: MiniTreeProps) {
     const [isOpenOnPhone, setIsOpenOnPhone] = useState(false);
     const [renamedNodeId, setRenamedNodeId] = useState<string | null>(null);
+    const [foldedNodeIds, setFoldedNodeIds] = useState<ReadonlySet<string>>(new Set());
+    const [gainDisplay] = useGainDisplay();
+    const [siblingOrder, setSiblingOrder] = useState<SiblingOrder>(() => siblingOrders.find((order) => order === loadMiniTreeOrder()) ?? "created");
     const previousTap = useRef<Tap | null>(null);
     const closing = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-    const lines = treeLinesOf(workspace.tree, workspace.comparison);
+    const lines = treeLinesOf(workspace.tree, workspace.comparison, siblingOrder);
     const root = workspace.comparison?.root;
     const rootDamagePerSecond = root?.state === "ready" ? root.battleSummary.averageDamagePerSecond : null;
     const selectedLine = lines.find((line) => line.nodeId === selectedNodeId);
+    const shownLines = linesShown(lines, foldedNodeIds);
+
+    function toggleFolded(nodeId: string) {
+        const next = new Set(foldedNodeIds);
+        if (!next.delete(nodeId)) {
+            next.add(nodeId);
+        }
+        setFoldedNodeIds(next);
+    }
     const isOpen = isWide || isOpenOnPhone;
 
     useEffect(() => () => clearTimeout(closing.current), []);
@@ -87,7 +121,7 @@ export function MiniTree({ workspace, selectedNodeId, isWide, onSelect, onAddBra
                     <button type="button" className="mini-line mini-current" aria-expanded={isOpenOnPhone} onClick={tapCurrentLine}>
                         {isOpenOnPhone ? <ChevronDownIcon size={14} /> : <ChevronRightIcon size={14} />}
                         <span className="mini-label">{selectedLine?.label ?? rootLabel}</span>
-                        {selectedLine === undefined ? rootNumber : <LineNumber line={selectedLine} rootDamagePerSecond={rootDamagePerSecond} />}
+                        {selectedLine === undefined ? rootNumber : <LineNumber line={selectedLine} isRootKnown={rootDamagePerSecond !== null} gainDisplay={gainDisplay} />}
                     </button>
                 )}
                 <button type="button" className="btn mini-add" data-testid="add-branch" onClick={() => onAddBranch(selectedLine?.nodeId ?? null)}>
@@ -97,28 +131,62 @@ export function MiniTree({ workspace, selectedNodeId, isWide, onSelect, onAddBra
             </div>
             {isOpen && (
                 <div className="mini-lines">
-                    <button type="button" className="mini-line" aria-current={selectedLine === undefined ? "true" : undefined} onClick={() => tapLine(null)}>
-                        <span className="mini-label">{rootLabel}</span>
-                        {rootNumber}
-                    </button>
-                    {lines.map((line) =>
-                        line.nodeId === renamedNodeId ? (
-                            <RenameLine key={line.nodeId} line={line} showsGuides onDone={(label) => rename(line.nodeId, label)} />
-                        ) : (
-                            <button
-                                key={line.nodeId}
-                                type="button"
-                                className="mini-line"
-                                aria-current={line.nodeId === selectedNodeId ? "true" : undefined}
-                                title={t("ダブルタップで名前を変更")}
-                                onClick={() => tapLine(line.nodeId)}
-                            >
-                                <Guides line={line} />
-                                <span className="mini-label">{line.label}</span>
-                                <LineNumber line={line} rootDamagePerSecond={rootDamagePerSecond} />
-                            </button>
-                        ),
-                    )}
+                    <label className="mini-order">
+                        {t("並び順")}
+                        <select
+                            value={siblingOrder}
+                            onChange={(event) => {
+                                const chosen = siblingOrders.find((order) => order === event.target.value) ?? "created";
+                                setSiblingOrder(chosen);
+                                storeMiniTreeOrder(chosen);
+                            }}
+                        >
+                            {siblingOrders.map((order) => (
+                                <option key={order} value={order}>
+                                    {siblingOrderLabels[order]}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
+                    <div className="mini-row">
+                        <span className="mini-fold" />
+                        <button type="button" className="mini-line" aria-current={selectedLine === undefined ? "true" : undefined} onClick={() => tapLine(null)}>
+                            <span className="mini-label">{rootLabel}</span>
+                            {rootNumber}
+                        </button>
+                    </div>
+                    {shownLines.map((line) => (
+                        <div key={line.nodeId} className="mini-row">
+                            {line.hasChildren ? (
+                                <button
+                                    type="button"
+                                    className="mini-fold"
+                                    aria-expanded={!foldedNodeIds.has(line.nodeId)}
+                                    aria-label={foldedNodeIds.has(line.nodeId) ? t("展開") : t("折りたたむ")}
+                                    onClick={() => toggleFolded(line.nodeId)}
+                                >
+                                    {foldedNodeIds.has(line.nodeId) ? <ChevronRightIcon size={13} /> : <ChevronDownIcon size={13} />}
+                                </button>
+                            ) : (
+                                <span className="mini-fold" />
+                            )}
+                            {line.nodeId === renamedNodeId ? (
+                                <RenameLine line={line} showsGuides onDone={(label) => rename(line.nodeId, label)} />
+                            ) : (
+                                <button
+                                    type="button"
+                                    className="mini-line"
+                                    aria-current={line.nodeId === selectedNodeId ? "true" : undefined}
+                                    title={t("ダブルタップで名前を変更")}
+                                    onClick={() => tapLine(line.nodeId)}
+                                >
+                                    <Guides line={line} />
+                                    <span className="mini-label">{line.label}</span>
+                                    <LineNumber line={line} isRootKnown={rootDamagePerSecond !== null} gainDisplay={gainDisplay} />
+                                </button>
+                            )}
+                        </div>
+                    ))}
                 </div>
             )}
         </section>
@@ -167,19 +235,13 @@ function Guides({ line }: { line: TreeLine }) {
     );
 }
 
-/** What a node does against the root, or why it has no number. */
-function LineNumber({ line, rootDamagePerSecond }: { line: TreeLine; rootDamagePerSecond: number | null }) {
-    if (line.state === "pending" || (line.state === "ready" && rootDamagePerSecond === null)) {
+/** What a node does against the root and against the node it builds on, or why it has no number. */
+function LineNumber({ line, isRootKnown, gainDisplay }: { line: TreeLine; isRootKnown: boolean; gainDisplay: GainDisplay }) {
+    if (line.state === "pending" || (line.state === "ready" && !isRootKnown)) {
         return <span className="num mini-number">…</span>;
     }
-    if (line.state !== "ready" || line.damagePerSecondGain === undefined || rootDamagePerSecond === null) {
+    if (line.state !== "ready") {
         return <span className={`badge ${line.state === "stale" ? "stl" : "bad"}`}>{line.state === "stale" ? "stale" : "!"}</span>;
     }
-    const gain = line.damagePerSecondGain;
-    return (
-        <span className={`badge num ${gain > 0 ? "good" : gain < 0 ? "bad" : "flat"}`}>
-            {gain > 0 ? "▲ " : gain < 0 ? "▼ " : ""}
-            {formatSignedPercent(gain, rootDamagePerSecond)}
-        </span>
-    );
+    return <GainBadges gains={line.gains} display={gainDisplay} metric="damagePerSecond" />;
 }

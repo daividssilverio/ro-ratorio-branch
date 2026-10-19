@@ -3,13 +3,17 @@ import { useRef, useState } from "react";
 import { ApplyToLockerButton } from "../ApplyToLockerButton.tsx";
 import { type Baseline, comparisonOf } from "../compare-model.ts";
 import { MetricCards, PairPicker, PathSection } from "../CompareParts.tsx";
-import { formatInteger, formatSeconds, formatSignedPercent, formatSignedSeconds, formatZeny } from "../format.ts";
+import { formatInteger, formatSeconds, formatZeny } from "../format.ts";
 import { ChevronDownIcon, ChevronRightIcon, ImportIcon, SpinnerIcon, StarIcon, WarningIcon } from "../Icons.tsx";
 import { rootLabel } from "../labels.ts";
 import { NodeActions } from "../NodeActions.tsx";
-import { type TreeRow, treeRowsOf, withoutCollapsedBranches } from "../tree-view-model.ts";
+import { GainBadges, GainDisplaySwitch, useGainDisplay } from "../GainBadges.tsx";
+import { type GainDisplay, gainsOf, type RowGains, type TreeRow, treeRowsOf, withoutCollapsedBranches } from "../tree-view-model.ts";
 import type { TreeImportFailure, TreeWorkspace } from "../use-tree-workspace.ts";
 import { t } from "../text/ui-text.ts";
+import { ColumnResizer, useColumnWidth } from "../ColumnResizer.tsx";
+
+const noGains: RowGains = { total: null, step: null };
 
 const siblingOrders: readonly { metric: RankingMetric; label: string }[] = [
     { metric: "damagePerSecondGain", label: "DPS" },
@@ -28,6 +32,8 @@ interface WideTreeViewProps {
 export function WideTreeView({ workspace, selectedNodeId, onSelect, onOpenDetail, onAddBranch }: WideTreeViewProps) {
     const { tree, comparison, descriptions } = workspace;
     const [siblingOrder, setSiblingOrder] = useState<RankingMetric>("damagePerSecondGain");
+    const comparePanel = useColumnWidth("tree-compare", 380, { narrowest: 300, widest: 760 }, "right");
+    const [gainDisplay, setGainDisplay] = useGainDisplay();
     const [collapsedNodeIds, setCollapsedNodeIds] = useState<ReadonlySet<string>>(new Set());
     const [importFailure, setImportFailure] = useState<TreeImportFailure | null>(null);
     const [baseline, setBaseline] = useState<Baseline>("root");
@@ -68,7 +74,7 @@ export function WideTreeView({ workspace, selectedNodeId, onSelect, onOpenDetail
                 )}
             </div>
 
-            <main className="wide-main">
+            <main className="wide-main resizable">
                 <section className="wide-primary">
                     <div className="view-head">
                         <h1>{t("ツリー")}</h1>
@@ -83,6 +89,7 @@ export function WideTreeView({ workspace, selectedNodeId, onSelect, onOpenDetail
                                 </button>
                             ))}
                         </div>
+                        <GainDisplaySwitch value={gainDisplay} onChange={setGainDisplay} />
                         <button type="button" className="btn" onClick={() => fileInput.current?.click()}>
                             <ImportIcon />
                             {t("読み込む")}
@@ -170,8 +177,8 @@ export function WideTreeView({ workspace, selectedNodeId, onSelect, onOpenDetail
                                   <OutlineRow
                                       key={row.node.id}
                                       row={row}
-                                      rootDamagePerSecond={rootSummary?.averageDamagePerSecond ?? 0}
-                                      rootSecondsToKill={rootSummary?.averageTimeToKill?.seconds ?? null}
+                                      gains={comparison === null ? noGains : gainsOf(row.node, comparison)}
+                                      gainDisplay={gainDisplay}
                                       isSelected={row.node.id === selectedNodeId}
                                       isCollapsed={collapsedNodeIds.has(row.node.id)}
                                       onSelect={() => onSelect(row.node.id)}
@@ -183,7 +190,8 @@ export function WideTreeView({ workspace, selectedNodeId, onSelect, onOpenDetail
                     <NodeActions workspace={workspace} selectedNodeId={selectedNodeId} rootLabel={rootLabel} onAddBranch={onAddBranch} onSelect={onSelect} />
                 </section>
 
-                <aside className="wide-aside">
+                <ColumnResizer column={comparePanel} label={t("列の幅")} />
+                <aside className="wide-aside" style={comparePanel.style}>
                     <div className="view-head">
                         <h2>{t("比較")}</h2>
                         <span style={{ flex: 1 }} />
@@ -221,8 +229,8 @@ export function WideTreeView({ workspace, selectedNodeId, onSelect, onOpenDetail
 
 interface OutlineRowProps {
     readonly row: TreeRow;
-    readonly rootDamagePerSecond: number;
-    readonly rootSecondsToKill: number | null;
+    readonly gains: RowGains;
+    readonly gainDisplay: GainDisplay;
     readonly isSelected: boolean;
     readonly isCollapsed: boolean;
     onSelect(): void;
@@ -254,7 +262,7 @@ function OutlineRow(props: OutlineRowProps) {
                     </span>
                 </button>
             </span>
-            <OutlineCells comparison={comparison} row={row} rootDamagePerSecond={props.rootDamagePerSecond} rootSecondsToKill={props.rootSecondsToKill} />
+            <OutlineCells comparison={comparison} row={row} gains={props.gains} gainDisplay={props.gainDisplay} />
             <button
                 type="button"
                 className={`tw ${node.favorite === true ? "favorite" : ""}`}
@@ -268,17 +276,7 @@ function OutlineRow(props: OutlineRowProps) {
     );
 }
 
-function OutlineCells({
-    comparison,
-    row,
-    rootDamagePerSecond,
-    rootSecondsToKill,
-}: {
-    comparison: NodeComparison;
-    row: TreeRow;
-    rootDamagePerSecond: number;
-    rootSecondsToKill: number | null;
-}) {
+function OutlineCells({ comparison, row, gains, gainDisplay }: { comparison: NodeComparison; row: TreeRow; gains: RowGains; gainDisplay: GainDisplay }) {
     const costText = row.node.zenyCost === undefined ? t("未設定") : `${row.depth > 1 ? "+" : ""}${formatZeny(row.node.zenyCost)}`;
     if (comparison.state !== "ready") {
         return (
@@ -290,29 +288,17 @@ function OutlineCells({
             </>
         );
     }
-    const gain = comparison.damagePerSecondGain;
     const secondsToKill = comparison.battleSummary.averageTimeToKill?.seconds ?? null;
-    const secondsDifference = secondsToKill !== null && rootSecondsToKill !== null ? secondsToKill - rootSecondsToKill : null;
     return (
         <>
             <span className="c num">{costText}</span>
             <span className="r num">{formatInteger(comparison.battleSummary.averageDamagePerSecond)}</span>
             <span className="r">
-                <span className={`badge num ${gain > 0 ? "good" : gain < 0 ? "bad" : "flat"}`}>
-                    {gain > 0 ? "▲ " : gain < 0 ? "▼ " : ""}
-                    {formatSignedPercent(gain, rootDamagePerSecond)}
-                </span>
+                <GainBadges gains={gains} display={gainDisplay} metric="damagePerSecond" isStacked />
             </span>
             <span className="r num">{secondsToKill === null ? "—" : `${formatSeconds(secondsToKill)} s`}</span>
             <span className="r">
-                {secondsDifference === null ? (
-                    <span className="c">—</span>
-                ) : (
-                    <span className={`badge num ${secondsDifference < 0 ? "good" : secondsDifference > 0 ? "bad" : "flat"}`}>
-                        {secondsDifference < 0 ? "▼ " : secondsDifference > 0 ? "▲ " : ""}
-                        {formatSignedSeconds(secondsDifference)}
-                    </span>
-                )}
+                <GainBadges gains={gains} display={gainDisplay} metric="secondsToKill" isStacked />
             </span>
         </>
     );

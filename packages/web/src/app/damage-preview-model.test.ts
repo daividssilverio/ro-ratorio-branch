@@ -1,6 +1,6 @@
 import type { Build, BuildOutcome } from "@ro-ratorio-branch/core/platform-neutral";
 import { describe, expect, it } from "vitest";
-import { buildWearingItem, buildWithSocketFilled, type DamagePreview, damagePreviewOf, orderedByPreview } from "./damage-preview-model.ts";
+import { type DamagePreview, damagePreviewOf, orderedByPreview } from "./damage-preview-model.ts";
 
 const build: Build = {
     formatVersion: 1,
@@ -16,35 +16,6 @@ const build: Build = {
 const outcomeDealing = (averageDamagePerSecond: number) =>
     ({ state: "ready", battleSummary: { targetMonsterId: 100, averageDamagePerAttack: 1, averageDamagePerSecond, averageTimeToKill: null } }) as unknown as BuildOutcome;
 const notCalculable: BuildOutcome = { state: "notCalculable", issues: [] };
-
-describe("buildWearingItem", () => {
-    it("keeps the refine and transcendence of the piece it replaces and drops its cards", () => {
-        expect(buildWearingItem(build, "rightHand", 4400).character.equipment.rightHand).toEqual({ itemId: 4400, refine: 10, transcendence: 2 });
-    });
-
-    it("gives no refine to a slot that takes none, and fills an empty slot", () => {
-        expect(buildWearingItem(build, "accessory1", 10).character.equipment.accessory1).toEqual({ itemId: 10 });
-        expect(buildWearingItem(build, "shoes", 20).character.equipment.shoes).toEqual({ itemId: 20 });
-    });
-
-    it("leaves the given build as it was", () => {
-        buildWearingItem(build, "rightHand", 4400);
-
-        expect(build.character.equipment.rightHand?.itemId).toBe(4411);
-    });
-});
-
-describe("buildWithSocketFilled", () => {
-    it("fills the socket and keeps the others", () => {
-        expect(buildWithSocketFilled(build, "rightHand", 1, 337)?.character.equipment.rightHand?.sockets).toEqual([1262, 337]);
-        expect(buildWithSocketFilled(build, "rightHand", 3, 337)?.character.equipment.rightHand?.sockets).toEqual([1262, null, null, 337]);
-        expect(buildWithSocketFilled(build, "accessory1", 0, 337)?.character.equipment.accessory1).toEqual({ itemId: 9, refine: 3, sockets: [337] });
-    });
-
-    it("has nothing to fill where nothing is worn", () => {
-        expect(buildWithSocketFilled(build, "shoes", 0, 337)).toBeNull();
-    });
-});
 
 describe("damagePreviewOf", () => {
     it("gives both numbers when both builds calculate", () => {

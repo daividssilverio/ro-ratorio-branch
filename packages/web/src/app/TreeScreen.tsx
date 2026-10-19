@@ -1,13 +1,16 @@
 import type { NodeComparison, RankingMetric } from "@ro-ratorio-branch/core/platform-neutral";
 import { useRef, useState } from "react";
-import { formatInteger, formatSeconds, formatSignedInteger, formatSignedPercent, formatSignedSeconds, formatZeny } from "./format.ts";
+import { formatInteger, formatSeconds, formatSignedInteger, formatZeny } from "./format.ts";
 import { BranchIcon, ChevronDownIcon, ChevronRightIcon, CompareIcon, ImportIcon, SpinnerIcon, StarIcon, WarningIcon } from "./Icons.tsx";
 import { rootLabel } from "./labels.ts";
 import { NodeActions } from "./NodeActions.tsx";
 import { RightsFooter } from "./RightsFooter.tsx";
-import { type TreeRow, treeRowsOf, withoutCollapsedBranches } from "./tree-view-model.ts";
+import { GainBadges, GainDisplaySwitch, useGainDisplay } from "./GainBadges.tsx";
+import { type GainDisplay, gainsOf, type RowGains, type TreeRow, treeRowsOf, withoutCollapsedBranches } from "./tree-view-model.ts";
 import type { TreeImportFailure, TreeWorkspace } from "./use-tree-workspace.ts";
 import { t } from "./text/ui-text.ts";
+
+const noGains: RowGains = { total: null, step: null };
 
 const siblingOrders: readonly { metric: RankingMetric; label: string }[] = [
     { metric: "damagePerSecondGain", label: "DPS" },
@@ -26,6 +29,7 @@ interface TreeScreenProps {
 export function TreeScreen({ workspace, selectedNodeId, onSelect, onCompare, onAddBranch }: TreeScreenProps) {
     const { tree, comparison, descriptions } = workspace;
     const [siblingOrder, setSiblingOrder] = useState<RankingMetric>("damagePerSecondGain");
+    const [gainDisplay, setGainDisplay] = useGainDisplay();
     const [collapsedNodeIds, setCollapsedNodeIds] = useState<ReadonlySet<string>>(new Set());
     const [importFailure, setImportFailure] = useState<TreeImportFailure | null>(null);
     const fileInput = useRef<HTMLInputElement>(null);
@@ -116,6 +120,7 @@ export function TreeScreen({ workspace, selectedNodeId, onSelect, onCompare, onA
                         </button>
                     ))}
                 </div>
+                <GainDisplaySwitch value={gainDisplay} onChange={setGainDisplay} />
                 <div className="progress" role="status">
                     {workspace.isCalculating && (
                         <>
@@ -179,8 +184,8 @@ export function TreeScreen({ workspace, selectedNodeId, onSelect, onCompare, onA
                               <TreeRowLine
                                   key={row.node.id}
                                   row={row}
-                                  rootDamagePerSecond={rootSummary?.averageDamagePerSecond ?? 0}
-                                  rootSecondsToKill={rootSummary?.averageTimeToKill?.seconds ?? null}
+                                  gains={comparison === null ? noGains : gainsOf(row.node, comparison)}
+                                  gainDisplay={gainDisplay}
                                   isSelected={row.node.id === selectedNodeId}
                                   isCollapsed={collapsedNodeIds.has(row.node.id)}
                                   onSelect={() => onSelect(row.node.id)}
@@ -255,8 +260,8 @@ function ImportFailureBanner({ failure }: { failure: TreeImportFailure }) {
 
 interface TreeRowLineProps {
     readonly row: TreeRow;
-    readonly rootDamagePerSecond: number;
-    readonly rootSecondsToKill: number | null;
+    readonly gains: RowGains;
+    readonly gainDisplay: GainDisplay;
     readonly isSelected: boolean;
     readonly isCollapsed: boolean;
     onSelect(): void;
@@ -299,7 +304,7 @@ function TreeRowLine(props: TreeRowLineProps) {
                     </span>
                 </span>
                 <span className="rc">
-                    <RowBadges comparison={comparison} rootDamagePerSecond={props.rootDamagePerSecond} rootSecondsToKill={props.rootSecondsToKill} />
+                    <RowBadges comparison={comparison} gains={props.gains} gainDisplay={props.gainDisplay} />
                 </span>
             </button>
         </div>
@@ -320,33 +325,17 @@ function metaTextOf({ node, comparison, depth }: TreeRow): string {
     return depth > 1 && comparison.cumulativeZenyCost !== null ? t("{0} · 累計 {1}", stepCost, formatZeny(comparison.cumulativeZenyCost)) : stepCost;
 }
 
-function RowBadges({
-    comparison,
-    rootDamagePerSecond,
-    rootSecondsToKill,
-}: {
-    comparison: NodeComparison;
-    rootDamagePerSecond: number;
-    rootSecondsToKill: number | null;
-}) {
+function RowBadges({ comparison, gains, gainDisplay }: { comparison: NodeComparison; gains: RowGains; gainDisplay: GainDisplay }) {
     if (comparison.state === "stale") {
         return <span className="badge stl">stale</span>;
     }
     if (comparison.state === "notCalculable") {
         return <span className="badge bad">!</span>;
     }
-    const gain = comparison.damagePerSecondGain;
-    const secondsToKill = comparison.battleSummary.averageTimeToKill?.seconds ?? null;
-    const secondsDifference = secondsToKill !== null && rootSecondsToKill !== null ? secondsToKill - rootSecondsToKill : null;
     return (
         <>
-            <span className={`badge wide num ${gain > 0 ? "good" : gain < 0 ? "bad" : "flat"}`}>
-                {gain > 0 ? "▲ " : gain < 0 ? "▼ " : ""}
-                {formatSignedPercent(gain, rootDamagePerSecond)}
-            </span>
-            <span className={`badge wide num ${secondsDifference === null || secondsDifference === 0 ? "flat" : secondsDifference < 0 ? "good" : "bad"}`}>
-                {secondsDifference === null ? "—" : `${secondsDifference < 0 ? "▼ " : secondsDifference > 0 ? "▲ " : ""}${formatSignedSeconds(secondsDifference)}`}
-            </span>
+            <GainBadges gains={gains} display={gainDisplay} metric="damagePerSecond" isWide />
+            <GainBadges gains={gains} display={gainDisplay} metric="secondsToKill" isWide />
         </>
     );
 }
