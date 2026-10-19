@@ -3282,5 +3282,14 @@
     "5782": {"name":"Celestial Rod","parts":[["セレスティアル","Celestial"],["ロッド","Rod"]]},
     "5785": {"parts":[["マジカル",""],["ケープ","Cape"]]},
     "5787": {"name":"[Shadow] Hero Weapon","parts":[["[",""],["シャドウ","Shadow"],["] ",""],["ヒーロー","Hero"],["ウェポン","Weapon"]]},
-    "5788": {"name":"[Shadow] Hero Pendant","parts":[["[",""],["シャドウ","Shadow"],["] ",""],["ヒーロー","Hero"],["ペンダント","Pendant"]]}
+    "5788": {"name":"[Shadow] Hero Pendant","parts":[["[",""],["シャドウ","Shadow"],["] ",""],["ヒーロー","Hero"],["ペンダント","Pendant"]]},
+    "5796": {"parts":[["フェアリー",""],["リング","Ring"]]},
+    "5797": {"parts":[["スノー",""],["クイーン","Queen"]]},
+    "5798": {"parts":[["青い","Blue"],["花びら",""]]},
+    "5799": {"name":"[Shadow] Celestial Armor","parts":[["[",""],["シャドウ","Shadow"],["] ",""],["セレスティアル","Celestial"],["アーマー","Armor"]]},
+    "5800": {"name":"[Shadow] Celestial Weapon","parts":[["[",""],["シャドウ","Shadow"],["] ",""],["セレスティアル","Celestial"],["ウェポン","Weapon"]]},
+    "5801": {"name":"[Shadow] Celestial Shield","parts":[["[",""],["シャドウ","Shadow"],["] ",""],["セレスティアル","Celestial"],["シールド","Shield"]]},
+    "5802": {"name":"[Shadow] Celestial Shoes","parts":[["[",""],["シャドウ","Shadow"],["] ",""],["セレスティアル","Celestial"],["シューズ","Shoes"]]},
+    "5803": {"name":"[Shadow] Celestial Earring","parts":[["[",""],["シャドウ","Shadow"],["] ",""],["セレスティアル","Celestial"],["イヤリング","Earring"]]},
+    "5804": {"name":"[Shadow] Celestial Pendant","parts":[["[",""],["シャドウ","Shadow"],["] ",""],["セレスティアル","Celestial"],["ペンダント","Pendant"]]}
 }
