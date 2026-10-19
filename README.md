@@ -110,14 +110,23 @@ mise exec -- pnpm --silent rocalc search sensha --kind cardOrEnchant --limit 2
 | `search` | Finds names and their ratorio IDs, like `rocalc search` |
 | `calc` | Calculates one build, like `rocalc calc` |
 | `apply_change` | Adds an upgrade step to a tree as a node and says what it does |
+| `import_build` | Reads a ROラトリオHUB save URL, an app link or build code, a build or tree file, or the app's JSON backup |
+| `export_build` | Gives a build or tree as a link that opens it in the app, a build code, and for a build a ROラトリオHUB save URL |
+| `rank_slot_candidates` | Ranks every item the job can wear in one slot by the damage per second it gives, optionally by name or effect, with a link that opens the best as branches in the app |
+| `rank_socket_choices` | The same for one socket of the piece worn in a slot: every card or enchant it takes, optionally only those with an effect you need (詠唱妨害不可, 石化 resistance…) |
+| `read_listing` | Reads a market listing copied from the official tool as a gear piece, and puts it into the comparison as a branch with the damage before and after |
 | `compare_nodes` | Says what differs between two builds of a tree: gear, stats, bonuses, damage |
 | `rank_leaves` | Ranks the finished upgrade paths by damage gain, kill time, cost or value for money |
 
-Start it with `mise exec -- pnpm --silent rocalc-mcp` from the repository. To register it with Claude Code:
+Start it with `mise exec -- pnpm --silent rocalc-mcp` from the repository. To register it with Claude Code for every folder (`mise -C` takes the Node version of this repository wherever the server is started):
 
 ```bash
-claude mcp add ro-ratorio-branch -- mise exec -- pnpm --silent --dir <path to this repository> rocalc-mcp
+claude mcp add --scope user ro-ratorio-branch -- mise -C <path to this repository> exec -- pnpm --silent rocalc-mcp
 ```
+
+A typical use: paste the ROラトリオHUB save URL or the app's build code of a character and ask which garment gives the most damage. The agent reads it with `import_build`, ranks the garments with `rank_slot_candidates`, and gives back a link that opens the best ones in the app as branches of a tree. Candidates come without cards and keep the refine of the piece they replace, so the gains are measured against the current piece without its cards too. Sockets go one at a time: rank one, put the chosen enchant into the build, then rank the next, which takes in what the others hold. The prices are yours to weigh.
+
+Both ranking tools can start from a node of a tree instead of a build: share the tree from the app, say which node ("starting from branch-3"; the node panel shows each node's ID), and the branches come back under that node. Opened in the app with 現在のツリーに子ノードとして追加, they join the tree you have open. `rank_slot_candidates` can also try the best items at other refines (`refineLevels`, for example +7 and +9) and at the levels where their own effects start (「精錬値が6以上の時」), as child branches of each item; `highestRefine` keeps to what you can reach, such as the safe +4. `rank_socket_choices` with `emptyOtherSockets` ranks on the piece without any enchants yet.
 
 ## Web app
 

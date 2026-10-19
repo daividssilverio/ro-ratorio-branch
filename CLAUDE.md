@@ -15,7 +15,7 @@ Mobile-first static web app (PWA) for Ragnarok Online Japan that answers: **whic
 | `packages/core` | Engine adapter, build/tree/diff, ranking, JSON Schema, build code | No UI, no DOM except the happy-dom shim in Node |
 | `packages/web` | PWA (React, Vite) | Imports `@ro-ratorio-branch/core/platform-neutral`; reaches the engine only by messages to the hidden engine frame (`src/engine-host`) |
 | `packages/cli` | `rocalc` CLI | Thin wrapper over core |
-| `packages/mcp` | MCP server over stdio, `rocalc-mcp` (`pnpm rocalc-mcp`) | Thin wrapper over core; keeps nothing between calls; the protocol is answered by hand in `mcp-server.ts`, without an SDK |
+| `packages/mcp` | MCP server over stdio, `rocalc-mcp` (`pnpm rocalc-mcp`) | Thin wrapper over core; keeps nothing between calls; the protocol is answered by hand in `mcp-server.ts`, without an SDK. What the tools do is in core (`agent/`, `sharing/`), shared with the app: reading pasted text (`recognizeImport`), app links (`share-link.ts`, `publishedAppAddress`) and ranking the choices for a slot or one socket (`agent/choice-ranking.ts`) |
 | `scripts/build-text-index` | Build-time readings of names with kanji (`pnpm text-index`), into `packages/core/src/text/readings/` | Output is static JSON; search keys and romaji are worked out from names and readings when a list is opened |
 | `docs/upstream/` | Proposed upstream PRs and carried patches | One file per change |
 | `docs/diagrams/` | Mermaid diagrams | All diagrams live here |
