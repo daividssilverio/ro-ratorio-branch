@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 import { licenceFiles } from "./licence-file-plugin.ts";
 import { offlineCache } from "./offline-cache-plugin.ts";
-import { engineTestTimeouts } from "../../vitest.shared.ts";
+import { engineTestSettings } from "../../vitest.shared.ts";
 
 const pathOf = (relativePath: string) => fileURLToPath(new URL(relativePath, import.meta.url));
 const shippedFonts = ["@fontsource/ibm-plex-sans", "@fontsource/ibm-plex-mono", "@fontsource-variable/noto-sans-jp"];
@@ -24,6 +24,6 @@ export default defineConfig({
     test: {
         environment: "node",
         include: ["src/**/*.test.ts"],
-        ...engineTestTimeouts,
+        ...engineTestSettings,
     },
 });

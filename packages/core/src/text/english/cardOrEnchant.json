@@ -1918,5 +1918,9 @@
     "4540": {"name":"Latent Release (Abyss Chaser XXII)","parts":[["潜在解放","Latent Release"],["(",""],["アビスチェイサー","Abyss Chaser"],["XXII)",""]]},
     "4542": {"name":"Latent Release (Arch Mage XXIV)","parts":[["潜在解放","Latent Release"],["(",""],["アークメイジ","Arch Mage"],["XXIV)",""]]},
     "4544": {"name":"Latent Release (Night Watch XX)","parts":[["潜在解放","Latent Release"],["(",""],["ナイトウォッチ","Night Watch"],["XX)",""]]},
-    "4546": {"parts":[["潜在覚醒","Latent Awakening"],["(",""],["ストーン","Stone"],["スキンI)",""]]}
+    "4546": {"parts":[["潜在覚醒","Latent Awakening"],["(",""],["ストーン","Stone"],["スキンI)",""]]},
+    "4555": {"name":"Latent Release (Windhawk XXIV)","parts":[["潜在解放","Latent Release"],["(",""],["ウィンドホーク","Windhawk"],["XXIV)",""]]},
+    "4557": {"name":"Latent Release (Hyper Novice XXV)","parts":[["潜在解放","Latent Release"],["(",""],["ハイパーノービス","Hyper Novice"],["XXV)",""]]},
+    "4559": {"name":"Latent Release (Biolo XX)","parts":[["潜在解放","Latent Release"],["(",""],["バイオロ","Biolo"],["XX)",""]]},
+    "4561": {"parts":[["潜在覚醒","Latent Awakening"],["(アンチ",""],["マジック","Magic"],["I)",""]]}
 }

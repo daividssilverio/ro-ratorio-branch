@@ -1,0 +1,2916 @@
+{
+    "formatVersion": 1,
+    "nodes": [
+        {
+            "changes": [],
+            "id": "celestial-upgrades",
+            "label": "celestial upgrade",
+            "parentId": null
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5468,
+                        "refine": 7,
+                        "sockets": [
+                            null,
+                            659,
+                            3537,
+                            2902
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "branch-2",
+            "label": "武＋７",
+            "parentId": "celestial-upgrades"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5457,
+                        "refine": 7,
+                        "sockets": [
+                            null,
+                            1297,
+                            3537,
+                            2904
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headTop"
+                }
+            ],
+            "id": "branch-3",
+            "label": "頭＋７",
+            "parentId": "celestial-upgrades"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5459,
+                        "refine": 7,
+                        "sockets": [
+                            null,
+                            1659,
+                            3537
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "branch-4",
+            "label": "鎧＋７",
+            "parentId": "celestial-upgrades"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5461,
+                        "refine": 7,
+                        "sockets": [
+                            null,
+                            3569,
+                            3537
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "garment"
+                }
+            ],
+            "id": "branch-5",
+            "label": "肩＋７",
+            "parentId": "celestial-upgrades"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5460,
+                        "refine": 7,
+                        "sockets": [
+                            null,
+                            1348,
+                            3537
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "branch-6",
+            "label": "靴＋７",
+            "parentId": "celestial-upgrades"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5468,
+                        "refine": 5,
+                        "sockets": [
+                            null,
+                            659,
+                            3537,
+                            2902
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                },
+                {
+                    "gearPiece": {
+                        "itemId": 5457,
+                        "refine": 5,
+                        "sockets": [
+                            null,
+                            1297,
+                            3537,
+                            2904
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headTop"
+                },
+                {
+                    "gearPiece": {
+                        "itemId": 5459,
+                        "refine": 5,
+                        "sockets": [
+                            null,
+                            1659,
+                            3537
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                },
+                {
+                    "gearPiece": {
+                        "itemId": 5461,
+                        "refine": 5,
+                        "sockets": [
+                            null,
+                            3569,
+                            3537
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "garment"
+                },
+                {
+                    "gearPiece": {
+                        "itemId": 5460,
+                        "refine": 5,
+                        "sockets": [
+                            null,
+                            1348,
+                            3537
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "branch-7",
+            "label": "全部＋５",
+            "parentId": "celestial-upgrades"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5468,
+                        "refine": 7,
+                        "sockets": [
+                            null,
+                            659,
+                            3537,
+                            2902
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "branch-8",
+            "label": "武＋７",
+            "parentId": "branch-4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4936,
+                        "refine": 6
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "branch-9",
+            "label": "剛勇無双の籠手",
+            "parentId": "celestial-upgrades"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5372,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "garment"
+                }
+            ],
+            "id": "branch-10",
+            "label": "＋７ステラグラーティア",
+            "parentId": "celestial-upgrades"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5483,
+                        "refine": 7,
+                        "sockets": [
+                            null,
+                            2098
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "branch-11",
+            "label": "＋７アビスセイバーガーブ",
+            "parentId": "celestial-upgrades"
+        },
+        {
+            "changes": [],
+            "id": "shields",
+            "label": "shields",
+            "parentId": null
+        },
+        {
+            "changes": [],
+            "id": "shields-plus4",
+            "label": "+4s",
+            "parentId": "shields"
+        },
+        {
+            "changes": [],
+            "id": "shields-plus7",
+            "label": "+7s",
+            "parentId": "shields"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4936,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield-4936",
+            "label": "＋４剛勇無双の籠手",
+            "parentId": "shields-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4221,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield-4221",
+            "label": "＋４ハルワタート",
+            "parentId": "shields-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3919,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield-3919",
+            "label": "＋４フェザーシールド",
+            "parentId": "shields-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3220,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield-3220",
+            "label": "＋４エクセリオンシールド",
+            "parentId": "shields-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 1334,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield-1334",
+            "label": "＋４殺虫剤",
+            "parentId": "shields-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3666,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield-3666",
+            "label": "＋４フォティアシールド",
+            "parentId": "shields-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4289,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield-4289",
+            "label": "＋４イルシオンシールドII",
+            "parentId": "shields-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5421,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield-5421",
+            "label": "＋４オートマティックシールドIII",
+            "parentId": "shields-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4297,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield-4297",
+            "label": "＋４オートマティックシールドII",
+            "parentId": "shields-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 1639,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield-1639",
+            "label": "＋４ロードオブデスの盾",
+            "parentId": "shields-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4936,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield7-4936",
+            "label": "＋７剛勇無双の籠手",
+            "parentId": "shields-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3220,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield7-3220",
+            "label": "＋７エクセリオンシールド",
+            "parentId": "shields-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3666,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield7-3666",
+            "label": "＋７フォティアシールド",
+            "parentId": "shields-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3919,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield7-3919",
+            "label": "＋７フェザーシールド",
+            "parentId": "shields-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4221,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield7-4221",
+            "label": "＋７ハルワタート",
+            "parentId": "shields-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 2504,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield7-2504",
+            "label": "＋７生ける炎の盾",
+            "parentId": "shields-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 2505,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield7-2505",
+            "label": "＋７大いなる水の盾",
+            "parentId": "shields-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 2506,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield7-2506",
+            "label": "＋７名状しがたき風の盾",
+            "parentId": "shields-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 2507,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield7-2507",
+            "label": "＋７無形なる地の盾",
+            "parentId": "shields-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 2851,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shield"
+                }
+            ],
+            "id": "shield7-2851",
+            "label": "＋７沸騰する混沌の盾",
+            "parentId": "shields-plus7"
+        },
+        {
+            "changes": [],
+            "id": "headMid-group",
+            "label": "Middle headgear",
+            "parentId": null
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4616
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headMid"
+                }
+            ],
+            "id": "headMid0-4616",
+            "label": "プリンセスメロンヘッドフォン",
+            "parentId": "headMid-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5668
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headMid"
+                }
+            ],
+            "id": "headMid0-5668",
+            "label": "リーブラオブジャッジメント",
+            "parentId": "headMid-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5559
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headMid"
+                }
+            ],
+            "id": "headMid0-5559",
+            "label": "アシャワヒシュタ",
+            "parentId": "headMid-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5693
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headMid"
+                }
+            ],
+            "id": "headMid0-5693",
+            "label": "ナイトメアチェーン",
+            "parentId": "headMid-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3982
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headMid"
+                }
+            ],
+            "id": "headMid0-3982",
+            "label": "セブン-イレブンヘッドホン",
+            "parentId": "headMid-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4229
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headMid"
+                }
+            ],
+            "id": "headMid0-4229",
+            "label": "浮遊するアーティファクト",
+            "parentId": "headMid-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4579
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headMid"
+                }
+            ],
+            "id": "headMid0-4579",
+            "label": "マジックセレスティアルグローブ",
+            "parentId": "headMid-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4615
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headMid"
+                }
+            ],
+            "id": "headMid0-4615",
+            "label": "クイーンメロンヘッドフォン",
+            "parentId": "headMid-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4687
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headMid"
+                }
+            ],
+            "id": "headMid0-4687",
+            "label": "リトルアビスドラゴン",
+            "parentId": "headMid-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4930
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headMid"
+                }
+            ],
+            "id": "headMid0-4930",
+            "label": "ライトニングサベージ",
+            "parentId": "headMid-group"
+        },
+        {
+            "changes": [],
+            "id": "headLow-group",
+            "label": "Lower headgear",
+            "parentId": null
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4581
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headLow"
+                }
+            ],
+            "id": "headLow0-4581",
+            "label": "イエスタデイ・ワンス・モア",
+            "parentId": "headLow-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4517
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headLow"
+                }
+            ],
+            "id": "headLow0-4517",
+            "label": "古びた迷彩スカーフ",
+            "parentId": "headLow-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4591
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headLow"
+                }
+            ],
+            "id": "headLow0-4591",
+            "label": "タイラントオブアース",
+            "parentId": "headLow-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4680
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headLow"
+                }
+            ],
+            "id": "headLow0-4680",
+            "label": "レイジングテンペスト",
+            "parentId": "headLow-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4833
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headLow"
+                }
+            ],
+            "id": "headLow0-4833",
+            "label": "メモリアルクロース",
+            "parentId": "headLow-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4985
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headLow"
+                }
+            ],
+            "id": "headLow0-4985",
+            "label": "ヒーロークロース",
+            "parentId": "headLow-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5211
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headLow"
+                }
+            ],
+            "id": "headLow0-5211",
+            "label": "ネコミミケープ(青)",
+            "parentId": "headLow-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5234
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headLow"
+                }
+            ],
+            "id": "headLow0-5234",
+            "label": "ブックオブディストラクション",
+            "parentId": "headLow-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5415
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headLow"
+                }
+            ],
+            "id": "headLow0-5415",
+            "label": "ヴァンパイアストール",
+            "parentId": "headLow-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5532
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "headLow"
+                }
+            ],
+            "id": "headLow0-5532",
+            "label": "甘えた黒猫",
+            "parentId": "headLow-group"
+        },
+        {
+            "changes": [],
+            "id": "armor-group",
+            "label": "Body armor",
+            "parentId": null
+        },
+        {
+            "changes": [],
+            "id": "armor-plus4",
+            "label": "+4",
+            "parentId": "armor-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4599,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor4-4599",
+            "label": "＋４覚醒支配者のローブ",
+            "parentId": "armor-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4925,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor4-4925",
+            "label": "＋４覚醒信奉者のローブ",
+            "parentId": "armor-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4705,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor4-4705",
+            "label": "＋４20周年記念コットンシャツ",
+            "parentId": "armor-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5377,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor4-5377",
+            "label": "＋４ラグナロクワールドシャツ",
+            "parentId": "armor-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5212,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor4-5212",
+            "label": "＋４がおがおタイガーパジャマ",
+            "parentId": "armor-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4132,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor4-4132",
+            "label": "＋４ポルックスローブ",
+            "parentId": "armor-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5001,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor4-5001",
+            "label": "＋４スクリーミングゴーストパーティ",
+            "parentId": "armor-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5516,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor4-5516",
+            "label": "＋４刻印されたルーンアーマー(火炎)",
+            "parentId": "armor-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5517,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor4-5517",
+            "label": "＋４刻印されたルーンアーマー(死屍)",
+            "parentId": "armor-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5518,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor4-5518",
+            "label": "＋４刻印されたルーンアーマー(草原)",
+            "parentId": "armor-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5459,
+                        "refine": 4,
+                        "sockets": [
+                            null,
+                            1659,
+                            3537
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor4-5459",
+            "label": "＋４セレスティアルスーツ（エンチャント付き）",
+            "parentId": "armor-plus4"
+        },
+        {
+            "changes": [],
+            "id": "armor-plus7",
+            "label": "+7",
+            "parentId": "armor-group"
+        },
+        {
+            "changes": [],
+            "id": "armor-plus8",
+            "label": "+8",
+            "parentId": "armor-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5483,
+                        "refine": 8,
+                        "sockets": [
+                            null,
+                            null,
+                            1661,
+                            2098
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor8-5483-ghost",
+            "label": "＋８アビスセイバーガーブ[1] 念属性付与(鎧) 極限の魔力",
+            "parentId": "armor-plus8"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5001,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor7-5001",
+            "label": "＋７スクリーミングゴーストパーティ",
+            "parentId": "armor-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5212,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor7-5212",
+            "label": "＋７がおがおタイガーパジャマ",
+            "parentId": "armor-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4678,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor7-4678",
+            "label": "＋７光輝",
+            "parentId": "armor-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5516,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor7-5516",
+            "label": "＋７刻印されたルーンアーマー(火炎)",
+            "parentId": "armor-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5517,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor7-5517",
+            "label": "＋７刻印されたルーンアーマー(死屍)",
+            "parentId": "armor-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5518,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor7-5518",
+            "label": "＋７刻印されたルーンアーマー(草原)",
+            "parentId": "armor-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5519,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor7-5519",
+            "label": "＋７刻印されたルーンアーマー(氷河)",
+            "parentId": "armor-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5547,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor7-5547",
+            "label": "＋７ヨルスキャールヴアーマー",
+            "parentId": "armor-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4599,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor7-4599",
+            "label": "＋７覚醒支配者のローブ",
+            "parentId": "armor-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4925,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor7-4925",
+            "label": "＋７覚醒信奉者のローブ",
+            "parentId": "armor-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5459,
+                        "refine": 7,
+                        "sockets": [
+                            null,
+                            1659,
+                            3537
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor7-5459",
+            "label": "＋７セレスティアルスーツ（エンチャント付き）",
+            "parentId": "armor-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5483,
+                        "refine": 7,
+                        "sockets": []
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor7-5483",
+            "label": "＋７アビスセイバーガーブ[1]",
+            "parentId": "armor-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5483,
+                        "refine": 7,
+                        "sockets": [
+                            null,
+                            null,
+                            1662,
+                            2098
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor7-5483-poison",
+            "label": "＋７アビスセイバーガーブ[1] 毒属性付与(鎧) 極限の魔力",
+            "parentId": "armor-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5483,
+                        "refine": 7,
+                        "sockets": [
+                            133,
+                            null,
+                            null,
+                            2098
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "armor"
+                }
+            ],
+            "id": "armor7-5483-argiope",
+            "label": "＋７アビスセイバーガーブ[1] アルギオペカード 極限の魔力",
+            "parentId": "armor-plus7"
+        },
+        {
+            "changes": [],
+            "id": "shoes-group",
+            "label": "Boots",
+            "parentId": null
+        },
+        {
+            "changes": [],
+            "id": "shoes-plus4",
+            "label": "+4",
+            "parentId": "shoes-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3976,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes4-3976",
+            "label": "＋４剛勇無双の貫",
+            "parentId": "shoes-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4685,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes4-4685",
+            "label": "＋４スターリースカイ・ツインプライム",
+            "parentId": "shoes-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3660,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes4-3660",
+            "label": "＋４天秤宮のシューズ",
+            "parentId": "shoes-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3865,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes4-3865",
+            "label": "＋４白羊宮のシューズ",
+            "parentId": "shoes-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3883,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes4-3883",
+            "label": "＋４双児宮のシューズ",
+            "parentId": "shoes-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3923,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes4-3923",
+            "label": "＋４人馬宮のシューズ",
+            "parentId": "shoes-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5366,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes4-5366",
+            "label": "＋４フシャスラワルヤ",
+            "parentId": "shoes-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5702,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes4-5702",
+            "label": "＋４ヴェスティギアサーベラス",
+            "parentId": "shoes-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4109,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes4-4109",
+            "label": "＋４ピープトゥサンダル",
+            "parentId": "shoes-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3761,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes4-3761",
+            "label": "＋４宝瓶宮のシューズ",
+            "parentId": "shoes-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5460,
+                        "refine": 4,
+                        "sockets": [
+                            null,
+                            1348,
+                            3537
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes4-5460",
+            "label": "＋４セレスティアルブーツ（エンチャント付き）",
+            "parentId": "shoes-plus4"
+        },
+        {
+            "changes": [],
+            "id": "shoes-plus7",
+            "label": "+7",
+            "parentId": "shoes-group"
+        },
+        {
+            "changes": [],
+            "id": "shoes-plus8",
+            "label": "+8",
+            "parentId": "shoes-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5222,
+                        "refine": 8,
+                        "sockets": [
+                            null,
+                            null,
+                            null,
+                            1245
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes8-5222",
+            "label": "＋８デイブレイク・スターゲイザー[1] 真理の解放",
+            "parentId": "shoes-plus8"
+        },
+        {
+            "changes": [],
+            "id": "shoes8-5222-seals",
+            "label": "星座の印章 (accessory 1)",
+            "parentId": "shoes8-5222"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5003,
+                        "sockets": [
+                            null,
+                            2886,
+                            2311,
+                            3406
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "shoes8-5222-seal-5003",
+            "label": "星座の印章 魔獣の爪牙 異境の統轄者 星雲の精髄(力2)",
+            "parentId": "shoes8-5222-seals"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5004,
+                        "sockets": [
+                            null,
+                            2886,
+                            2311,
+                            3406
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "shoes8-5222-seal-5004",
+            "label": "星座の印章(力) 魔獣の爪牙 異境の統轄者 星雲の精髄(力2)",
+            "parentId": "shoes8-5222-seals"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5005,
+                        "sockets": [
+                            null,
+                            2886,
+                            2311,
+                            3406
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "shoes8-5222-seal-5005",
+            "label": "星座の印章(体力) 魔獣の爪牙 異境の統轄者 星雲の精髄(力2)",
+            "parentId": "shoes8-5222-seals"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5006,
+                        "sockets": [
+                            null,
+                            2886,
+                            2311,
+                            3406
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "shoes8-5222-seal-5006",
+            "label": "星座の印章(創造) 魔獣の爪牙 異境の統轄者 星雲の精髄(力2)",
+            "parentId": "shoes8-5222-seals"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5007,
+                        "sockets": [
+                            null,
+                            2886,
+                            2311,
+                            3406
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "shoes8-5222-seal-5007",
+            "label": "星座の印章(魔力) 魔獣の爪牙 異境の統轄者 星雲の精髄(力2)",
+            "parentId": "shoes8-5222-seals"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5008,
+                        "sockets": [
+                            null,
+                            2886,
+                            2311,
+                            3406
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "shoes8-5222-seal-5008",
+            "label": "星座の印章(聡明) 魔獣の爪牙 異境の統轄者 星雲の精髄(力2)",
+            "parentId": "shoes8-5222-seals"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5009,
+                        "sockets": [
+                            null,
+                            2886,
+                            2311,
+                            3406
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "shoes8-5222-seal-5009",
+            "label": "星座の印章(集中) 魔獣の爪牙 異境の統轄者 星雲の精髄(力2)",
+            "parentId": "shoes8-5222-seals"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5366,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes7-5366",
+            "label": "＋７フシャスラワルヤ",
+            "parentId": "shoes-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5702,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes7-5702",
+            "label": "＋７ヴェスティギアサーベラス",
+            "parentId": "shoes-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5189,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes7-5189",
+            "label": "＋７ツインヘッド・ドラゴンブーツ",
+            "parentId": "shoes-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4685,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes7-4685",
+            "label": "＋７スターリースカイ・ツインプライム",
+            "parentId": "shoes-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5520,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes7-5520",
+            "label": "＋７刻印されたルーンブーツ(火炎)",
+            "parentId": "shoes-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5521,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes7-5521",
+            "label": "＋７刻印されたルーンブーツ(死屍)",
+            "parentId": "shoes-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5522,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes7-5522",
+            "label": "＋７刻印されたルーンブーツ(草原)",
+            "parentId": "shoes-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5523,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes7-5523",
+            "label": "＋７刻印されたルーンブーツ(氷河)",
+            "parentId": "shoes-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5549,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes7-5549",
+            "label": "＋７ヨルスキャールヴブーツ",
+            "parentId": "shoes-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4971,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes7-4971",
+            "label": "＋７雪花のブーツ",
+            "parentId": "shoes-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5460,
+                        "refine": 7,
+                        "sockets": [
+                            null,
+                            1348,
+                            3537
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "shoes"
+                }
+            ],
+            "id": "shoes7-5460",
+            "label": "＋７セレスティアルブーツ（エンチャント付き）",
+            "parentId": "shoes-plus7"
+        },
+        {
+            "changes": [],
+            "id": "rightHand-group",
+            "label": "Weapon",
+            "parentId": null
+        },
+        {
+            "changes": [],
+            "id": "rightHand-plus4",
+            "label": "+4",
+            "parentId": "rightHand-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4175,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand4-4175",
+            "label": "＋４アディクションプランツ",
+            "parentId": "rightHand-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4630,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand4-4630",
+            "label": "＋４セイフティフォックステイル",
+            "parentId": "rightHand-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5068,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand4-5068",
+            "label": "＋４ウィキッドフォックステイル",
+            "parentId": "rightHand-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5069,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand4-5069",
+            "label": "＋４リラプスフォックステイル",
+            "parentId": "rightHand-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5266,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand4-5266",
+            "label": "＋４フラッシュセイフティフォックステイル",
+            "parentId": "rightHand-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5638,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand4-5638",
+            "label": "＋４サタンフォックステイル",
+            "parentId": "rightHand-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5052,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand4-5052",
+            "label": "＋４ウィワートゥス・フィデス・フォックステイル",
+            "parentId": "rightHand-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5600,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand4-5600",
+            "label": "＋４セプルクルム・ホノリス・フォックステイル",
+            "parentId": "rightHand-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4047,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand4-4047",
+            "label": "＋４白の騎士団の猫じゃらし",
+            "parentId": "rightHand-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3831,
+                        "refine": 4
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand4-3831",
+            "label": "＋４エレクトリックフォックス-OS",
+            "parentId": "rightHand-plus4"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5468,
+                        "refine": 4,
+                        "sockets": [
+                            null,
+                            659,
+                            3537,
+                            2902
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand4-5468",
+            "label": "＋４セレスティアルフォックステイル（エンチャント付き）",
+            "parentId": "rightHand-plus4"
+        },
+        {
+            "changes": [],
+            "id": "rightHand-plus7",
+            "label": "+7",
+            "parentId": "rightHand-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5638,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand7-5638",
+            "label": "＋７サタンフォックステイル",
+            "parentId": "rightHand-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5068,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand7-5068",
+            "label": "＋７ウィキッドフォックステイル",
+            "parentId": "rightHand-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5069,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand7-5069",
+            "label": "＋７リラプスフォックステイル",
+            "parentId": "rightHand-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4175,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand7-4175",
+            "label": "＋７アディクションプランツ",
+            "parentId": "rightHand-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4630,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand7-4630",
+            "label": "＋７セイフティフォックステイル",
+            "parentId": "rightHand-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5266,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand7-5266",
+            "label": "＋７フラッシュセイフティフォックステイル",
+            "parentId": "rightHand-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5052,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand7-5052",
+            "label": "＋７ウィワートゥス・フィデス・フォックステイル",
+            "parentId": "rightHand-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5600,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand7-5600",
+            "label": "＋７セプルクルム・ホノリス・フォックステイル",
+            "parentId": "rightHand-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4426,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand7-4426",
+            "label": "＋７メロンフォックステイル",
+            "parentId": "rightHand-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5023,
+                        "refine": 7
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand7-5023",
+            "label": "＋７アドゥルテル・フィデス・フォックステイル",
+            "parentId": "rightHand-plus7"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5468,
+                        "refine": 7,
+                        "sockets": [
+                            null,
+                            659,
+                            3537,
+                            2902
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "rightHand"
+                }
+            ],
+            "id": "rightHand7-5468",
+            "label": "＋７セレスティアルフォックステイル（エンチャント付き）",
+            "parentId": "rightHand-plus7"
+        },
+        {
+            "changes": [],
+            "id": "accessory1-group",
+            "label": "Accessory 1",
+            "parentId": null
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3146
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-3146",
+            "label": "鍛冶師の手甲",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5659
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-5659",
+            "label": "荒ぶる虎んぷるソックス",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4002
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-4002",
+            "label": "森羅万象の指輪",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4216
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-4216",
+            "label": "オートマティックチップα-II",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4218
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-4218",
+            "label": "オートマティックチップβ-II",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5756
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-5756",
+            "label": "覚醒ブリリアントジルコンネックレス",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 348
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-348",
+            "label": "メギンギョルド",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5003
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-5003",
+            "label": "星座の印章",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5004
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-5004",
+            "label": "星座の印章(力)",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5005
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-5005",
+            "label": "星座の印章(体力)",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5006
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-5006",
+            "label": "星座の印章(創造)",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5007
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-5007",
+            "label": "星座の印章(魔力)",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5008
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-5008",
+            "label": "星座の印章(聡明)",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5009
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-5009",
+            "label": "星座の印章(集中)",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5571
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-5571",
+            "label": "グローバルライセンス",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4947
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-4947",
+            "label": "マジェスティオブイグドラシル",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3852
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-3852",
+            "label": "イルシオンチップα-II",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3854
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-3854",
+            "label": "イルシオンチップβ-II",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5496
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-5496",
+            "label": "シャドウリチュアル",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5646
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-5646",
+            "label": "火の聖霊石",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5462,
+                        "sockets": [
+                            null,
+                            1425,
+                            3537,
+                            3336
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory1"
+                }
+            ],
+            "id": "accessory10-5462",
+            "label": "セレスティアルリング（エンチャント付き）",
+            "parentId": "accessory1-group"
+        },
+        {
+            "changes": [],
+            "id": "accessory2-group",
+            "label": "Accessory 2",
+            "parentId": null
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5688
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-5688",
+            "label": "ディヴィニトゥス・フィデス・モニーレ",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5689
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-5689",
+            "label": "セプルクルム・ホノリス・ロザリオ",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5690
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-5690",
+            "label": "ポエニテンティア・グロリオサ",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5687
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-5687",
+            "label": "覚醒創星石のアミュレット",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5416
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-5416",
+            "label": "オーバードライブランページエコーズ",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4862
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-4862",
+            "label": "創星石のアミュレット",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5417
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-5417",
+            "label": "コンセクレイト・フィデス・モニーレ",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5613
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-5613",
+            "label": "覇王のアミュレット",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5698
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-5698",
+            "label": "セレスティアルマグナニミティ",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3146
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-3146",
+            "label": "鍛冶師の手甲",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5659
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-5659",
+            "label": "荒ぶる虎んぷるソックス",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5190
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-5190",
+            "label": "オーバードライブランページ",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4002
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-4002",
+            "label": "森羅万象の指輪",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4216
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-4216",
+            "label": "オートマティックチップα-II",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4218
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-4218",
+            "label": "オートマティックチップβ-II",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4026
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-4026",
+            "label": "半龍王女の指輪",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 348
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-348",
+            "label": "メギンギョルド",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4656
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-4656",
+            "label": "トランセンデンスリング",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 4947
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-4947",
+            "label": "マジェスティオブイグドラシル",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 3852
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-3852",
+            "label": "イルシオンチップα-II",
+            "parentId": "accessory2-group"
+        },
+        {
+            "changes": [
+                {
+                    "gearPiece": {
+                        "itemId": 5462,
+                        "sockets": [
+                            null,
+                            1425,
+                            3537,
+                            3336
+                        ]
+                    },
+                    "kind": "setGearPiece",
+                    "slot": "accessory2"
+                }
+            ],
+            "id": "accessory20-5462",
+            "label": "セレスティアルリング（エンチャント付き）",
+            "parentId": "accessory2-group"
+        }
+    ],
+    "root": {
+        "baseLevel": 200,
+        "baseStats": {
+            "agi": 90,
+            "dex": 120,
+            "int": 110,
+            "luk": 1,
+            "str": 110,
+            "vit": 111
+        },
+        "equipment": {
+            "accessory1": {
+                "itemId": 5462,
+                "sockets": [
+                    null,
+                    1425,
+                    3537,
+                    3336
+                ]
+            },
+            "accessory2": {
+                "itemId": 5462,
+                "sockets": [
+                    null,
+                    1425,
+                    3537,
+                    3336
+                ]
+            },
+            "armor": {
+                "itemId": 5459,
+                "refine": 4,
+                "sockets": [
+                    null,
+                    1659,
+                    3537
+                ]
+            },
+            "garment": {
+                "itemId": 5461,
+                "refine": 4,
+                "sockets": [
+                    null,
+                    3569,
+                    3537
+                ]
+            },
+            "headLow": {
+                "itemId": 4999
+            },
+            "headMid": {
+                "itemId": 4949
+            },
+            "headTop": {
+                "itemId": 5457,
+                "refine": 4,
+                "sockets": [
+                    null,
+                    1297,
+                    3537,
+                    2904
+                ]
+            },
+            "rightHand": {
+                "itemId": 5468,
+                "refine": 4,
+                "sockets": [
+                    null,
+                    659,
+                    3537,
+                    2902
+                ]
+            },
+            "shield": {
+                "itemId": 692,
+                "refine": 4,
+                "sockets": [
+                    231
+                ]
+            },
+            "shoes": {
+                "itemId": 5460,
+                "refine": 4,
+                "sockets": [
+                    null,
+                    1348,
+                    3537
+                ]
+            }
+        },
+        "jobId": 85,
+        "jobLevel": 30,
+        "selfBuffs": {
+            "934": 1,
+            "939": 1,
+            "1205": 10
+        }
+    },
+    "scenario": {
+        "skillId": 1221,
+        "skillLevel": 7,
+        "targetMonsterId": 2373
+    }
+}

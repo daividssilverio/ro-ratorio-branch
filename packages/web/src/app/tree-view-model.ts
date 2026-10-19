@@ -43,6 +43,56 @@ export function treeRowsOf(tree: Tree, comparison: TreeComparison, siblingOrder:
     return rows;
 }
 
+/** The order of a node's branches: as they were made, or best first by a ranking. */
+export type SiblingOrder = "created" | RankingMetric;
+
+export const siblingOrders: readonly SiblingOrder[] = ["created", "damagePerSecondGain", "secondsToKill", "valueForMoney"];
+
+/** Which change a row shows: against the root (total), against the node it builds on (step), or both. */
+export type GainDisplay = "total" | "step" | "both";
+
+export const gainDisplays: readonly GainDisplay[] = ["total", "step", "both"];
+
+/** A change in the numbers, against some base. */
+export interface Gain {
+    readonly damagePerSecondChange: number;
+    /** What the change is a share of. */
+    readonly damagePerSecondBase: number;
+    /** Negative is faster. `null` when either side kills nothing. */
+    readonly secondsToKillChange: number | null;
+}
+
+export interface RowGains {
+    /** Against the root. */
+    readonly total: Gain | null;
+    /** Against the node it builds on, the root for a top-level node. Steps multiply: +10% then +3% is +13.3% in total. */
+    readonly step: Gain | null;
+}
+
+/** A node's change against the root and against its parent; `null` where either side has no numbers. */
+export function gainsOf(node: TreeNode, comparison: TreeComparison): RowGains {
+    const own = comparison.nodes.find((nodeComparison) => nodeComparison.id === node.id);
+    if (own?.state !== "ready") {
+        return { total: null, step: null };
+    }
+    const rootSummary = comparison.root.state === "ready" ? comparison.root.battleSummary : null;
+    const parent = node.parentId === null ? undefined : comparison.nodes.find((nodeComparison) => nodeComparison.id === node.parentId);
+    const parentSummary = node.parentId === null ? rootSummary : parent?.state === "ready" ? parent.battleSummary : null;
+    const gainOver = (base: typeof rootSummary): Gain | null => {
+        if (base === null) {
+            return null;
+        }
+        const seconds = own.battleSummary.averageTimeToKill?.seconds;
+        const baseSeconds = base.averageTimeToKill?.seconds;
+        return {
+            damagePerSecondChange: own.battleSummary.averageDamagePerSecond - base.averageDamagePerSecond,
+            damagePerSecondBase: base.averageDamagePerSecond,
+            secondsToKillChange: seconds === undefined || baseSeconds === undefined ? null : seconds - baseSeconds,
+        };
+    };
+    return { total: gainOver(rootSummary), step: gainOver(parentSummary) };
+}
+
 /** The rows that stay visible when the given nodes are collapsed: everything below a collapsed node is left out. */
 export function withoutCollapsedBranches(rows: readonly TreeRow[], collapsedNodeIds: ReadonlySet<string>): TreeRow[] {
     const visibleRows: TreeRow[] = [];
@@ -156,8 +206,10 @@ export interface TreeLine {
     readonly guides: readonly TreeGuide[];
     /** `pending` until the tree has been calculated. */
     readonly state: NodeComparison["state"] | "pending";
-    /** Against the root. Only for a node with numbers. */
-    readonly damagePerSecondGain?: number;
+    /** Whether nodes hang under it, so that it can be folded. */
+    readonly hasChildren: boolean;
+    /** Against the root and against its parent; none until the tree has been calculated. */
+    readonly gains: RowGains;
 }
 
 /**
@@ -165,11 +217,16 @@ export interface TreeLine {
  * on it, in the order the tree holds them: a line stays where it is while
  * its numbers change.
  */
-export function treeLinesOf(tree: Tree, comparison: TreeComparison | null): TreeLine[] {
+export function treeLinesOf(tree: Tree, comparison: TreeComparison | null, siblingOrder: SiblingOrder = "created"): TreeLine[] {
     const comparisonOfNodeId = new Map((comparison?.nodes ?? []).map((nodeComparison) => [nodeComparison.id, nodeComparison]));
+    const rankOfNodeId = new Map(siblingOrder === "created" || comparison === null ? [] : comparison.rankings[siblingOrder].map((nodeId, rank) => [nodeId, rank]));
+    const unranked = Number.MAX_SAFE_INTEGER;
     const lines: TreeLine[] = [];
     function addChildrenOf(parentId: string | null, guidesAbove: readonly TreeGuide[]): void {
-        const children = tree.nodes.filter((node) => node.parentId === parentId);
+        // A stable sort: nodes without numbers, and every node in the order they were made, keep the tree's order.
+        const children = tree.nodes
+            .filter((node) => node.parentId === parentId)
+            .sort((first, second) => (rankOfNodeId.get(first.id) ?? unranked) - (rankOfNodeId.get(second.id) ?? unranked));
         children.forEach((node, index) => {
             const isLast = index === children.length - 1;
             const nodeComparison = comparisonOfNodeId.get(node.id);
@@ -179,7 +236,8 @@ export function treeLinesOf(tree: Tree, comparison: TreeComparison | null): Tree
                 depth: guidesAbove.length + 1,
                 guides: [...guidesAbove, isLast ? "last" : "branch"],
                 state: nodeComparison?.state ?? "pending",
-                ...(nodeComparison?.state === "ready" ? { damagePerSecondGain: nodeComparison.damagePerSecondGain } : {}),
+                hasChildren: tree.nodes.some((candidate) => candidate.parentId === node.id),
+                gains: comparison === null ? { total: null, step: null } : gainsOf(node, comparison),
             });
             addChildrenOf(node.id, [...guidesAbove, isLast ? "none" : "through"]);
         });
@@ -189,6 +247,20 @@ export function treeLinesOf(tree: Tree, comparison: TreeComparison | null): Tree
 }
 
 /** A tap on something, to tell a double tap by. */
+/** The lines that stay visible when the given nodes are folded: everything below a folded node is left out. */
+export function linesShown(lines: readonly TreeLine[], foldedNodeIds: ReadonlySet<string>): TreeLine[] {
+    const shown: TreeLine[] = [];
+    let foldedDepth: number | null = null;
+    for (const line of lines) {
+        if (foldedDepth !== null && line.depth > foldedDepth) {
+            continue;
+        }
+        foldedDepth = foldedNodeIds.has(line.nodeId) ? line.depth : null;
+        shown.push(line);
+    }
+    return shown;
+}
+
 export interface Tap {
     readonly target: string;
     readonly timeInMilliseconds: number;

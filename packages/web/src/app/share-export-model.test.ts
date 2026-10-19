@@ -1,7 +1,7 @@
 import { buildOf, parseTree, resolveTree } from "@ro-ratorio-branch/core/platform-neutral";
 import exampleTreeFileContent from "@ro-ratorio-branch/core/example-trees/mechanic-upgrades.tree.json" with { type: "json" };
 import { describe, expect, it } from "vitest";
-import { exportContentOf, kilobytesOf, shareCodeInFragment, shareLinkOf } from "./share-export-model.ts";
+import { exportContentOf, kilobytesOf } from "./share-export-model.ts";
 
 const exampleTree = parseTree(exampleTreeFileContent);
 const firstNodeId = exampleTree.nodes[0]?.id ?? "";
@@ -29,19 +29,6 @@ describe("exportContentOf", () => {
         { situation: "the selected node is gone", selectedNodeId: "no-such-node" },
     ])("gives nothing for the selected node when $situation", ({ selectedNodeId }) => {
         expect(exportContentOf(exampleTree, "selectedNode", selectedNodeId)).toBeNull();
-    });
-});
-
-describe("share links", () => {
-    it("puts the code in the fragment and drops the query, and reads it back", () => {
-        const link = shareLinkOf("https://example.org/branch/?utm=1#old", "B1.abc_DEF-123");
-
-        expect(link).toBe("https://example.org/branch/#B1.abc_DEF-123");
-        expect(shareCodeInFragment(new URL(link).hash)).toBe("B1.abc_DEF-123");
-    });
-
-    it.each(["", "#", "#tree", "#B1.", "#B1.abc def", "#xB1.abc"])("finds no share code in the fragment %j", (urlFragment) => {
-        expect(shareCodeInFragment(urlFragment)).toBeNull();
     });
 });
 

@@ -44,6 +44,7 @@ export function NodeActions({ workspace, selectedNodeId, rootLabel, onAddBranch,
                 {t("ノード名")}
                 <CommittedTextField value={node.label} ariaLabel={t("ノード名")} onCommit={(label) => label.trim() !== "" && workspace.renameNode(node.id, label.trim())} />
             </label>
+            <NodeIdLine nodeId={node.id} />
             <div className="button-pair">
                 <button type="button" className="btn btn-p" disabled={isStale} onClick={() => onAddBranch(node.id)}>
                     <PlusIcon />
@@ -80,6 +81,15 @@ export function NodeActions({ workspace, selectedNodeId, rootLabel, onAddBranch,
                 {t("{0} から分岐を作る", rootLabel)}
             </button>
         </div>
+    );
+}
+
+/** The node's ID, which an agent working on the tree, or a share link, names it by. */
+export function NodeIdLine({ nodeId }: { nodeId: string }) {
+    return (
+        <span className="node-id-line">
+            {t("ノード ID")} <code>{nodeId}</code>
+        </span>
     );
 }
 

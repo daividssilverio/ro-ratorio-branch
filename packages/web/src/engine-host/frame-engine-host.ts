@@ -1,6 +1,7 @@
 import type { BuildCalculator, BuildOutcome } from "@ro-ratorio-branch/core/platform-neutral";
 import type { AttackMethod, Build, CatalogEntry, Character, StatPointBudget } from "@ro-ratorio-branch/core/platform-neutral";
 import {
+    type BonusAtValue,
     type GearListingRead,
     type CatalogList,
     type Descriptions,
@@ -25,6 +26,8 @@ export interface EngineHost {
     /** The stat points the character has earned and spent. `null` for a job the engine does not have. */
     countStatPoints(character: Character): Promise<StatPointBudget | null>;
     listSkillsGearRewards(itemIds: readonly number[], cardOrEnchantIds: readonly number[]): Promise<readonly number[]>;
+    /** Each bonus in upstream's words, in the order given; empty for one upstream does not word. */
+    wordBonuses(bonuses: readonly BonusAtValue[]): Promise<readonly string[]>;
     readGearListing(text: string, itemId?: number): Promise<GearListingRead>;
     /** The attacks the build's character can use. None for a character that cannot be calculated. */
     listAttackMethods(build: Build): Promise<readonly AttackMethod[]>;
@@ -114,6 +117,13 @@ export function startFrameEngineHost(hostPageUrl: string): Promise<EngineHost> {
                 throw new EngineHostError(response.kind === "failed" ? response.reason : `unexpected ${response.kind}`);
             }
             return response.listingRead;
+        },
+        async wordBonuses(bonuses) {
+            const response = await ask({ kind: "wordBonuses", bonuses });
+            if (response.kind !== "bonusesWorded") {
+                throw new EngineHostError(response.kind === "failed" ? response.reason : `unexpected ${response.kind}`);
+            }
+            return response.wordings;
         },
         async listSkillsGearRewards(itemIds, cardOrEnchantIds) {
             const response = await ask({ kind: "listSkillsGearRewards", itemIds, cardOrEnchantIds });

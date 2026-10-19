@@ -1,7 +1,5 @@
 import {
     type CatalogEntry,
-    type EnglishGlossary,
-    englishPartsOf,
     type PreparedEntry,
     prepareEntries,
     type ReadingSegment,
@@ -137,64 +135,4 @@ export function rowsMatching<Row>(rows: readonly Row[], textOf: (row: Row) => st
     const prepared = prepareEntries(rows.map((row, index) => ({ id: index, name: textOf(row) })));
     const matchingIndexes = new Set(searchEntries(prepared, query).hits.map((hit) => hit.entry.id));
     return rows.filter((_row, index) => matchingIndexes.has(index));
-}
-
-/** A catalog entry found by what it does, with the lines that matched. */
-export interface EffectHit {
-    readonly entry: PickerEntry;
-    /** The effect lines to show: those a word of the query was found in, or the first ones when nothing was asked. */
-    readonly lines: readonly { readonly text: string; readonly highlights: readonly (readonly [number, number])[] }[];
-}
-
-export interface EffectSearch {
-    readonly shown: readonly EffectHit[];
-    readonly matchCount: number;
-}
-
-const effectLineSeparator = " / ";
-
-interface EntryWithEffects extends SearchableEntry {
-    readonly source: PickerEntry;
-    readonly lineStarts: readonly number[];
-}
-
-export type PreparedEffects = readonly PreparedEntry<EntryWithEffects>[];
-
-/** Works out what every entry of a list can be found by among its effects. Once per list. */
-export function prepareEffects(entries: readonly PickerEntry[], effectWords: EnglishGlossary = {}): PreparedEffects {
-    return prepareEntries(
-        entries.map((entry): EntryWithEffects => {
-            const lines = entry.effects ?? [];
-            const lineStarts: number[] = [];
-            let position = 0;
-            for (const line of lines) {
-                lineStarts.push(position);
-                position += line.length + effectLineSeparator.length;
-            }
-            const text = lines.join(effectLineSeparator);
-            // Effect text has no English of its own; the words the glossary knows let an English word find its place in it.
-            const { parts } = englishPartsOf(text, effectWords);
-            return { id: entry.id, name: text, source: entry, lineStarts, ...(parts.some(([, english]) => english !== "") ? { englishParts: parts } : {}) };
-        }),
-    );
-}
-
-/**
- * The entries whose effects have every word of the query, in any of their
- * lines, best match first; every entry in the list's order for no query.
- */
-export function searchEffects(prepared: PreparedEffects, query: string, shownLimit: number, shownLinesPerEntry: number): EffectSearch {
-    const { hits } = searchEntries(prepared, query);
-    const shown = hits.slice(0, shownLimit).map((hit): EffectHit => {
-        const lines = (hit.entry.source.effects ?? []).map((text, lineIndex) => {
-            const start = hit.entry.lineStarts[lineIndex] ?? 0;
-            const highlights = hit.highlights
-                .filter(([from, to]) => from < start + text.length && to > start)
-                .map(([from, to]) => [Math.max(from - start, 0), Math.min(to - start, text.length)] as const);
-            return { text, highlights };
-        });
-        const matching = lines.filter((line) => line.highlights.length > 0);
-        return { entry: hit.entry.source, lines: (matching.length > 0 ? matching : lines).slice(0, shownLinesPerEntry) };
-    });
-    return { shown, matchCount: hits.length };
 }

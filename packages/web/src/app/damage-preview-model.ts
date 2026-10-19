@@ -1,4 +1,4 @@
-import { type Build, type BuildOutcome, type EquipmentSlot, type GearPiece, slotTakesRefine, slotTakesTranscendence } from "@ro-ratorio-branch/core/platform-neutral";
+import type { Build, BuildOutcome, EquipmentSlot } from "@ro-ratorio-branch/core/platform-neutral";
 
 /** What a choice in a picker would do to the damage, before it is chosen. */
 export type DamagePreview =
@@ -13,32 +13,6 @@ export function damagePreviewOf(baseline: BuildOutcome, withChoice: BuildOutcome
         return { state: "unavailable" };
     }
     return { state: "ready", damagePerSecond: withChoice.battleSummary.averageDamagePerSecond, baselineDamagePerSecond: baseline.battleSummary.averageDamagePerSecond };
-}
-
-/**
- * The build wearing another item in a slot. The item takes the refine and
- * transcendence of the piece it replaces, so that the preview compares
- * like with like, and comes without cards: sockets differ from item to item.
- */
-export function buildWearingItem(build: Build, slot: EquipmentSlot, itemId: number): Build {
-    const replaced = build.character.equipment[slot];
-    const piece: GearPiece = {
-        itemId,
-        ...(replaced?.refine !== undefined && slotTakesRefine(slot) ? { refine: replaced.refine } : {}),
-        ...(replaced?.transcendence !== undefined && slotTakesTranscendence(slot) ? { transcendence: replaced.transcendence } : {}),
-    };
-    return { ...build, character: { ...build.character, equipment: { ...build.character.equipment, [slot]: piece } } };
-}
-
-/** The build with a card or enchant in one socket of the piece worn in a slot. `null` when nothing is worn there. */
-export function buildWithSocketFilled(build: Build, slot: EquipmentSlot, socketIndex: number, cardOrEnchantId: number): Build | null {
-    const piece = build.character.equipment[slot];
-    if (piece === undefined) {
-        return null;
-    }
-    const sockets: (number | null)[] = Array.from({ length: Math.max(socketIndex + 1, piece.sockets?.length ?? 0) }, (_unused, index) => piece.sockets?.[index] ?? null);
-    sockets[socketIndex] = cardOrEnchantId;
-    return { ...build, character: { ...build.character, equipment: { ...build.character.equipment, [slot]: { ...piece, sockets } } } };
 }
 
 /**

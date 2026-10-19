@@ -1,4 +1,4 @@
-import type { CatalogEntry, SearchHit, TextKind } from "@ro-ratorio-branch/core/platform-neutral";
+import { type CatalogEntry, type EffectHit, prepareEffects, type SearchHit, searchEffects, type TextKind } from "@ro-ratorio-branch/core/platform-neutral";
 import { type ReactNode, useMemo, useState } from "react";
 import type { CatalogList } from "../engine-host/host-protocol.ts";
 import { type DamagePreview, orderedByPreview } from "./damage-preview-model.ts";
@@ -6,18 +6,10 @@ import { formatSignedPercent } from "./format.ts";
 import { pictureKinds } from "../image-pack/image-pack-model.ts";
 import { Picture } from "../image-pack/Picture.tsx";
 import { MarkedName } from "./MarkedName.tsx";
+import { CopyButton } from "./CopyButton.tsx";
 import { OfficialDatabaseLink } from "./OfficialDatabaseLink.tsx";
 import { Overlay } from "./Overlay.tsx";
-import {
-    type EffectHit,
-    type PickerEntry,
-    type PickerNotice,
-    prepareEffects,
-    preparePickerEntries,
-    type SearchablePickerEntry,
-    searchEffects,
-    searchPicker,
-} from "./picker-model.ts";
+import { type PickerEntry, type PickerNotice, preparePickerEntries, type SearchablePickerEntry, searchPicker } from "./picker-model.ts";
 import { shownEnglishName } from "./text/EnglishName.tsx";
 import { useEffectWords, useTextOfKind } from "./text/text-index.ts";
 import { menuLanguage, t } from "./text/ui-text.ts";
@@ -112,7 +104,7 @@ interface EntryPickerProps extends PickerFrameProps {
 interface ShownRow {
     readonly entry: PickerEntry;
     readonly nameHit?: SearchHit<SearchablePickerEntry>;
-    readonly effectHit?: EffectHit;
+    readonly effectHit?: EffectHit<PickerEntry>;
 }
 
 /**
@@ -209,6 +201,11 @@ export function EntryPicker({ title, entries, textKind = null, aboveSearch, none
                                 {!hidesIds && <span className="num picker-id">#{entry.id}</span>}
                             </span>
                         </button>
+                        {effectHit === undefined ? (
+                            <CopyButton text={entry.name} label={t("名前をコピー")} />
+                        ) : (
+                            <CopyButton text={[entry.name, ...effectHit.lines.map((line) => line.text)].join("\n")} label={t("名前と効果をコピー")} />
+                        )}
                         {textKind !== null && <OfficialDatabaseLink kind={textKind} name={entry.name} />}
                     </li>
                 ))}

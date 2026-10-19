@@ -1,4 +1,5 @@
 import { Value } from "typebox/value";
+import { withEarlierUpstreamContentUpdated } from "../build/earlier-upstream-content.ts";
 import { collectSchemaIssues, type SchemaIssue } from "../schema-issues.ts";
 import type { TSchema } from "typebox";
 import { changeSchemaOfKind, type Tree, TreeSchema, TreeSchemaWithUncheckedChanges } from "./tree-format.ts";
@@ -30,7 +31,8 @@ export class InvalidTreeError extends Error {
  * @throws {InvalidTreeError} listing every place the candidate breaks the tree
  * schema, and every node whose parent is missing, duplicated or circular.
  */
-export function parseTree(candidate: unknown): Tree {
+export function parseTree(content: unknown): Tree {
+    const candidate = withEarlierUpstreamContentUpdated(content);
     if (!Value.Check(TreeSchema, candidate)) {
         throw new InvalidTreeError(collectTreeSchemaIssues(candidate));
     }

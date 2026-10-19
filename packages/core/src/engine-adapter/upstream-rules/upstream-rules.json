@@ -189,6 +189,7 @@
         "effectsOfItem": "The effect pairs of an ItemObjNew row put into words by GetItemExplainText(), then the row's free text",
         "effectsOfCardOrEnchant": "The same for a CardObjNew row",
         "wordingOfRandomOption": "The effect of a g_rndOptArray row put into words by GetItemExplainText()",
+        "wordingOfBonus": "An ITEM_SP_* constant and a value put into words by GetItemExplainText()",
         "itemsNamed": "The names and card slot counts of ItemObjNew"
     }
 }

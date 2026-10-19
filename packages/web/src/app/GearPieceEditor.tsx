@@ -1,5 +1,6 @@
 import {
     type Build,
+    buildWithSocketFilled,
     equipmentSlots,
     gearLimits,
     type LockerPiece,
@@ -15,8 +16,11 @@ import { CommittedNumberField, CommittedTextArea } from "./CommittedFields.tsx";
 import { formatZeny } from "./format.ts";
 import { cardOrEnchantNameIn, itemNameIn, slotGlyphs, slotsLabel } from "./labels.ts";
 import { withPieceField, withRandomOptionAt, withSocket, socketStateOf } from "./locker-view-model.ts";
-import { buildWithSocketFilled } from "./damage-preview-model.ts";
+import { CopyButton } from "./CopyButton.tsx";
 import { OfficialDatabaseLink } from "./OfficialDatabaseLink.tsx";
+import { pieceTextIn } from "./piece-text.ts";
+import { EffectSourceList } from "./EffectsCard.tsx";
+import { pieceEffectSourcesOf } from "./effects-view-model.ts";
 import { GearListingDialog } from "./GearListingDialog.tsx";
 import { Picker } from "./Picker.tsx";
 import { Picture } from "../image-pack/Picture.tsx";
@@ -91,10 +95,19 @@ export function GearPieceEditor({ workspace, gearPieceId, gearData, onRemoved }:
                 <div className="piece-title">
                     <b>{itemNameIn(descriptions, lockerPiece.itemId)}</b>
                     <EnglishName kind="item" id={lockerPiece.itemId} withTag />
-                    <OfficialDatabaseLink kind="item" name={itemNameIn(descriptions, lockerPiece.itemId)} />
+                    <span className="piece-copy">
+                        <CopyButton text={itemNameIn(descriptions, lockerPiece.itemId)} label={t("名前をコピー")} />
+                        <CopyButton text={pieceTextIn(descriptions, lockerPiece)} label={t("ギアをテキストでコピー")} caption={t("テキスト")} />
+                        <OfficialDatabaseLink kind="item" name={itemNameIn(descriptions, lockerPiece.itemId)} />
+                    </span>
                     <span>{slotsLabel(slots) ?? `item #${lockerPiece.itemId}`}</span>
                 </div>
             </div>
+
+            <details className="effects-group piece-effects">
+                <summary>{t("このギアの効果")}</summary>
+                <EffectSourceList sources={pieceEffectSourcesOf(lockerPiece, firstSlot ?? "rightHand", descriptions)} showsSlots={false} />
+            </details>
 
             {takesRefine && (
                 <div className="stepper-pair">

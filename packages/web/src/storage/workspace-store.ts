@@ -112,3 +112,61 @@ export function indexedDbWorkspaceStore(): WorkspaceStore {
             ),
     };
 }
+
+const gainDisplayStorageKey = "ro-ratorio-branch.gain-display";
+
+/** Which change the tree shows per node, as last chosen in this browser. */
+export function loadGainDisplay(): string | null {
+    try {
+        return window.localStorage.getItem(gainDisplayStorageKey);
+    } catch {
+        return null;
+    }
+}
+
+export function storeGainDisplay(gainDisplay: string): void {
+    try {
+        window.localStorage.setItem(gainDisplayStorageKey, gainDisplay);
+    } catch {
+        // Without storage the tree shows the default next time.
+    }
+}
+
+const columnWidthStoragePrefix = "ro-ratorio-branch.column-width.";
+
+/** A desktop column's width as last dragged in this browser, by the column's name. */
+export function loadColumnWidth(columnName: string): number | null {
+    try {
+        const stored = Number(window.localStorage.getItem(columnWidthStoragePrefix + columnName));
+        return Number.isFinite(stored) && stored > 0 ? stored : null;
+    } catch {
+        return null;
+    }
+}
+
+export function storeColumnWidth(columnName: string, width: number): void {
+    try {
+        window.localStorage.setItem(columnWidthStoragePrefix + columnName, String(Math.round(width)));
+    } catch {
+        // Without storage the column opens at its usual width next time.
+    }
+}
+
+const miniTreeOrderStorageKey = "ro-ratorio-branch.mini-tree-order";
+
+/** The order of branches in the mini tree, as last chosen in this browser. */
+export function loadMiniTreeOrder(): string | null {
+    try {
+        return window.localStorage.getItem(miniTreeOrderStorageKey);
+    } catch {
+        return null;
+    }
+}
+
+export function storeMiniTreeOrder(order: string): void {
+    try {
+        window.localStorage.setItem(miniTreeOrderStorageKey, order);
+    } catch {
+        // Without storage the mini tree shows the order the branches were made in next time.
+    }
+}

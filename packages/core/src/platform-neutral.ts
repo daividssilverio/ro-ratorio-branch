@@ -16,6 +16,7 @@ export {
     type BuildOutcome,
     buildOf,
     calculatorOn,
+    outcomeOf,
     evaluateTree,
     type NodeEvaluation,
     type TreeEvaluation,
@@ -61,6 +62,37 @@ export type {
 } from "./workspace/workspace-format.ts";
 export { workspaceFormatVersion, workspaceJsonSchema } from "./workspace/workspace-format.ts";
 export { decodeShareCode, encodeShareCode, InvalidShareCodeError, type ShareCodeFlaw, type SharedContent } from "./sharing/share-code.ts";
+export { publishedAppAddress, shareCodeInFragment, shareLinkOf } from "./sharing/share-link.ts";
+export {
+    type ImportRecognition,
+    type ImportRefusal,
+    type ImportSource,
+    type RecognizedImport,
+    recognizeImport,
+    type SaveReadOutcome,
+    saveReadingOn,
+} from "./sharing/recognize-import.ts";
+export { buildWearingItem, buildWithSocketFilled } from "./build/wear-item.ts";
+export { type GraftedNodes, graftNodes } from "./tree/graft-nodes.ts";
+export {
+    type ChoiceRanking,
+    type ChoiceRankingOptions,
+    buildOfNode,
+    type DamageOfBuild,
+    NoPieceInSlotError,
+    type RankedChoice,
+    type RefineOption,
+    refineLevelsStartingEffects,
+    rankSlotCandidates,
+    rankSocketChoices,
+    type SlotChoice,
+    type SlotRanking,
+    type SlotRankingOptions,
+    type SocketRanking,
+    type SocketRankingOptions,
+    UnusableNodeError,
+    withRankingUnder,
+} from "./agent/choice-ranking.ts";
 export {
     addCharacterToWorkspace,
     addEmptyTreeToWorkspace,
@@ -120,6 +152,7 @@ export type { GearLoadout, StatLoadout } from "./workspace/workspace-format.ts";
 export { forgivenEdits, type MatchedText, type MatchKind, matchKinds, prepareEntries, type PreparedEntry, type ReadingSegment, type SearchableEntry, searchEntries, type SearchHit, type SearchOptions, type SearchResult, type TermMatch } from "./search/forgiving-search.ts";
 export { canonicalizeRomaji, foldText, hasKanaOrKanji, romanizeKana, toKatakana } from "./search/kana.ts";
 export { type EnglishGlossary, type EnglishName, type EnglishPart, englishPartsOf } from "./text/english-names.ts";
+export { type EffectHit, type EffectSearch, type PreparedEffects, prepareEffects, searchEffects } from "./search/effect-search.ts";
 export { type TextKind, textKinds } from "./text/text-kinds.ts";
 export { type ComparedSide, compareNodePair, type NodePairComparison, rankLeaves, withNode } from "./agent/tree-operations.ts";
 export { type AddedNode, addEmptyTreeNode, type NodeEdit, type NodeEditStored, startNodeEdit, storeNodeEdit } from "./workspace/node-edit.ts";

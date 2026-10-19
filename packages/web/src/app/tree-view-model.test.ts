@@ -1,7 +1,18 @@
 import type { NodeComparison, Tree, TreeComparison, TreeNode } from "@ro-ratorio-branch/core/platform-neutral";
 import { describe, expect, it } from "vitest";
 import { formatSignedInteger, formatSignedPercent, formatSignedSeconds, formatZeny } from "./format.ts";
-import { doubleTapWindowInMilliseconds, idsShownIn, isSecondTapOfDouble, rankingCardsOf, staleNodesOf, treeLinesOf, treeRowsOf, withoutCollapsedBranches } from "./tree-view-model.ts";
+import {
+    doubleTapWindowInMilliseconds,
+    gainsOf,
+    idsShownIn,
+    isSecondTapOfDouble,
+    linesShown,
+    rankingCardsOf,
+    staleNodesOf,
+    treeLinesOf,
+    treeRowsOf,
+    withoutCollapsedBranches,
+} from "./tree-view-model.ts";
 
 function node(id: string, parentId: string | null, changes: TreeNode["changes"] = []): TreeNode {
     return { id, parentId, label: `label of ${id}`, changes };
@@ -175,11 +186,13 @@ describe("number formats", () => {
 
 describe("treeLinesOf", () => {
     it("gives every node a line under its parent, in the order the tree holds them, whatever their numbers", () => {
+        const gain = (damagePerSecondChange: number, damagePerSecondBase: number) => ({ damagePerSecondChange, damagePerSecondBase, secondsToKillChange: null });
+
         expect(treeLinesOf(tree, comparison)).toEqual([
-            { nodeId: "small", label: "label of small", depth: 1, guides: ["branch"], state: "ready", damagePerSecondGain: 100 },
-            { nodeId: "large", label: "label of large", depth: 1, guides: ["branch"], state: "ready", damagePerSecondGain: 400 },
-            { nodeId: "under-large", label: "label of under-large", depth: 2, guides: ["through", "last"], state: "ready", damagePerSecondGain: 500 },
-            { nodeId: "old", label: "label of old", depth: 1, guides: ["last"], state: "stale" },
+            { nodeId: "small", label: "label of small", depth: 1, guides: ["branch"], state: "ready", hasChildren: false, gains: { total: gain(100, 1000), step: gain(100, 1000) } },
+            { nodeId: "large", label: "label of large", depth: 1, guides: ["branch"], state: "ready", hasChildren: true, gains: { total: gain(400, 1000), step: gain(400, 1000) } },
+            { nodeId: "under-large", label: "label of under-large", depth: 2, guides: ["through", "last"], state: "ready", hasChildren: false, gains: { total: gain(500, 1000), step: gain(100, 1400) } },
+            { nodeId: "old", label: "label of old", depth: 1, guides: ["last"], state: "stale", hasChildren: false, gains: { total: null, step: null } },
         ]);
     });
 
@@ -196,6 +209,20 @@ describe("treeLinesOf", () => {
         ]);
     });
 
+    it("orders each node's branches best first by a ranking when asked, with the guides drawn for that order", () => {
+        expect(treeLinesOf(tree, comparison, "damagePerSecondGain").map((line) => [line.nodeId, ...line.guides])).toEqual([
+            ["large", "branch"],
+            ["under-large", "through", "last"],
+            ["small", "branch"],
+            ["old", "last"],
+        ]);
+        expect(treeLinesOf(tree, comparison, "cumulativeZenyCost").map((line) => line.nodeId)).toEqual(["small", "large", "under-large", "old"]);
+    });
+
+    it("keeps the tree's order before the tree is calculated, whatever order is asked", () => {
+        expect(treeLinesOf(tree, null, "damagePerSecondGain").map((line) => line.nodeId)).toEqual(["small", "large", "under-large", "old"]);
+    });
+
     it("lists the nodes before they are calculated", () => {
         expect(treeLinesOf(tree, null).map((line) => [line.nodeId, line.depth, line.state])).toEqual([
             ["small", 1, "pending"],
@@ -203,6 +230,22 @@ describe("treeLinesOf", () => {
             ["under-large", 2, "pending"],
             ["old", 1, "pending"],
         ]);
+    });
+});
+
+describe("linesShown", () => {
+    const deep: Tree = { ...tree, nodes: [node("a", null), node("a1", "a"), node("a1x", "a1"), node("a2", "a"), node("b", null), node("b1", "b")] };
+    const lines = treeLinesOf(deep, null);
+
+    it("leaves out everything below a folded node, and keeps the folded node itself", () => {
+        expect(linesShown(lines, new Set(["a1"])).map((line) => line.nodeId)).toEqual(["a", "a1", "a2", "b", "b1"]);
+        expect(linesShown(lines, new Set(["a"])).map((line) => line.nodeId)).toEqual(["a", "b", "b1"]);
+        expect(linesShown(lines, new Set(["a", "b"])).map((line) => line.nodeId)).toEqual(["a", "b"]);
+    });
+
+    it("shows every line with nothing folded, and says which lines have something to fold", () => {
+        expect(linesShown(lines, new Set()).map((line) => line.nodeId)).toEqual(lines.map((line) => line.nodeId));
+        expect(lines.filter((line) => line.hasChildren).map((line) => line.nodeId)).toEqual(["a", "a1", "b"]);
     });
 });
 
@@ -219,5 +262,41 @@ describe("isSecondTapOfDouble", () => {
 
     it("takes a tap with none before it as a first one", () => {
         expect(isSecondTapOfDouble(null, first)).toBe(false);
+    });
+});
+
+describe("gainsOf", () => {
+    const summary = (averageDamagePerSecond: number, seconds: number | null) => ({
+        targetMonsterId: 1,
+        averageDamagePerAttack: 1,
+        averageDamagePerSecond,
+        averageTimeToKill: seconds === null ? null : { seconds, attacks: 1 },
+    });
+    const ready = (id: string, damagePerSecond: number, seconds: number | null) =>
+        ({ id, label: id, state: "ready", battleSummary: summary(damagePerSecond, seconds) }) as unknown as TreeComparison["nodes"][number];
+    const node = (id: string, parentId: string | null) => ({ id, parentId, label: id, changes: [] });
+    const comparison = {
+        root: { state: "ready", battleSummary: summary(1000, 10) },
+        nodes: [ready("x", 1100, 9), ready("x1", 1133, 8.5), { id: "broken", label: "broken", state: "notCalculable", issues: [] }, ready("under-broken", 1200, 8)],
+        rankings: { damagePerSecondGain: [], secondsToKill: [], cumulativeZenyCost: [], valueForMoney: [] },
+    } as unknown as TreeComparison;
+
+    it("measures a top-level node against the root both ways", () => {
+        const gains = gainsOf(node("x", null), comparison);
+
+        expect(gains.total).toEqual({ damagePerSecondChange: 100, damagePerSecondBase: 1000, secondsToKillChange: -1 });
+        expect(gains.step).toEqual(gains.total);
+    });
+
+    it("measures a deeper node against its parent for the step and against the root for the total", () => {
+        const gains = gainsOf(node("x1", "x"), comparison);
+
+        expect(gains.step).toEqual({ damagePerSecondChange: 33, damagePerSecondBase: 1100, secondsToKillChange: -0.5 });
+        expect(gains.total).toEqual({ damagePerSecondChange: 133, damagePerSecondBase: 1000, secondsToKillChange: -1.5 });
+    });
+
+    it("has no step under a parent without numbers, and nothing for a node without numbers", () => {
+        expect(gainsOf(node("under-broken", "broken"), comparison)).toEqual({ total: { damagePerSecondChange: 200, damagePerSecondBase: 1000, secondsToKillChange: -2 }, step: null });
+        expect(gainsOf(node("broken", null), comparison)).toEqual({ total: null, step: null });
     });
 });

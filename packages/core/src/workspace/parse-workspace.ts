@@ -1,4 +1,5 @@
 import { Value } from "typebox/value";
+import { withEarlierUpstreamContentUpdated } from "../build/earlier-upstream-content.ts";
 import { collectSchemaIssues } from "../schema-issues.ts";
 import { type ChangeIssue, collectChangeIssues, collectNodeStructureIssues, type NodeStructureIssue } from "../tree/parse-tree.ts";
 import { type Workspace, workspaceChangeSchemaOfKind, WorkspaceSchema, WorkspaceSchemaWithUncheckedChanges } from "./workspace-format.ts";
@@ -25,7 +26,8 @@ export class InvalidWorkspaceError extends Error {
  * workspace schema, every reference to a piece or character that is not there,
  * and every tree whose nodes do not hang together.
  */
-export function parseWorkspace(candidate: unknown): Workspace {
+export function parseWorkspace(content: unknown): Workspace {
+    const candidate = withEarlierUpstreamContentUpdated(content);
     if (!Value.Check(WorkspaceSchema, candidate)) {
         throw new InvalidWorkspaceError(collectWorkspaceSchemaIssues(candidate));
     }

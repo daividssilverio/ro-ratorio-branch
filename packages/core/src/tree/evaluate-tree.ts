@@ -28,16 +28,19 @@ export type BuildCalculator = (build: Build) => BuildOutcome | Promise<BuildOutc
 
 /** A calculator that runs on the given engine, in this thread. */
 export function calculatorOn(engine: RatorioEngine): BuildCalculator {
-    return (build) => {
-        try {
-            return { state: "ready", ...calculateBuildInDetail(build, engine) };
-        } catch (error) {
-            if (error instanceof BuildConversionError) {
-                return { state: "notCalculable", issues: error.issues };
-            }
-            throw error;
+    return (build) => outcomeOf(build, engine);
+}
+
+/** A build calculated on an engine, or why the engine cannot calculate it. */
+export function outcomeOf(build: Build, engine: RatorioEngine): BuildOutcome {
+    try {
+        return { state: "ready", ...calculateBuildInDetail(build, engine) };
+    } catch (error) {
+        if (error instanceof BuildConversionError) {
+            return { state: "notCalculable", issues: error.issues };
         }
-    };
+        throw error;
+    }
 }
 
 /** Calculates the root and every node that is not stale, each against the tree's shared scenario. */

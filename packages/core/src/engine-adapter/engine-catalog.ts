@@ -76,6 +76,12 @@ export interface EngineCatalog {
     /** What a random option does at a value, in upstream's words. Empty for an unknown option. */
     wordingOfRandomOption(optionId: number, value: number): string;
     /**
+     * A bonus of a build's stat snapshot (its `ITEM_SP_` name without the
+     * prefix) at a value, in upstream's words, as its effect lists write it.
+     * Empty for a name upstream does not have or does not put into words.
+     */
+    wordingOfBonus(bonusName: string, value: number): string;
+    /**
      * The items of a name, given as names are compared (full and half
      * width alike, no case, no spaces, no card slot count behind it), each
      * with its number of card slots. Retired items come last.
@@ -183,7 +189,8 @@ export async function loadEngineCatalog(
     const { g_rndOptListArray } = await import("../../../../vendor/ratorio/engine/equip/rndoptlist.dat.js");
     const { GetRndOptTypeId, GetItemExplainText } = await import("../../../../vendor/ratorio/engine/equip/item.h.js");
     const { RND_OPT_DATA_INDEX_MIN, RND_OPT_DATA_INDEX_MAX, RND_OPT_DATA_INDEX_STEP, RND_OPT_DATA_INDEX_SPID } = await import("../../../../vendor/ratorio/engine/const/EnumRndOptDataIndex.js");
-    const { ITEM_SP_LEARNED_SKILL_EFFECT } = await import("../../../../vendor/ratorio/engine/const/EnumItemSpId.js");
+    const itemSpIds = await import("../../../../vendor/ratorio/engine/const/EnumItemSpId.js");
+    const { ITEM_SP_LEARNED_SKILL_EFFECT } = itemSpIds;
     const { ITEM_SP_TIME_OBJ_SORT } = await import("../../../../vendor/ratorio/engine/equip/timeitem.dat.js");
     const { SpeedPotName } = await import("../../../../vendor/ratorio/engine/runtime/roro-state.js");
     const { ELM_ID_COUNT } = await import("../../../../vendor/ratorio/engine/const/EnumElmId.js");
@@ -444,6 +451,21 @@ export async function loadEngineCatalog(
                       .map(([, text]) => text)
                       .join("")
                       .trim();
+        },
+        wordingOfBonus(bonusName, value) {
+            const effectId: unknown = Reflect.get(itemSpIds, `ITEM_SP_${bonusName}`);
+            if (typeof effectId !== "number") {
+                return "";
+            }
+            try {
+                return GetItemExplainText(effectId, value)
+                    .map(([, text]) => text)
+                    .join("")
+                    .trim();
+            } catch {
+                // Some effects take a skill or an item as their value, which a summed bonus is not; those have no wording.
+                return "";
+            }
         },
         itemsNamed(nameKey) {
             itemsOfNameKey ??= itemsByNameKey();

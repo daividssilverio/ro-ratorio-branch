@@ -21,21 +21,6 @@ export function exportContentOf(tree: Tree, scope: ExportScope, selectedNodeId: 
     return resolution?.state === "resolved" ? buildOf(resolution.character, tree.scenario) : null;
 }
 
-/** A link to this app that carries a share code in its fragment, so the code never reaches a server. */
-export function shareLinkOf(pageUrl: string, shareCode: string): string {
-    const link = new URL(pageUrl);
-    link.search = "";
-    link.hash = shareCode;
-    return link.href;
-}
-
-const shareCodeFragment = /^#(B\d+\.[A-Za-z0-9_-]+)$/;
-
-/** The share code a page was opened with, if its URL fragment is one. */
-export function shareCodeInFragment(urlFragment: string): string | null {
-    return shareCodeFragment.exec(urlFragment)?.[1] ?? null;
-}
-
 const bytesPerKilobyte = 1024;
 
 /** A text's size in kilobytes, to one decimal. Share codes are plain ASCII, so one character is one byte. */

@@ -8,13 +8,12 @@ import {
     calculatorOn,
     type CatalogEntry,
     exportRatorioSave,
-    importRatorioSave,
+    saveReadingOn,
     type ItemDescription,
     type RatorioEngine,
     ratorioPageUrl,
-    UnreadableRatorioSaveError,
 } from "@ro-ratorio-branch/core/platform-neutral";
-import type { CatalogList, Descriptions, GearFacts, HostRequest, HostResponse, IdsToDescribe, SaveReadOutcome } from "./host-protocol.ts";
+import type { CatalogList, Descriptions, GearDescription, GearFacts, HostRequest, HostResponse, IdsToDescribe, SaveReadOutcome } from "./host-protocol.ts";
 
 /** Answers one request on the given engine. A failure becomes a `failed` response, never a thrown error. */
 export async function handleHostRequest(engine: RatorioEngine, request: HostRequest): Promise<HostResponse> {
@@ -59,6 +58,9 @@ export async function handleHostRequest(engine: RatorioEngine, request: HostRequ
             const slotsOfItem = listing.gearPiece === null ? [] : engine.catalog.slotsOfItem(listing.gearPiece.itemId);
             return { kind: "gearListingRead", requestId: request.requestId, listingRead: { listing, slotsOfItem } };
         }
+        if (request.kind === "wordBonuses") {
+            return { kind: "bonusesWorded", requestId: request.requestId, wordings: request.bonuses.map(({ name, value }) => engine.catalog.wordingOfBonus(name, value)) };
+        }
         if (request.kind === "listSkillsGearRewards") {
             return { kind: "skillsGearRewardsListed", requestId: request.requestId, skillIds: engine.catalog.learnedSkillsGearRewards(request.itemIds, request.cardOrEnchantIds) };
         }
@@ -78,15 +80,7 @@ export async function handleHostRequest(engine: RatorioEngine, request: HostRequ
 }
 
 async function readSave(engine: RatorioEngine, saveUrlOrData: string): Promise<SaveReadOutcome> {
-    const readRatorioSave = await engine.loadSaveReader();
-    try {
-        return { state: "read", saveImport: importRatorioSave(readRatorioSave(saveUrlOrData), engine) };
-    } catch (error) {
-        if (error instanceof UnreadableRatorioSaveError) {
-            return { state: "unreadable", flaw: error.flaw };
-        }
-        throw error;
-    }
+    return (await saveReadingOn(engine))(saveUrlOrData);
 }
 
 function withEffects(entries: CatalogEntry[], isAsked: boolean, effectsOf: (id: number) => string[]): CatalogEntry[] {
@@ -147,10 +141,16 @@ function describe(engine: RatorioEngine, ids: IdsToDescribe): Descriptions {
         jobNames: known(ids.jobIds, engine.names.jobName),
         skillNames: known(ids.skillIds, engine.names.skillName),
         monsterNames: known(ids.monsterIds, engine.names.monsterName),
-        items: known<ItemDescription>(ids.itemIds, engine.names.describeItem),
-        cardsOrEnchants: known<ItemDescription>(ids.cardOrEnchantIds, engine.names.describeCardOrEnchant),
+        items: known<GearDescription>(ids.itemIds, (itemId) => describedWithEffects(engine.names.describeItem(itemId), engine.catalog.effectsOfItem(itemId))),
+        cardsOrEnchants: known<GearDescription>(ids.cardOrEnchantIds, (cardOrEnchantId) =>
+            describedWithEffects(engine.names.describeCardOrEnchant(cardOrEnchantId), engine.catalog.effectsOfCardOrEnchant(cardOrEnchantId)),
+        ),
         randomOptionNames: known(ids.randomOptionIds ?? [], engine.names.randomOptionName),
     };
+}
+
+function describedWithEffects(description: ItemDescription | undefined, effects: readonly string[]): GearDescription | undefined {
+    return description === undefined ? undefined : { ...description, effects };
 }
 
 function known<Described>(ids: readonly number[], lookUp: (id: number) => Described | undefined): Record<number, Described> {
