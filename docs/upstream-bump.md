@@ -43,6 +43,16 @@ Run the `upstream-ui-split` skill (`.claude/skills/upstream-ui-split/SKILL.md`).
 
 Names are read the same way: rebuild the readings of names with kanji with `mise exec -- pnpm text-index`. `readings.test.ts` fails for every name that is new or has changed until that is done. Look through what the run adds to `packages/core/src/text/readings-to-check.txt`, and put a reading that is wrong into `reading-overrides.json`. The same run rebuilds the English names (`packages/core/src/text/english/`); `english.test.ts` fails until it is done.
 
+Builds, trees and workspaces that people saved hold upstream names and option positions: support buff names (`CONF_ID_` without the prefix) in `supportBuffs` and in `setSupportBuff` changes, and attack options as `skillOptions` in the order a skill asks for them. When upstream renames one, or adds, removes or reorders a skill's options, saved content would be refused or, worse, read as something else. Look for both in the diff:
+
+```bash
+git -C vendor/ratorio diff "$OLD" "$NEW" -- engine/skill engine/chara engine/battle/CAttackMethodAreaComponentManager.js
+```
+
+Support buff names are the `CONF_ID_` constants of `engine/chara/` (`CCharaConfYozi.js` and the like); a skill's options are listed in its job file under `engine/skill/` and in `CAttackMethodAreaComponentManager.js`.
+
+Then add the old shape to `packages/core/src/build/earlier-upstream-content.ts`, which the build, tree and workspace parsers run before checking the content, with a test in `earlier-upstream-content.test.ts`. Tell each old shape apart by the content itself (a name that no longer exists, a count of options that no longer fits), so current content comes back as the same object.
+
 ## 6. Move the pin and run the tests
 
 ```bash
