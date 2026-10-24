@@ -87,6 +87,47 @@ describe("engine catalog", () => {
         expect(monsters.every((monster) => engine.hasMonster(monster.id))).toBe(true);
     });
 
+    it("gives a monster's stats as the engine holds them", () => {
+        const poringId = 272;
+        const granPapiliaId = 1533;
+
+        expect(engine.catalog.monsterInfo(poringId)).toEqual({
+            id: poringId,
+            name: "ポリン",
+            level: 1,
+            hp: 60,
+            element: { kind: "water", level: 1 },
+            race: "plant",
+            size: "medium",
+            isBoss: false,
+            hardDef: 2,
+            hardMdef: 5,
+            res: 0,
+            mres: 0,
+            baseExp: 1,
+            jobExp: 1,
+        });
+        expect(engine.catalog.monsterInfo(granPapiliaId)).toMatchObject({
+            level: 235,
+            hp: 180_000_000,
+            element: { kind: "ghost", level: 2 },
+            race: "plant",
+            size: "large",
+            isBoss: true,
+            hardDef: 1030,
+            hardMdef: 133,
+            res: 200,
+            mres: 210,
+        });
+        expect(engine.catalog.monsterInfo(-1)).toBeUndefined();
+    });
+
+    it("gives stats for every monster it lists", () => {
+        const monsters = engine.catalog.monsters();
+
+        expect(monsters.every((monster) => engine.catalog.monsterInfo(monster.id)?.name === monster.name)).toBe(true);
+    });
+
     it("says which slots an item fits", () => {
         expect(engine.catalog.slotsOfItem(maceItemId)).toEqual(["rightHand"]);
         expect(engine.catalog.slotsOfItem(shieldItemId)).toEqual(["shield"]);
