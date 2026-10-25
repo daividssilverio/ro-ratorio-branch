@@ -48,6 +48,55 @@ declare module "*/vendor/ratorio/engine/const/EnumMonsterDataIndex.js" {
     export const MONSTER_DATA_INDEX_KANA: number;
     export const MONSTER_DATA_INDEX_ID: number;
     export const MONSTER_DATA_INDEX_NAME: number;
+    export const MONSTER_DATA_INDEX_LEVEL: number;
+    export const MONSTER_DATA_INDEX_HP: number;
+    export const MONSTER_DATA_INDEX_DEF_DIV: number;
+    export const MONSTER_DATA_INDEX_MDEF_DIV: number;
+    export const MONSTER_DATA_INDEX_BASE_EXP: number;
+    export const MONSTER_DATA_INDEX_JOB_EXP: number;
+    export const MONSTER_DATA_INDEX_SIZE: number;
+    export const MONSTER_DATA_INDEX_ELEMENT: number;
+    export const MONSTER_DATA_INDEX_RACE: number;
+    export const MONSTER_DATA_INDEX_BOSS_TYPE: number;
+    export const MONSTER_DATA_INDEX_RES: number;
+    export const MONSTER_DATA_INDEX_MRES: number;
+}
+
+/** A monster's element is its kind in the tens and its level in the ones; these are the first level of each kind. */
+declare module "*/vendor/ratorio/engine/const/EnumMonsterElement.js" {
+    export const MONSTER_ELM_VANITY_1: number;
+    export const MONSTER_ELM_WATER_1: number;
+    export const MONSTER_ELM_EARTH_1: number;
+    export const MONSTER_ELM_FIRE_1: number;
+    export const MONSTER_ELM_WIND_1: number;
+    export const MONSTER_ELM_POISON_1: number;
+    export const MONSTER_ELM_HOLY_1: number;
+    export const MONSTER_ELM_DARK_1: number;
+    export const MONSTER_ELM_PSYCO_1: number;
+    export const MONSTER_ELM_UNDEAD_1: number;
+}
+
+declare module "*/vendor/ratorio/engine/const/EnumRaceId.js" {
+    export const RACE_ID_SOLID: number;
+    export const RACE_ID_UNDEAD: number;
+    export const RACE_ID_ANIMAL: number;
+    export const RACE_ID_PLANT: number;
+    export const RACE_ID_INSECT: number;
+    export const RACE_ID_FISH: number;
+    export const RACE_ID_DEMON: number;
+    export const RACE_ID_HUMAN: number;
+    export const RACE_ID_ANGEL: number;
+    export const RACE_ID_DRAGON: number;
+}
+
+declare module "*/vendor/ratorio/engine/const/EnumSizeId.js" {
+    export const SIZE_ID_SMALL: number;
+    export const SIZE_ID_MEDIUM: number;
+    export const SIZE_ID_LARGE: number;
+}
+
+declare module "*/vendor/ratorio/engine/const/EnumMonsterBossType.js" {
+    export const MONSTER_BOSSTYPE_BOSS: number;
 }
 
 declare module "*/vendor/ratorio/engine/chara/CCharaConfIchizi.js" {

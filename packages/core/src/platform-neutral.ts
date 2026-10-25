@@ -24,7 +24,7 @@ export {
 export { type NodeResolution, resolveTree, type StaleChange } from "./tree/resolve-tree.ts";
 export { type BuildCalculation, calculateBuildInDetail } from "./build/calculate-build.ts";
 export type { EngineNames, ItemDescription } from "./engine-adapter/engine-names.ts";
-export type { CatalogEntry, EngineCatalog, JobLimits, SkillLevelSetting, StatPointBudget } from "./engine-adapter/engine-catalog.ts";
+export type { CatalogEntry, EngineCatalog, JobLimits, MonsterElementKind, MonsterInfo, MonsterRace, MonsterSize, SkillLevelSetting, StatPointBudget } from "./engine-adapter/engine-catalog.ts";
 export type { SupportBuffSection, SupportBuffSetting } from "./engine-adapter/calc-model-layout.ts";
 export { type AutoSpellValue, highestAutoSpellLevel } from "./engine-adapter/auto-spells.ts";
 export { type CustomizationSection, customizationSections, isOfferedBySetting, type NamedSetting, type TargetSettingSection, targetSettingSections } from "./engine-adapter/named-settings.ts";

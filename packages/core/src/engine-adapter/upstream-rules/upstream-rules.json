@@ -174,6 +174,7 @@
     "dataReaders": {
         "jobs": "The JOB_ID_* constants and GetJobName()",
         "monsters": "MonsterObjNew",
+        "monsterInfo": "A MonsterObjNew row read with the MONSTER_DATA_INDEX_* constants: element with MONSTER_ELM_*, race with RACE_ID_*, size with SIZE_ID_*, boss with MONSTER_BOSSTYPE_BOSS",
         "attackSkillsOfJob": "The job data's GetAttackSkillIdArray()",
         "learnableSkillsOfJob": "The job data's GetLearnSkillIdArray() and each skill's highest level",
         "selfBuffsOfJob": "The job data's GetPassiveSkillIdArray(), with ranges and labels from upstream-panels.json",

@@ -19,6 +19,30 @@ export interface CatalogEntry {
     readonly defaultValue?: number;
 }
 
+export type MonsterElementKind = "neutral" | "water" | "earth" | "fire" | "wind" | "poison" | "holy" | "dark" | "ghost" | "undead";
+export type MonsterRace = "formless" | "undead" | "animal" | "plant" | "insect" | "fish" | "demon" | "human" | "angel" | "dragon";
+export type MonsterSize = "small" | "medium" | "large";
+
+/** A monster's stats as the engine holds them. */
+export interface MonsterInfo {
+    readonly id: number;
+    readonly name: string;
+    readonly level: number;
+    readonly hp: number;
+    /** Its element and that element's level, 1 to 4. */
+    readonly element: { readonly kind: MonsterElementKind; readonly level: number };
+    readonly race: MonsterRace;
+    readonly size: MonsterSize;
+    readonly isBoss: boolean;
+    /** DEF and MDEF without the parts that come from its stats. */
+    readonly hardDef: number;
+    readonly hardMdef: number;
+    readonly res: number;
+    readonly mres: number;
+    readonly baseExp: number;
+    readonly jobExp: number;
+}
+
 /** The stat points a character has earned by its level and spent on its stats; the same for trait points. */
 export interface StatPointBudget {
     readonly earned: number;
@@ -103,6 +127,8 @@ export interface EngineCatalog {
      */
     socketChoicesOfItem(slot: EquipmentSlot, itemId: number): CatalogEntry[][];
     monsters(): CatalogEntry[];
+    /** `undefined` for an unknown monster. */
+    monsterInfo(monsterId: number): MonsterInfo | undefined;
     /** The skills the job can attack with. Empty for an unknown job. */
     attackSkillsOfJob(jobId: number): CatalogEntry[];
     /** `undefined` for an unknown job. An adopted character has a lower highest base stat. */
@@ -212,7 +238,12 @@ export async function loadEngineCatalog(
     const { SkillObjNew } = await import("../../../../vendor/ratorio/engine/skill/skill.dat.js");
     const { ITEM_DATA_INDEX_KIND, ITEM_DATA_INDEX_NAME, ITEM_DATA_INDEX_WPNLV, ITEM_DATA_INDEX_DETAIL, ITEM_DATA_INDEX_SPBEGIN, ITEM_DATA_INDEX_SLOT } = await import("../../../../vendor/ratorio/engine/const/EnumItemDataIndex.js");
     const { CARD_DATA_INDEX_NAME, CARD_DATA_INDEX_DETAIL, CARD_DATA_INDEX_SPBEGIN } = await import("../../../../vendor/ratorio/engine/const/EnumCardDataIndex.js");
-    const { MONSTER_DATA_INDEX_NAME } = await import("../../../../vendor/ratorio/engine/const/EnumMonsterDataIndex.js");
+    const monsterIndexes = await import("../../../../vendor/ratorio/engine/const/EnumMonsterDataIndex.js");
+    const { MONSTER_DATA_INDEX_NAME } = monsterIndexes;
+    const monsterElements = await import("../../../../vendor/ratorio/engine/const/EnumMonsterElement.js");
+    const raceIds = await import("../../../../vendor/ratorio/engine/const/EnumRaceId.js");
+    const sizeIds = await import("../../../../vendor/ratorio/engine/const/EnumSizeId.js");
+    const { MONSTER_BOSSTYPE_BOSS } = await import("../../../../vendor/ratorio/engine/const/EnumMonsterBossType.js");
     const { SKILL_DATA_INDEX_NAME, SKILL_DATA_INDEX_MAXLV } = await import("../../../../vendor/ratorio/engine/const/EnumSkillDataIndex.js");
     const cardKinds = await import("../../../../vendor/ratorio/engine/const/EnumCardKind.js");
     const statPoints = await import("../../../../vendor/ratorio/engine/chara/hmjob.js");
@@ -235,6 +266,36 @@ export async function loadEngineCatalog(
         accessory2: sortedCardIdsOfKinds(cardKinds.CARD_KIND_ACCESSORY, cardKinds.CARD_KIND_ACCESSORY_ON2),
     };
     const cardIdsOfLaterWeaponSockets = sortedCardIdsOfKinds(cardKinds.CARD_KIND_ARMS);
+    const tensOf = (elementValue: number) => Math.floor(elementValue / 10);
+    const elementKindOfTens = new Map<number, MonsterElementKind>([
+        [tensOf(monsterElements.MONSTER_ELM_VANITY_1), "neutral"],
+        [tensOf(monsterElements.MONSTER_ELM_WATER_1), "water"],
+        [tensOf(monsterElements.MONSTER_ELM_EARTH_1), "earth"],
+        [tensOf(monsterElements.MONSTER_ELM_FIRE_1), "fire"],
+        [tensOf(monsterElements.MONSTER_ELM_WIND_1), "wind"],
+        [tensOf(monsterElements.MONSTER_ELM_POISON_1), "poison"],
+        [tensOf(monsterElements.MONSTER_ELM_HOLY_1), "holy"],
+        [tensOf(monsterElements.MONSTER_ELM_DARK_1), "dark"],
+        [tensOf(monsterElements.MONSTER_ELM_PSYCO_1), "ghost"],
+        [tensOf(monsterElements.MONSTER_ELM_UNDEAD_1), "undead"],
+    ]);
+    const raceOfId = new Map<number, MonsterRace>([
+        [raceIds.RACE_ID_SOLID, "formless"],
+        [raceIds.RACE_ID_UNDEAD, "undead"],
+        [raceIds.RACE_ID_ANIMAL, "animal"],
+        [raceIds.RACE_ID_PLANT, "plant"],
+        [raceIds.RACE_ID_INSECT, "insect"],
+        [raceIds.RACE_ID_FISH, "fish"],
+        [raceIds.RACE_ID_DEMON, "demon"],
+        [raceIds.RACE_ID_HUMAN, "human"],
+        [raceIds.RACE_ID_ANGEL, "angel"],
+        [raceIds.RACE_ID_DRAGON, "dragon"],
+    ]);
+    const sizeOfId = new Map<number, MonsterSize>([
+        [sizeIds.SIZE_ID_SMALL, "small"],
+        [sizeIds.SIZE_ID_MEDIUM, "medium"],
+        [sizeIds.SIZE_ID_LARGE, "large"],
+    ]);
     const weaponHands: readonly EquipmentSlot[] = ["rightHand", "leftHand"];
     // Two items take a card of their slot in the last socket, as an enchant.
     const itemIdsWithACardInTheLastSocket = [ITEM_ID_KAITEI_SHINDENNO_ZAIHO_CARD_ENCHANTABLE, ITEM_ID_ALPHA_CORE_CARD_ENCHANTABLE];
@@ -493,6 +554,32 @@ export async function loadEngineCatalog(
             return enchantsOfSocket.map((enchants, socketIndex) => (enchants.length > 0 ? enchants : cardEntriesOf(cardIdsAt(slot, itemId, socketIndex))));
         },
         monsters: () => namedEntries(MonsterObjNew, MONSTER_DATA_INDEX_NAME, () => true),
+        monsterInfo(monsterId) {
+            const dataRow = MonsterObjNew[monsterId];
+            const name = dataRow?.[MONSTER_DATA_INDEX_NAME];
+            if (dataRow === undefined || typeof name !== "string") {
+                return undefined;
+            }
+            const numberAt = (index: number) => Number(dataRow[index] ?? 0);
+            // Upstream writes an element as its kind in the tens and its level in the ones (water 2 is 12).
+            const elementValue = numberAt(monsterIndexes.MONSTER_DATA_INDEX_ELEMENT);
+            return {
+                id: monsterId,
+                name,
+                level: numberAt(monsterIndexes.MONSTER_DATA_INDEX_LEVEL),
+                hp: numberAt(monsterIndexes.MONSTER_DATA_INDEX_HP),
+                element: { kind: elementKindOfTens.get(Math.floor(elementValue / 10)) ?? "neutral", level: elementValue % 10 },
+                race: raceOfId.get(numberAt(monsterIndexes.MONSTER_DATA_INDEX_RACE)) ?? "formless",
+                size: sizeOfId.get(numberAt(monsterIndexes.MONSTER_DATA_INDEX_SIZE)) ?? "medium",
+                isBoss: numberAt(monsterIndexes.MONSTER_DATA_INDEX_BOSS_TYPE) === MONSTER_BOSSTYPE_BOSS,
+                hardDef: numberAt(monsterIndexes.MONSTER_DATA_INDEX_DEF_DIV),
+                hardMdef: numberAt(monsterIndexes.MONSTER_DATA_INDEX_MDEF_DIV),
+                res: numberAt(monsterIndexes.MONSTER_DATA_INDEX_RES),
+                mres: numberAt(monsterIndexes.MONSTER_DATA_INDEX_MRES),
+                baseExp: numberAt(monsterIndexes.MONSTER_DATA_INDEX_BASE_EXP),
+                jobExp: numberAt(monsterIndexes.MONSTER_DATA_INDEX_JOB_EXP),
+            };
+        },
         attackSkillsOfJob(jobId) {
             const skillIds = jobData(jobId)?.GetAttackSkillIdArray() ?? [];
             return skillIds.flatMap((skillId) => {
