@@ -48,6 +48,7 @@ import { ConfirmedAction, NodeIdLine, NodeMergeButtons, RemoveNodeButton } from 
 import { Picture } from "../image-pack/Picture.tsx";
 import type { PickerPreview } from "./use-damage-previews.ts";
 import { ColumnResizer, useColumnWidth } from "./ColumnResizer.tsx";
+import { CharacterManager } from "./CharacterManager.tsx";
 import { EffectsCard } from "./EffectsCard.tsx";
 import { SpSustainCard } from "./SpSustainCard.tsx";
 
@@ -55,7 +56,7 @@ import { SpSustainCard } from "./SpSustainCard.tsx";
 const widestLimits = { lowest: 0, highest: 999 };
 const highestSkillLevel = 100;
 
-type OpenPicker = "attackSkill" | "targetMonster" | "targetSettings" | "newCharacterJob" | "skillsAndBuffs";
+type OpenPicker = "attackSkill" | "targetMonster" | "targetSettings" | "newCharacterJob" | "skillsAndBuffs" | "characters";
 
 /** The build editor: the open tree's root character, what it wears, and what it attacks. Every change recalculates the tree. */
 /** The node of the tree an editor is open on, in place of the root. */
@@ -164,6 +165,9 @@ export function BuildScreen({ workspace, isWide, treeStrip, editedNode }: BuildS
             <button type="button" className="btn" onClick={() => setOpenPicker("newCharacterJob")}>
                 <PlusIcon />
                 {t("新しいキャラ")}
+            </button>
+            <button type="button" className="btn" data-testid="open-character-manager" onClick={() => setOpenPicker("characters")}>
+                {t("管理")} <span className="num">{Object.keys(characters).length}</span>
             </button>
         </div>
     );
@@ -483,6 +487,7 @@ export function BuildScreen({ workspace, isWide, treeStrip, editedNode }: BuildS
             )}
             {openPicker === "targetSettings" && <TargetSettingsEditor scenario={scenario} jobSettings={jobSettings} onChange={updateScenario} onClose={() => setOpenPicker(null)} />}
             {openPicker === "skillsAndBuffs" && <SettingsEditor character={character} skillIdsGearRewards={skillIdsGearRewards} onChange={updateCharacter} onClose={() => setOpenPicker(null)} />}
+            {openPicker === "characters" && <CharacterManager workspace={workspace} onClose={() => setOpenPicker(null)} />}
             {openPicker === "newCharacterJob" && (
                 <Picker
                     title={t("新しいキャラの職業")}

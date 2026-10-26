@@ -1,6 +1,7 @@
 import { spSustainSettingsOf } from "@ro-ratorio-branch/core/platform-neutral";
 import type { NodeComparison, RankingMetric } from "@ro-ratorio-branch/core/platform-neutral";
 import { useRef, useState } from "react";
+import { CharacterManager } from "./CharacterManager.tsx";
 import { type SpRowTexts, spRowTextsOf } from "./sp-sustain-view-model.ts";
 import { formatInteger, formatSeconds, formatSignedInteger, formatZeny } from "./format.ts";
 import { BranchIcon, ChevronDownIcon, ChevronRightIcon, CompareIcon, ImportIcon, SpinnerIcon, StarIcon, WarningIcon } from "./Icons.tsx";
@@ -34,6 +35,7 @@ export function TreeScreen({ workspace, selectedNodeId, onSelect, onCompare, onA
     const [gainDisplay, setGainDisplay] = useGainDisplay();
     const [collapsedNodeIds, setCollapsedNodeIds] = useState<ReadonlySet<string>>(new Set());
     const [importFailure, setImportFailure] = useState<TreeImportFailure | null>(null);
+    const [isManagingCharacters, setIsManagingCharacters] = useState(false);
     const fileInput = useRef<HTMLInputElement>(null);
 
     const rootSummary = comparison?.root.state === "ready" ? comparison.root.battleSummary : null;
@@ -73,6 +75,9 @@ export function TreeScreen({ workspace, selectedNodeId, onSelect, onCompare, onA
                     </strong>
                     <span className="num">{tree.nodes.length} nodes</span>
                 </div>
+                <button type="button" className="btn" data-testid="open-character-manager" onClick={() => setIsManagingCharacters(true)}>
+                    {t("管理")}
+                </button>
                 <button type="button" className="ib" aria-label={t("ツリーファイルを読み込む")} onClick={() => fileInput.current?.click()}>
                     <ImportIcon />
                 </button>
@@ -228,6 +233,7 @@ export function TreeScreen({ workspace, selectedNodeId, onSelect, onCompare, onA
                     </button>
                 </div>
             )}
+            {isManagingCharacters && <CharacterManager workspace={workspace} onClose={() => setIsManagingCharacters(false)} />}
         </div>
     );
 }

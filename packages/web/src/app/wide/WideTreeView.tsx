@@ -1,6 +1,7 @@
 import { spSustainSettingsOf } from "@ro-ratorio-branch/core/platform-neutral";
 import type { NodeComparison, RankingMetric } from "@ro-ratorio-branch/core/platform-neutral";
 import { useRef, useState } from "react";
+import { CharacterManager } from "../CharacterManager.tsx";
 import { type SpRowTexts, spRowTextsOf } from "../sp-sustain-view-model.ts";
 import { ApplyToLockerButton } from "../ApplyToLockerButton.tsx";
 import { type Baseline, comparisonOf } from "../compare-model.ts";
@@ -39,6 +40,7 @@ export function WideTreeView({ workspace, selectedNodeId, onSelect, onOpenDetail
     const [gainDisplay, setGainDisplay] = useGainDisplay();
     const [collapsedNodeIds, setCollapsedNodeIds] = useState<ReadonlySet<string>>(new Set());
     const [importFailure, setImportFailure] = useState<TreeImportFailure | null>(null);
+    const [isManagingCharacters, setIsManagingCharacters] = useState(false);
     const [baseline, setBaseline] = useState<Baseline>("root");
     const [isSwapped, setIsSwapped] = useState(false);
     const fileInput = useRef<HTMLInputElement>(null);
@@ -93,6 +95,9 @@ export function WideTreeView({ workspace, selectedNodeId, onSelect, onOpenDetail
                             ))}
                         </div>
                         <GainDisplaySwitch value={gainDisplay} onChange={setGainDisplay} />
+                        <button type="button" className="btn" data-testid="open-character-manager" onClick={() => setIsManagingCharacters(true)}>
+                            {t("管理")}
+                        </button>
                         <button type="button" className="btn" onClick={() => fileInput.current?.click()}>
                             <ImportIcon />
                             {t("読み込む")}
@@ -231,6 +236,7 @@ export function WideTreeView({ workspace, selectedNodeId, onSelect, onOpenDetail
                     </div>
                 </aside>
             </main>
+            {isManagingCharacters && <CharacterManager workspace={workspace} onClose={() => setIsManagingCharacters(false)} />}
         </>
     );
 }

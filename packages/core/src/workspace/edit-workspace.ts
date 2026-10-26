@@ -136,6 +136,49 @@ export function removeCharacter(workspace: Workspace, characterId: string): Char
     return { workspace: { ...workspace, characters, trees }, removedTreeIds };
 }
 
+/**
+ * The workspace without several characters and their trees, as `removeCharacter`
+ * takes them one by one; `undefined` when no tree would be left to open.
+ * @throws {UnknownWorkspaceEntryError} when the workspace has no such character.
+ */
+export function removeCharacters(workspace: Workspace, characterIds: readonly string[]): CharacterRemoval | undefined {
+    let removal: CharacterRemoval = { workspace, removedTreeIds: [] };
+    for (const characterId of new Set(characterIds)) {
+        const next = removeCharacter(removal.workspace, characterId);
+        removal = { workspace: next.workspace, removedTreeIds: [...removal.removedTreeIds, ...next.removedTreeIds] };
+    }
+    return Object.keys(removal.workspace.trees).length === 0 ? undefined : removal;
+}
+
+export interface TreeRemoval {
+    readonly workspace: Workspace;
+    /** The character the tree was the last one of, which went with it; `null` when it has other trees. */
+    readonly removedCharacterId: string | null;
+}
+
+/**
+ * The workspace without a tree; a character left without trees goes too,
+ * since nothing shows it any more. The locker and loadouts stay.
+ * `undefined` for the last tree, which the app needs to have one open.
+ * @throws {UnknownWorkspaceEntryError} when the workspace has no such tree.
+ */
+export function removeTree(workspace: Workspace, treeId: string): TreeRemoval | undefined {
+    const tree = workspace.trees[treeId];
+    if (tree === undefined) {
+        throw new UnknownWorkspaceEntryError("tree", treeId);
+    }
+    const { [treeId]: _removedTree, ...trees } = workspace.trees;
+    if (Object.keys(trees).length === 0) {
+        return undefined;
+    }
+    const isCharacterLeftWithoutTrees = Object.values(trees).every((otherTree) => otherTree.characterId !== tree.characterId);
+    if (!isCharacterLeftWithoutTrees) {
+        return { workspace: { ...workspace, trees }, removedCharacterId: null };
+    }
+    const { [tree.characterId]: _removedCharacter, ...characters } = workspace.characters;
+    return { workspace: { ...workspace, characters, trees }, removedCharacterId: tree.characterId };
+}
+
 /** @throws {UnknownWorkspaceEntryError} when the workspace has no such tree. */
 export function replaceTreeScenario(workspace: Workspace, treeId: string, scenario: Scenario): Workspace {
     const tree = workspace.trees[treeId];

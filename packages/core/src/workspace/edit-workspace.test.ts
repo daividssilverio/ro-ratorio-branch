@@ -6,6 +6,8 @@ import {
     descendantCountOf,
     lockerPieceUsage,
     removeCharacter,
+    removeCharacters,
+    removeTree,
     removeLockerPiece,
     removeTreeNode,
     replaceCharacter,
@@ -133,6 +135,53 @@ describe("replaceCharacter and replaceTreeScenario", () => {
     it("rejects an unknown character or tree", () => {
         expect(() => replaceCharacter(workspace, "nobody", Object.values(workspace.characters)[0]!)).toThrow(UnknownWorkspaceEntryError);
         expect(() => replaceTreeScenario(workspace, "no-such-tree", { skillId: 554, skillLevel: 1, targetMonsterId: 850 })).toThrow(UnknownWorkspaceEntryError);
+    });
+});
+
+describe("removing several characters, or one tree", () => {
+    const mechanic = workspace.characters.mechanic;
+    const upgrades = workspace.trees.upgrades;
+    if (mechanic === undefined || upgrades === undefined) {
+        throw new Error("the test workspace has no mechanic");
+    }
+    const withThreeCharacters = {
+        ...workspace,
+        characters: { ...workspace.characters, imported: { ...mechanic, name: "読み込んだツリー" }, alt: { ...mechanic, name: "Alt" } },
+        trees: {
+            ...workspace.trees,
+            "mechanic-again": { ...upgrades, name: "Again" },
+            "imported-tree": { ...upgrades, characterId: "imported" },
+            "alt-tree": { ...upgrades, characterId: "alt" },
+        },
+    };
+
+    it("removes several characters with their trees at once", () => {
+        const removal = removeCharacters(withThreeCharacters, ["imported", "alt", "imported"]);
+
+        expect(Object.keys(removal?.workspace.characters ?? {})).toEqual(["mechanic"]);
+        expect(removal?.removedTreeIds).toEqual(["imported-tree", "alt-tree"]);
+        expect(parseWorkspace(removal?.workspace)).toBeDefined();
+    });
+
+    it("does not remove every character, since one tree must stay open", () => {
+        expect(removeCharacters(withThreeCharacters, ["mechanic", "imported", "alt"])).toBeUndefined();
+    });
+
+    it("removes a tree and keeps its character while it has another", () => {
+        const removal = removeTree(withThreeCharacters, "mechanic-again");
+
+        expect(removal?.removedCharacterId).toBeNull();
+        expect(Object.keys(removal?.workspace.trees ?? {})).toEqual(["upgrades", "imported-tree", "alt-tree"]);
+        expect(Object.keys(removal?.workspace.characters ?? {})).toEqual(["mechanic", "imported", "alt"]);
+    });
+
+    it("removes a character with its last tree, and refuses to remove the workspace's last tree", () => {
+        const removal = removeTree(withThreeCharacters, "imported-tree");
+
+        expect(removal?.removedCharacterId).toBe("imported");
+        expect(Object.keys(removal?.workspace.characters ?? {})).toEqual(["mechanic", "alt"]);
+        expect(parseWorkspace(removal?.workspace)).toBeDefined();
+        expect(removeTree(workspace, "upgrades")).toBeUndefined();
     });
 });
 

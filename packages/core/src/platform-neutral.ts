@@ -36,7 +36,7 @@ export {
     type UncountedSpEffect,
 } from "./sp-sustain/sp-sustain.ts";
 export { spSustainOfBuild } from "./sp-sustain/sp-sustain-of-build.ts";
-export { setSpEffectActive, setSpEffectChance } from "./workspace/edit-workspace.ts";
+export { removeCharacters, removeTree, setSpEffectActive, setSpEffectChance, type TreeRemoval } from "./workspace/edit-workspace.ts";
 export {
     type ActiveSpEffects,
     ActiveSpEffectsSchema,
