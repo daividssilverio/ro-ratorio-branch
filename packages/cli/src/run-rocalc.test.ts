@@ -113,6 +113,33 @@ describe("rocalc calc", () => {
     }, 60_000);
 });
 
+describe("rocalc sp", () => {
+    const spiritHandlerBuildFileText = readFileSync(new URL("../../core/src/build/golden-builds/spirit-handler-abyss-armor.build.json", import.meta.url), "utf8");
+
+    it("prints how SP holds up using the build's attack, with the chances given", async () => {
+        const io = createFakeIo({ "build.json": spiritHandlerBuildFileText });
+
+        const exitCode = await runRocalc(["sp", "build.json", "--chance", "card:2359=3", "--chance", "item:4404=5"], io);
+        const { spSustain } = JSON.parse(io.resultTexts.join(""));
+
+        expect(exitCode).toBe(exitCodes.success);
+        expect(spSustain).toMatchObject({ maxSp: 3890, spCostPerUse: 100, usesPerSecond: 2, spentPerSecond: 200 });
+        // 200 SP a second spent; back: 7.25 natural, 38 from 極限の魔力, and its set with the armor at an assumed 1%.
+        expect(spSustain.fullBar.seconds).toBeCloseTo(3890 / (200 - 7.25 - 38 - (1 - 0.99 ** 20) * 389));
+    }, 60_000);
+
+    it("counts a state as on all the time with --active: the armor's set with 極限の魔力 then gives back more than the attack spends", async () => {
+        const io = createFakeIo({ "build.json": spiritHandlerBuildFileText });
+
+        const exitCode = await runRocalc(["sp", "build.json", "--active", "item:5486"], io);
+        const { spSustain } = JSON.parse(io.resultTexts.join(""));
+
+        expect(exitCode).toBe(exitCodes.success);
+        expect(spSustain.fullBar).toBeNull();
+        expect(spSustain.gains.find((gain: { from: { source?: { id: number } } }) => gain.from.source?.id === 5486).state).toMatchObject({ shareOfTimeOn: 1, perSecondWhileOn: 389, onBecause: "yours" });
+    }, 60_000);
+});
+
 describe("rocalc compare", () => {
     const exampleTreeFileText = readFileSync(
         new URL("../../core/src/tree/example-trees/mechanic-upgrades.tree.json", import.meta.url),
@@ -159,6 +186,11 @@ describe("rocalc usage", () => {
         { situation: "an unknown command", commandLineArguments: ["rank", "build.json"] },
         { situation: "calc without a file", commandLineArguments: ["calc"] },
         { situation: "calc with two files", commandLineArguments: ["calc", "one.json", "two.json"] },
+        { situation: "calc with a chance", commandLineArguments: ["calc", "build.json", "--chance", "item:4404=5"] },
+        { situation: "sp with a chance of no item or card", commandLineArguments: ["sp", "build.json", "--chance", "pet:1=5"] },
+        { situation: "sp with a chance above 100%", commandLineArguments: ["sp", "build.json", "--chance", "item:4404=101"] },
+        { situation: "sp with a chance left out", commandLineArguments: ["sp", "build.json", "--chance"] },
+        { situation: "sp with an active state of no item or card", commandLineArguments: ["sp", "build.json", "--active", "pet:1"] },
     ])("exits with the usage code for $situation", async ({ commandLineArguments }) => {
         const io = createFakeIo({});
 

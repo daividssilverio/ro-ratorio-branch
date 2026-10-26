@@ -1,5 +1,6 @@
 import type { Scenario } from "../build/build-format.ts";
 import type { EquipmentSlot } from "../character-vocabulary.ts";
+import type { SpEffectSource } from "../sp-sustain/sp-sustain.ts";
 import { firstUnusedId } from "./add-to-workspace.ts";
 import { UnknownWorkspaceEntryError } from "./resolve-workspace.ts";
 import type { LockerPiece, Workspace, WorkspaceCharacter } from "./workspace-format.ts";
@@ -172,4 +173,33 @@ export function descendantCountOf(workspace: Workspace, treeId: string, nodeId: 
     const nodeCount = workspace.trees[treeId]?.nodes.length ?? 0;
     const hasNode = workspace.trees[treeId]?.nodes.some((node) => node.id === nodeId) ?? false;
     return hasNode ? nodeCount - (removeTreeNode(workspace, treeId, nodeId).trees[treeId]?.nodes.length ?? 0) - 1 : 0;
+}
+
+/**
+ * Sets the chance taken for the SP effects of an item, card or enchant that
+ * happen by chance, in percent; `undefined` goes back to the one assumed.
+ * @throws {RangeError} for a chance below 0% or above 100%.
+ */
+export function setSpEffectChance(workspace: Workspace, source: SpEffectSource, percent: number | undefined): Workspace {
+    if (percent !== undefined && !(percent >= 0 && percent <= 100)) {
+        throw new RangeError(`A chance is from 0 to 100 percent, not ${percent}`);
+    }
+    const group = source.kind === "item" ? "items" : "cardsOrEnchants";
+    const { [String(source.id)]: _earlierChance, ...otherChances } = workspace.spEffectChances?.[group] ?? {};
+    const chancesOfGroup = percent === undefined ? otherChances : { ...otherChances, [String(source.id)]: percent };
+    const { [group]: _earlierGroup, ...otherGroups } = workspace.spEffectChances ?? {};
+    const spEffectChances = Object.keys(chancesOfGroup).length === 0 ? otherGroups : { ...otherGroups, [group]: chancesOfGroup };
+    const { spEffectChances: _earlierChances, ...rest } = workspace;
+    return Object.keys(spEffectChances).length === 0 ? rest : { ...rest, spEffectChances };
+}
+
+/** Counts the state an item, card or enchant sets off as on all the time, or again on average. */
+export function setSpEffectActive(workspace: Workspace, source: SpEffectSource, isActive: boolean): Workspace {
+    const group = source.kind === "item" ? "items" : "cardsOrEnchants";
+    const others = (workspace.activeSpEffects?.[group] ?? []).filter((id) => id !== source.id);
+    const idsOfGroup = isActive ? [...others, source.id] : others;
+    const { [group]: _earlierGroup, ...otherGroups } = workspace.activeSpEffects ?? {};
+    const activeSpEffects = idsOfGroup.length === 0 ? otherGroups : { ...otherGroups, [group]: idsOfGroup };
+    const { activeSpEffects: _earlier, ...rest } = workspace;
+    return Object.keys(activeSpEffects).length === 0 ? rest : { ...rest, activeSpEffects };
 }

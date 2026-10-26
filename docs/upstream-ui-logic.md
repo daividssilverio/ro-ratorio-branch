@@ -45,6 +45,7 @@ These are rules the original has only inside its page-building code: who is offe
 | Which ammunition a job is offered | `engine/equip/equip.js`, `OnChangeArmsTypeRight()` | `catalog.arrowsOfJob()` | `weapon-element-and-arrow.test.ts` |
 | Level and stat limits of a job; trait stats for fourth jobs only | `engine/equip/equip.js`, `changeJobSettings()`<br>`engine/chara/hmjob.js`, `RebuildStatusSelect()` | `catalog.limitsOfJob()` | `engine-catalog.test.ts` |
 | Which learned skills worn gear and cards do something more for | `engine/skill/learnedskill.js`, `IsLearnedSkillTarget()` | `catalog.learnedSkillsGearRewards()` | `engine-catalog.test.ts` |
+| What one use of a skill costs in SP, with what the character wears | `engine/battle/castsim.js`, `RefreshCastSimSimulateArea()` | `catalog.spCostOfSkill()` | `sp-cost.test.ts` |
 <!-- rewritten-rules:end -->
 
 A second check comes from the other side: `packages/core/src/sharing/saves-made-on-the-original.test.ts` takes every save listed in `savesMadeOnTheOriginal` and requires that the catalog would have offered every value in it. A save made on the page is proof the page offered it, so a rule that is too strict fails there. Adding a save from a job or a feature the others do not cover widens that check by one line.

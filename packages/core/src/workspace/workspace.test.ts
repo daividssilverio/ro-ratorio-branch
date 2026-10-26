@@ -26,6 +26,14 @@ function issuesOf(candidate: unknown): readonly WorkspaceIssue[] {
 }
 
 describe("parseWorkspace", () => {
+    it("keeps the chances taken for SP effects, from 0 to 100 percent", () => {
+        const spEffectChances = { items: { "4404": 5 }, cardsOrEnchants: { "2359": 2.5 } };
+        const candidate = { ...mechanicWorkspaceWith([]), spEffectChances };
+
+        expect(parseWorkspace(candidate).spEffectChances).toEqual(spEffectChances);
+        expect(issuesOf({ ...candidate, spEffectChances: { items: { "4404": 120 } } })).toEqual([expect.objectContaining({ path: "/spEffectChances/items/4404" })]);
+    });
+
     it("accepts a workspace with a locker, a character and a tree that equips a locker piece", () => {
         const candidate = mechanicWorkspaceWith([workspaceNode("shield", null, [equipSpareShield, refineMaceToTen])]);
 

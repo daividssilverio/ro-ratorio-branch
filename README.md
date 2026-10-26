@@ -77,6 +77,14 @@ The full format is the JSON Schema in [`packages/core/schema/build.v1.schema.jso
 
 Not expressible yet: guild, food and miscellaneous buffs, shadow gear, auto-spell, costume, gear random options, arrows and weapon element.
 
+### How SP holds up
+
+```bash
+mise exec -- pnpm --silent rocalc sp packages/core/src/build/golden-builds/spirit-handler-abyss-armor.build.json --chance card:2359=3
+```
+
+Gives the SP one use of the build's attack costs, the SP spent and gained per second, and how long a full SP bar lasts using that attack again and again. The cost is the engine's, with what the character wears. What items, cards and enchants give back is read from upstream's wording of their effects; an effect whose wording or condition is not read is listed under `uncounted`. An effect that happens by chance where its wording gives none (一定確率で) is taken at 1% unless `--chance item:<ID>=<percent>` or `--chance card:<ID>=<percent>` sets one.
+
 ## Upgrade trees
 
 A tree file is a root character, one shared scenario and a list of nodes. Each node holds only its changes against its parent, plus an optional cost for that step.
@@ -111,6 +119,7 @@ To set it up and ask Claude for upgrades, follow the guide: [English](docs/mcp-g
 | --- | --- |
 | `search` | Finds names and their ratorio IDs, like `rocalc search` |
 | `calc` | Calculates one build, like `rocalc calc` |
+| `sp_sustain` | How the character's SP holds up using its attack again and again, like `rocalc sp`, with the chance of each effect that happens by chance yours to set |
 | `apply_change` | Adds an upgrade step to a tree as a node and says what it does |
 | `import_build` | Reads a ROラトリオHUB save URL, an app link or build code, a build or tree file, or the app's JSON backup |
 | `export_build` | Gives a build or tree as a link that opens it in the app, a build code, and for a build a ROラトリオHUB save URL |

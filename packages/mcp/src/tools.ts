@@ -19,6 +19,9 @@ import {
     exportRatorioSave,
     type ImportRefusal,
     InvalidBuildError,
+    ActiveSpEffectsSchema,
+    isActiveSpEffects,
+    isSpEffectChances,
     InvalidTreeError,
     type GearListingLine,
     graftNodes,
@@ -43,6 +46,8 @@ import {
     recognizeImport,
     saveReadingOn,
     shareLinkOf,
+    SpEffectChancesSchema,
+    spSustainOfBuild,
     type TextKind,
     textKinds,
     type TreeIssue,
@@ -173,14 +178,20 @@ const rankingOptionSchemas = (choices: string) => ({
     branchCount: { type: "integer", minimum: 0, maximum: 20, description: "How many of the best become branches of the tree. 5 when left out." },
 });
 
-/** The build, the slot and the options a ranking tool was given, checked. A tree and a node stand for the node's build, and the branches go under that node. */
-async function rankingArguments(toolArguments: Arguments, context: ToolContext, nameKind: "item" | "cardOrEnchant") {
+/** The build a tool was given, or the build of a node of the tree it was given, with that tree and node. */
+function startingBuildOf(toolArguments: Arguments) {
     const hasBuild = toolArguments["build"] !== undefined;
     if (hasBuild === (toolArguments["tree"] !== undefined)) {
         throw new InvalidArgumentsError([{ argument: "build", expected: "a build, or a tree with nodeId, one of the two" }]);
     }
     const startingPoint = hasBuild ? undefined : { tree: parseTree(toolArguments["tree"]), nodeId: nodeIdArgument(toolArguments, "nodeId") };
     const build = startingPoint === undefined ? parseBuild(toolArguments["build"]) : buildOfNode(startingPoint.tree, startingPoint.nodeId);
+    return { build, startingPoint };
+}
+
+/** The build, the slot and the options a ranking tool was given, checked. A tree and a node stand for the node's build, and the branches go under that node. */
+async function rankingArguments(toolArguments: Arguments, context: ToolContext, nameKind: "item" | "cardOrEnchant") {
+    const { build, startingPoint } = startingBuildOf(toolArguments);
     const slot = toolArguments["slot"];
     if (!equipmentSlots.some((equipmentSlot) => equipmentSlot === slot)) {
         throw new InvalidArgumentsError([{ argument: "slot", expected: `one of: ${equipmentSlots.join(", ")}` }]);
@@ -273,6 +284,40 @@ export const tools: readonly Tool[] = [
         inputSchema: { type: "object", properties: { build: buildSchema }, required: ["build"], additionalProperties: false },
         async call(toolArguments, context) {
             return calculateBuild(parseBuild(toolArguments["build"]), await context.engine());
+        },
+    },
+    {
+        name: "sp_sustain",
+        description:
+            "How the character's SP holds up using the scenario's attack again and again: the SP one use costs with what it wears, uses per second, SP spent and gained per second, " +
+            "the net, and how long a full SP bar lasts in seconds and uses (fullBar is null when SP comes back at least as fast as it goes). " +
+            "Gains are natural recovery and what items, cards and enchants give back, each named with the line of its effect. " +
+            "An effect that happens by chance where its wording gives none (一定確率で) is taken at 1% unless spEffectChances sets one; each such gain says where its chance came from. " +
+            "A state an attack sets off for some seconds counts on average, or as on all the time where activeSpEffects names its item or card or the build's timed items say it is on; its gain gives the share of the time it is on and what it gives while on. " +
+            "uncounted lists effects about gaining SP whose wording or condition is not read. spSustain is null when the attack never kills. " +
+            idNote,
+        inputSchema: {
+            type: "object",
+            properties: {
+                build: { ...buildSchema, description: "The build. Or give tree and nodeId instead." },
+                tree: { ...treeSchema, description: "A tree, to look at one of its nodes." },
+                nodeId: { ...nodeIdOrRoot, description: "With tree: the node to look at (the app shows a node's ID in its node panel), or null for the root." },
+                spEffectChances: SpEffectChancesSchema,
+                activeSpEffects: ActiveSpEffectsSchema,
+            },
+            additionalProperties: false,
+        },
+        async call(toolArguments, context) {
+            const { build } = startingBuildOf(toolArguments);
+            const chances = toolArguments["spEffectChances"];
+            if (chances !== undefined && !isSpEffectChances(chances)) {
+                throw new InvalidArgumentsError([{ argument: "spEffectChances", expected: "items and cardsOrEnchants, each from an ID to a percent from 0 to 100" }]);
+            }
+            const active = toolArguments["activeSpEffects"];
+            if (active !== undefined && !isActiveSpEffects(active)) {
+                throw new InvalidArgumentsError([{ argument: "activeSpEffects", expected: "items and cardsOrEnchants, each a list of IDs" }]);
+            }
+            return { spSustain: spSustainOfBuild(build, await context.engine(), chances, active) };
         },
     },
     {

@@ -7,6 +7,7 @@ import { goldenSaveUrlOf } from "../../core/src/sharing/golden-save-urls.ts";
 import { createToolContext, tools } from "./tools.ts";
 
 const mechanicBuild = JSON.parse(readFileSync(new URL("../../core/src/build/golden-builds/mechanic-arms-cannon.build.json", import.meta.url), "utf8"));
+const spiritHandlerBuild = JSON.parse(readFileSync(new URL("../../core/src/build/golden-builds/spirit-handler-abyss-armor.build.json", import.meta.url), "utf8"));
 const damageTheUpstreamPageShows = { averageDamagePerAttack: 911001, averageDamagePerSecond: 6507149 };
 const tree = { formatVersion: 1, scenario: mechanicBuild.scenario, root: mechanicBuild.character, nodes: [] as unknown[] };
 const strongerNode = { id: "stronger", parentId: null, label: "STR 130", zenyCost: 0, changes: [{ kind: "setBaseStat", stat: "str", value: 130 }] };
@@ -36,9 +37,9 @@ describe("the protocol", () => {
     it("lists its tools, each with a schema for its input", async () => {
         const listed = (await resultOf("tools/list")).tools as { name: string; inputSchema: { type: string; properties: object } }[];
 
-        expect(listed.map((tool) => tool.name)).toEqual(["search", "calc", "apply_change", "import_build", "export_build", "rank_slot_candidates", "rank_socket_choices", "read_listing", "compare_nodes", "rank_leaves"]);
+        expect(listed.map((tool) => tool.name)).toEqual(["search", "calc", "sp_sustain", "apply_change", "import_build", "export_build", "rank_slot_candidates", "rank_socket_choices", "read_listing", "compare_nodes", "rank_leaves"]);
         expect(listed.every((tool) => tool.inputSchema.type === "object" && Object.keys(tool.inputSchema.properties).length > 0)).toBe(true);
-        expect(tools).toHaveLength(10);
+        expect(tools).toHaveLength(11);
     });
 
     it("answers a ping and stays silent on a notification", async () => {
@@ -203,7 +204,24 @@ describe("the tools", () => {
         expect(byCost.leaves[0]).toMatchObject({ nodeId: "stronger", cumulativeZenyCost: 0 });
     });
 
+    it("tells how SP holds up using one attack, naming what gives it back, with the chances given", async () => {
+        const extremeMagicEnchantId = 2098;
+        const { spSustain } = (await call("sp_sustain", { build: spiritHandlerBuild, spEffectChances: { cardsOrEnchants: { "2359": 3 } } })).structuredContent;
+
+        expect(spSustain).toMatchObject({ maxSp: 3890, spCostPerUse: 100, usesPerSecond: 2, spentPerSecond: 200 });
+        expect(spSustain.gains.map((gain: { from: { kind: string; name?: string } }) => gain.from.name ?? gain.from.kind)).toEqual(["naturalRecovery", "極限の魔力", "アビスセイバーガーブ + 極限の魔力"]);
+        expect(spSustain.gains[1].from.source).toEqual({ kind: "cardOrEnchant", id: extremeMagicEnchantId });
+    });
+
+    it("counts the states it is told are on as on all the time", async () => {
+        const { spSustain } = (await call("sp_sustain", { build: spiritHandlerBuild, activeSpEffects: { items: [5486] } })).structuredContent;
+
+        expect(spSustain.fullBar).toBeNull();
+    });
+
     it.each([
+        { situation: "active states that are not IDs", name: "sp_sustain", toolArguments: { build: mechanicBuild, activeSpEffects: { items: ["メロン"] } }, kind: "invalidArguments" },
+        { situation: "a chance above 100%", name: "sp_sustain", toolArguments: { build: mechanicBuild, spEffectChances: { items: { "4404": 150 } } }, kind: "invalidArguments" },
         { situation: "a build that breaks the format", name: "calc", toolArguments: { build: { formatVersion: 1 } }, kind: "invalidBuild" },
         { situation: "a build the engine refuses", name: "calc", toolArguments: { build: { ...mechanicBuild, character: { ...mechanicBuild.character, jobId: 9_999_999 } } }, kind: "buildNotCalculable" },
         { situation: "a node whose parent is missing", name: "apply_change", toolArguments: { tree, node: { ...strongerNode, parentId: "nobody" } }, kind: "invalidTree" },

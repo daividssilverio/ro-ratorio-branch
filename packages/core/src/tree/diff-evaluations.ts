@@ -1,3 +1,4 @@
+import type { CompletedItemSetEffects } from "../build/calculate-build.ts";
 import { type PositionalBuffPanel, positionalBuffPanels } from "../panels/panel-definitions.ts";
 import type { Character, GearPiece } from "../build/build-format.ts";
 import { type EquipmentSlot, equipmentSlots } from "../character-vocabulary.ts";
@@ -42,6 +43,8 @@ export interface CharacterInputDiff extends NumberDiff {
  */
 export interface EvaluationDiff {
     readonly gear: readonly GearSlotDiff[];
+    /** The item sets one side completes and the other does not; what they add is in `bonuses` already. */
+    readonly itemSets: { readonly lost: readonly CompletedItemSetEffects[]; readonly gained: readonly CompletedItemSetEffects[] };
     readonly otherInputs: readonly CharacterInputDiff[];
     readonly stats: readonly NumberDiff[];
     readonly bonuses: readonly NumberDiff[];
@@ -60,6 +63,10 @@ export function diffEvaluations(before: ReadyNodeEvaluation, after: ReadyNodeEva
             const pieceAfter = after.character.equipment[slot];
             return isSameGearPiece(pieceBefore, pieceAfter) ? [] : [{ slot, before: pieceBefore, after: pieceAfter }];
         }),
+        itemSets: {
+            lost: before.itemSets.filter((itemSet) => !after.itemSets.some((other) => isSameItemSet(itemSet, other))),
+            gained: after.itemSets.filter((itemSet) => !before.itemSets.some((other) => isSameItemSet(itemSet, other))),
+        },
         otherInputs: diffCharacterInputs(before.character, after.character),
         stats: diffNamedNumbers(before.statSnapshot.stats, after.statSnapshot.stats),
         bonuses: diffNamedNumbers(before.statSnapshot.bonuses, after.statSnapshot.bonuses),
@@ -165,4 +172,8 @@ function diffNamedNumbers(
         const valueAfter = after[name] ?? 0;
         return valueBefore === valueAfter ? [] : [{ name, before: valueBefore, after: valueAfter }];
     });
+}
+
+function isSameItemSet(one: CompletedItemSetEffects, other: CompletedItemSetEffects): boolean {
+    return one.set.kind === other.set.kind && one.set.id === other.set.id;
 }

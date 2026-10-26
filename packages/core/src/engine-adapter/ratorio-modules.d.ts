@@ -160,6 +160,28 @@ declare module "*/vendor/ratorio/engine/runtime/global.js" {
         GetDataManger(dataKind: number): { GetEnchListIdArrayByItemId(itemId: number): number[] };
         GetName(dataKind: number, dataId: number): string;
     };
+    export const g_skillManager: {
+        /** The skill's own SP cost at a level, before anything the character wears changes it. */
+        GetCostFixed(skillId: number, skillLevel: number, charaDataManager: null): number;
+        /** Flags added together: `CSkillData.TYPE_PHYSICAL`, `CSkillData.TYPE_MAGICAL` and others. */
+        GetSkillType(skillId: number): number;
+    };
+}
+
+declare module "*/vendor/ratorio/engine/skill/CSkillManager.js" {
+    export const CSkillData: { readonly TYPE_PHYSICAL: number; readonly TYPE_MAGICAL: number };
+}
+
+declare module "*/vendor/ratorio/engine/status/skill-cost.js" {
+    /** The skill's cost in percent after what the character of the last calculation wears: 100 is unchanged. */
+    export function GetCostScalingOfSkill(skillId: number): number;
+    /** What the character of the last calculation wears adds to the skill's cost; below 0 when it costs less. */
+    export function GetCostFixOfSkill(skillId: number): number;
+}
+
+declare module "*/vendor/ratorio/engine/runtime/ro4-state.js" {
+    /** The bonuses of the last calculation, by `ITEM_SP_` ID. */
+    export const n_tok: readonly number[];
 }
 
 declare module "*/vendor/ratorio/engine/const/EnumConstDataKind.js" {
@@ -337,6 +359,8 @@ declare module "*/vendor/ratorio/engine/equip/item.dat.js" {
     export const ItemObjNew: readonly (readonly unknown[] | undefined)[];
     /** Bare hands: what an empty weapon hand holds. */
     export const ITEM_ID_SUDE: number;
+    /** What fills the places after the sets a calculation found complete. */
+    export const ITEM_ID_NOEQUIP_SET: number;
     /** What upstream puts into each armor slot that holds nothing. */
     export const ITEM_ID_NOEQUIP_HEAD_TOP: number;
     export const ITEM_ID_NOEQUIP_HEAD_MID: number;
@@ -356,6 +380,7 @@ declare module "*/vendor/ratorio/engine/equip/card.dat.js" {
     export const CardObjNew: readonly (readonly unknown[] | undefined)[];
     /** By card kind: the card IDs a socket of that kind lists, in the page's order, starting with 0 for "none". */
     export const CardSortOBJ: readonly (readonly number[] | undefined)[];
+    export const CARD_ID_NONE: number;
 }
 
 declare module "*/vendor/ratorio/engine/const/EnumCharaDataIndex.js" {
@@ -368,6 +393,8 @@ declare module "*/vendor/ratorio/engine/const/EnumItemSpId.js" {
     export const ITEM_SP_NONE: number;
     /** The effect that marks an item or card as doing something more when a skill is learned; its value is the skill. */
     export const ITEM_SP_LEARNED_SKILL_EFFECT: number;
+    /** Every skill's SP cost in percent: 100 is unchanged. */
+    export const ITEM_SP_COST_DOWN: number;
 }
 
 declare module "*/vendor/ratorio/engine/equip/timeitem.dat.js" {
@@ -380,6 +407,8 @@ declare module "*/vendor/ratorio/engine/equip/timeitem.dat.js" {
 declare module "*/vendor/ratorio/engine/const/EnumTimeItemDataIndex.js" {
     export const TIME_ITEM_DATA_INDEX_NAME: number;
     export const TIME_ITEM_DATA_INDEX_EXPLAIN: number;
+    /** The items and cards a timed item comes from, as [1, item ID] or [2, card ID] pairs. */
+    export const TIME_ITEM_DATA_INDEX_SRC_DATA_ARRAY: number;
 }
 
 declare module "*/vendor/ratorio/engine/runtime/roro-state.js" {
@@ -388,6 +417,19 @@ declare module "*/vendor/ratorio/engine/runtime/roro-state.js" {
     /** The job the engine currently works with. A calculation sets it from its model. */
     export const n_A_JOB: number;
     export function set_n_A_JOB(jobId: number): void;
+    /** The item worn in each slot by equip region, then the items that stand for the sets a calculation found complete. */
+    export const n_A_Equip: readonly number[];
+    /** The card in each socket by card region, then the cards that stand for the sets a calculation found complete. */
+    export const n_A_card: readonly number[];
+}
+
+declare module "*/vendor/ratorio/engine/equip/itemset.dat.js" {
+    /**
+     * Every item set: what stands for it (an item ID, or a card ID below 0),
+     * then its members (an item ID, a card ID below 0, or a pet below -ITEM_SET_PET_ID_OFFSET).
+     */
+    export const w_SE: readonly (readonly (number | string)[])[];
+    export const ITEM_SET_PET_ID_OFFSET: number;
 }
 
 declare module "*/vendor/ratorio/engine/const/EnumArrowKind.js" {

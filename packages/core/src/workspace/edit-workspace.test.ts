@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+    setSpEffectActive,
+    setSpEffectChance,
     addLockerPiece,
     descendantCountOf,
     lockerPieceUsage,
@@ -194,5 +196,42 @@ describe("removeTreeNode", () => {
 
     it("refuses a tree the workspace does not have", () => {
         expect(() => removeTreeNode(withNodes, "nowhere", "parent")).toThrow(UnknownWorkspaceEntryError);
+    });
+});
+
+describe("setSpEffectChance", () => {
+    const melonMace = { kind: "item", id: 4411 } as const;
+    const draculaCard = { kind: "cardOrEnchant", id: 2359 } as const;
+
+    it("keeps a chance for an item and for a card or enchant, by ID", () => {
+        const workspace = setSpEffectChance(setSpEffectChance(mechanicWorkspaceWith([]), melonMace, 5), draculaCard, 2.5);
+
+        expect(workspace.spEffectChances).toEqual({ items: { "4411": 5 }, cardsOrEnchants: { "2359": 2.5 } });
+        expect(parseWorkspace(workspace)).toEqual(workspace);
+    });
+
+    it("goes back to the assumed chance, leaving no empty group and no empty field behind", () => {
+        const withBoth = setSpEffectChance(setSpEffectChance(mechanicWorkspaceWith([]), melonMace, 5), draculaCard, 3);
+
+        expect(setSpEffectChance(withBoth, melonMace, undefined).spEffectChances).toEqual({ cardsOrEnchants: { "2359": 3 } });
+        expect("spEffectChances" in setSpEffectChance(setSpEffectChance(withBoth, melonMace, undefined), draculaCard, undefined)).toBe(false);
+    });
+
+    it("refuses a chance outside 0 to 100 percent", () => {
+        expect(() => setSpEffectChance(mechanicWorkspaceWith([]), melonMace, 101)).toThrow(RangeError);
+        expect(() => setSpEffectChance(mechanicWorkspaceWith([]), melonMace, Number.NaN)).toThrow(RangeError);
+    });
+});
+
+describe("setSpEffectActive", () => {
+    const melonMace = { kind: "item", id: 4411 } as const;
+    const abyssGarbWithExtremeMagic = { kind: "item", id: 5486 } as const;
+
+    it("counts a state as on, once, and on average again, leaving no empty field behind", () => {
+        const twice = setSpEffectActive(setSpEffectActive(setSpEffectActive(mechanicWorkspaceWith([]), melonMace, true), abyssGarbWithExtremeMagic, true), melonMace, true);
+
+        expect(twice.activeSpEffects).toEqual({ items: [5486, 4411] });
+        expect(parseWorkspace(twice)).toEqual(twice);
+        expect("activeSpEffects" in setSpEffectActive(setSpEffectActive(twice, melonMace, false), abyssGarbWithExtremeMagic, false)).toBe(false);
     });
 });

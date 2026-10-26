@@ -169,6 +169,18 @@
                 }
             ],
             "test": "packages/core/src/engine-adapter/engine-catalog.test.ts"
+        },
+        {
+            "catalog": "spCostOfSkill",
+            "what": "What one use of a skill costs in SP, with what the character wears",
+            "upstream": [
+                {
+                    "file": "engine/battle/castsim.js",
+                    "function": "RefreshCastSimSimulateArea",
+                    "fingerprint": "d77c412eb1b50f0b"
+                }
+            ],
+            "test": "packages/core/src/sp-sustain/sp-cost.test.ts"
         }
     ],
     "dataReaders": {
@@ -191,6 +203,8 @@
         "effectsOfCardOrEnchant": "The same for a CardObjNew row",
         "wordingOfRandomOption": "The effect of a g_rndOptArray row put into words by GetItemExplainText()",
         "wordingOfBonus": "An ITEM_SP_* constant and a value put into words by GetItemExplainText()",
-        "itemsNamed": "The names and card slot counts of ItemObjNew"
+        "itemsNamed": "The names and card slot counts of ItemObjNew",
+        "damageKindOfSkill": "The physical and magical flags of a skill's CSkillData type",
+        "sourcesOfTimedItem": "The [kind, ID] pairs of an ITEM_SP_TIME_OBJ row, 1 an item and 2 a card"
     }
 }

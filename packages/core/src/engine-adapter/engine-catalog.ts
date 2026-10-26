@@ -77,6 +77,22 @@ export interface JobLimits {
 }
 
 /** What the engine has to choose from. Every list is in upstream ID order. */
+/**
+ * What a character wears that changes the SP a skill costs, as the engine
+ * works it out in a calculation. Read with `skillCostChangesOfLastCalculation()`.
+ */
+export interface SkillCostChanges {
+    /** Added to the skill's own cost; below 0 when it costs less. */
+    readonly flat: number;
+    /** The skill's cost in percent after this skill's own reductions: 100 is unchanged. */
+    readonly percentOfThisSkill: number;
+    /** Every skill's cost in percent ("スキル使用時の消費SP - 10%" makes it 90): 100 is unchanged. */
+    readonly percentOfEverySkill: number;
+}
+
+/** Whether a skill hits as a physical or a magical attack, as upstream marks it. */
+export type SkillDamageKind = "physical" | "magical" | "neither";
+
 export interface EngineCatalog {
     jobs(): CatalogEntry[];
     /**
@@ -186,6 +202,16 @@ export interface EngineCatalog {
     randomOptionsOfItem(itemId: number): CatalogEntry[][];
     /** The slots the item fits. Empty for an unknown item or one that is not gear. */
     slotsOfItem(itemId: number): EquipmentSlot[];
+    /**
+     * The SP one use of a skill costs at a level, with what the character
+     * wears changing it: never below 1 for a skill that costs SP, 0 for one
+     * that costs none or that the engine does not have.
+     */
+    spCostOfSkill(skillId: number, skillLevel: number, costChanges: SkillCostChanges): number;
+    /** Whether the skill hits as a physical or a magical attack; "neither" for one the engine does not have. */
+    damageKindOfSkill(skillId: number): SkillDamageKind;
+    /** The items, cards and enchants a timed item is the state of ("メロン武器" for every メロン weapon); none for an unknown one. */
+    sourcesOfTimedItem(timedItemId: number): { readonly kind: "item" | "cardOrEnchant"; readonly id: number }[];
 }
 
 const jobIdNamePrefix = "JOB_ID_";
@@ -236,6 +262,10 @@ export async function loadEngineCatalog(
     const { CardObjNew, CardSortOBJ } = await import("../../../../vendor/ratorio/engine/equip/card.dat.js");
     const { MonsterObjNew } = await import("../../../../vendor/ratorio/engine/monster/monster.dat.js");
     const { SkillObjNew } = await import("../../../../vendor/ratorio/engine/skill/skill.dat.js");
+    const { g_skillManager } = await import("../../../../vendor/ratorio/engine/runtime/global.js");
+    const { ITEM_SP_TIME_OBJ: timedItemRows } = await import("../../../../vendor/ratorio/engine/equip/timeitem.dat.js");
+    const { TIME_ITEM_DATA_INDEX_SRC_DATA_ARRAY } = await import("../../../../vendor/ratorio/engine/const/EnumTimeItemDataIndex.js");
+    const { CSkillData } = await import("../../../../vendor/ratorio/engine/skill/CSkillManager.js");
     const { ITEM_DATA_INDEX_KIND, ITEM_DATA_INDEX_NAME, ITEM_DATA_INDEX_WPNLV, ITEM_DATA_INDEX_DETAIL, ITEM_DATA_INDEX_SPBEGIN, ITEM_DATA_INDEX_SLOT } = await import("../../../../vendor/ratorio/engine/const/EnumItemDataIndex.js");
     const { CARD_DATA_INDEX_NAME, CARD_DATA_INDEX_DETAIL, CARD_DATA_INDEX_SPBEGIN } = await import("../../../../vendor/ratorio/engine/const/EnumCardDataIndex.js");
     const monsterIndexes = await import("../../../../vendor/ratorio/engine/const/EnumMonsterDataIndex.js");
@@ -531,6 +561,41 @@ export async function loadEngineCatalog(
         itemsNamed(nameKey) {
             itemsOfNameKey ??= itemsByNameKey();
             return itemsOfNameKey.get(nameKey) ?? [];
+        },
+        spCostOfSkill(skillId, skillLevel, costChanges) {
+            if (SkillObjNew[skillId] === undefined) {
+                return 0;
+            }
+            const ownCost = g_skillManager.GetCostFixed(skillId, skillLevel, null);
+            if (ownCost <= 0) {
+                return 0;
+            }
+            // Upstream's cast simulator rounds up before it divides by 100 here, and only at the end after that.
+            let cost = Math.max(1, ownCost + costChanges.flat);
+            cost = Math.max(1, Math.ceil(cost * costChanges.percentOfThisSkill) / 100);
+            return Math.max(1, Math.ceil((cost * costChanges.percentOfEverySkill) / 100));
+        },
+        damageKindOfSkill(skillId) {
+            if (SkillObjNew[skillId] === undefined) {
+                return "neither";
+            }
+            const skillType = g_skillManager.GetSkillType(skillId);
+            if ((skillType & CSkillData.TYPE_MAGICAL) !== 0) {
+                return "magical";
+            }
+            return (skillType & CSkillData.TYPE_PHYSICAL) !== 0 ? "physical" : "neither";
+        },
+        sourcesOfTimedItem(timedItemId) {
+            const sourcePairs = timedItemRows[timedItemId]?.[TIME_ITEM_DATA_INDEX_SRC_DATA_ARRAY];
+            if (!Array.isArray(sourcePairs)) {
+                return [];
+            }
+            const kindOfNumber: Readonly<Record<number, "item" | "cardOrEnchant">> = { 1: "item", 2: "cardOrEnchant" };
+            return sourcePairs.flatMap((pair: unknown) => {
+                const [kindNumber, id] = Array.isArray(pair) ? pair : [];
+                const kind = typeof kindNumber === "number" ? kindOfNumber[kindNumber] : undefined;
+                return kind === undefined || typeof id !== "number" ? [] : [{ kind, id }];
+            });
         },
         effectsOfItem: (itemId) => effectsOfDataRow(ItemObjNew[itemId], ITEM_DATA_INDEX_SPBEGIN, ITEM_DATA_INDEX_DETAIL),
         effectsOfCardOrEnchant: (cardOrEnchantId) => effectsOfDataRow(CardObjNew[cardOrEnchantId], CARD_DATA_INDEX_SPBEGIN, CARD_DATA_INDEX_DETAIL),

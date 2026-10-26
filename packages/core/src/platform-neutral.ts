@@ -22,7 +22,31 @@ export {
     type TreeEvaluation,
 } from "./tree/evaluate-tree.ts";
 export { type NodeResolution, resolveTree, type StaleChange } from "./tree/resolve-tree.ts";
-export { type BuildCalculation, calculateBuildInDetail } from "./build/calculate-build.ts";
+export { type BuildCalculation, calculateBuildInDetail, type CompletedItemSetEffects } from "./build/calculate-build.ts";
+export {
+    assumedChancePercent,
+    type ChanceOrigin,
+    secondsPerNaturalRecoveryTick,
+    type SpEffectSource,
+    type SpGain,
+    type SpSustain,
+    type SpSustainBasis,
+    type SpSustainSettings,
+    spSustainFrom,
+    type UncountedSpEffect,
+} from "./sp-sustain/sp-sustain.ts";
+export { spSustainOfBuild } from "./sp-sustain/sp-sustain-of-build.ts";
+export { setSpEffectActive, setSpEffectChance } from "./workspace/edit-workspace.ts";
+export {
+    type ActiveSpEffects,
+    ActiveSpEffectsSchema,
+    chancePercentLookup,
+    isActiveSpEffects,
+    isSpEffectChances,
+    type SpEffectChances,
+    SpEffectChancesSchema,
+    spSustainSettingsOf,
+} from "./sp-sustain/sp-effect-chances.ts";
 export type { EngineNames, ItemDescription } from "./engine-adapter/engine-names.ts";
 export type { CatalogEntry, EngineCatalog, JobLimits, MonsterElementKind, MonsterInfo, MonsterRace, MonsterSize, SkillLevelSetting, StatPointBudget } from "./engine-adapter/engine-catalog.ts";
 export type { SupportBuffSection, SupportBuffSetting } from "./engine-adapter/calc-model-layout.ts";

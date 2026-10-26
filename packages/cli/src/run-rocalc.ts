@@ -11,6 +11,9 @@ import {
     loadRatorioEngine,
     parseBuild,
     parseTree,
+    type ActiveSpEffects,
+    type SpEffectChances,
+    spSustainOfBuild,
     type TextKind,
     textKinds,
     type TreeIssue,
@@ -38,6 +41,13 @@ const usageLines = [
     "    Calculates the build's attack against its target monster: average damage",
     "    per attack, damage per second and time to kill.",
     "",
+    "rocalc sp <build.json> [--chance item|card:<ID>=<percent>]… [--active item|card:<ID>]…",
+    "    How the character's SP holds up using the build's attack again and again:",
+    "    SP spent and gained per second, and how long a full SP bar lasts. An effect",
+    "    that happens by chance where its wording gives none is taken at 1%; --chance",
+    "    sets one for an item, or for a card or enchant, by its ratorio ID. A state",
+    "    an attack sets off counts on average; --active counts it as on all the time.",
+    "",
     "rocalc compare <tree.json>",
     "    Calculates every node of an upgrade tree, what each one changes against",
     "    its parent, and the rankings by gain, kill time, cost and value for money.",
@@ -64,14 +74,43 @@ class RocalcFailureError extends Error {
     }
 }
 
-const commands = {
-    async calc(fileContent: unknown): Promise<unknown> {
+interface SpOptions {
+    readonly chances: SpEffectChances;
+    readonly active: ActiveSpEffects;
+}
+
+const commands: Record<"calc" | "sp" | "compare", (fileContent: unknown, spOptions: SpOptions) => Promise<unknown>> = {
+    async calc(fileContent) {
         return calculateBuild(parseBuild(fileContent), await loadRatorioEngine());
     },
-    async compare(fileContent: unknown): Promise<unknown> {
+    async sp(fileContent, { chances, active }) {
+        return { spSustain: spSustainOfBuild(parseBuild(fileContent), await loadRatorioEngine(), chances, active) };
+    },
+    async compare(fileContent) {
         return compareTree(parseTree(fileContent), calculatorOn(await loadRatorioEngine()));
     },
 };
+
+/** The chances and active states `rocalc sp` was given, or `undefined` when one of them does not make sense. */
+function spOptionsOf(optionArguments: readonly string[]): SpOptions | undefined {
+    const chances = { items: {} as Record<string, number>, cardsOrEnchants: {} as Record<string, number> };
+    const active = { items: [] as number[], cardsOrEnchants: [] as number[] };
+    for (let position = 0; position < optionArguments.length; position += 2) {
+        const option = optionArguments[position];
+        const value = optionArguments[position + 1] ?? "";
+        const chance = option === "--chance" ? /^(item|card):(\d+)=(\d+(?:\.\d+)?)$/.exec(value) : null;
+        const on = option === "--active" ? /^(item|card):(\d+)$/.exec(value) : null;
+        if (chance !== null && Number(chance[3]) <= 100) {
+            chances[chance[1] === "item" ? "items" : "cardsOrEnchants"][String(Number(chance[2]))] = Number(chance[3]);
+        } else if (on !== null) {
+            const ids = active[on[1] === "item" ? "items" : "cardsOrEnchants"];
+            ids.push(...(ids.includes(Number(on[2])) ? [] : [Number(on[2])]));
+        } else {
+            return undefined;
+        }
+    }
+    return { chances, active };
+}
 
 interface SearchRequest {
     readonly query: string;
@@ -126,19 +165,15 @@ export async function runRocalc(commandLineArguments: readonly string[], io: Roc
     if (commandLineArguments[0] === "search") {
         return runSearch(commandLineArguments.slice(1), io);
     }
-    const [commandName, filePath, ...unexpectedArguments] = commandLineArguments;
-    if (
-        commandName === undefined ||
-        !Object.hasOwn(commands, commandName) ||
-        filePath === undefined ||
-        unexpectedArguments.length > 0
-    ) {
+    const [commandName, filePath, ...optionArguments] = commandLineArguments;
+    const spOptions = commandName === "sp" ? spOptionsOf(optionArguments) : optionArguments.length === 0 ? { chances: {}, active: {} } : undefined;
+    if (commandName === undefined || !Object.hasOwn(commands, commandName) || filePath === undefined || spOptions === undefined) {
         return fail(io, { kind: "usage", usageLines }, exitCodes.usage);
     }
 
     try {
         const fileContent = await readJsonFile(filePath, io);
-        const result = await commands[commandName as keyof typeof commands](fileContent);
+        const result = await commands[commandName as keyof typeof commands](fileContent, spOptions);
         io.writeResult(`${JSON.stringify(result, null, 2)}\n`);
         return exitCodes.success;
     } catch (error) {

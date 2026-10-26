@@ -1,6 +1,7 @@
 import { type Static, Type } from "typebox";
 import { CharacterSchema, GearPieceSchema, type GearPiece, ScenarioSchema, strictObject } from "../build/build-format.ts";
 import { type EquipmentSlot, equipmentSlots } from "../character-vocabulary.ts";
+import { type ActiveSpEffects, ActiveSpEffectsSchema, type SpEffectChances, SpEffectChancesSchema } from "../sp-sustain/sp-effect-chances.ts";
 import { type Change, ChangeSchema, changeSchemaOfKind, EquipmentSlotName, treeNodeFields } from "../tree/tree-format.ts";
 
 export const workspaceFormatVersion = 1;
@@ -51,9 +52,11 @@ const StatLoadoutSchema = Type.Object(
     strictObject,
 );
 
-const loadoutFields = {
+const optionalWorkspaceFields = {
     gearLoadouts: Type.Optional(Type.Record(IdKey, GearLoadoutSchema, { ...strictObject, description: "Named sets of locker pieces, by ID." })),
     statLoadouts: Type.Optional(Type.Record(IdKey, StatLoadoutSchema, { ...strictObject, description: "Named stat allocations, by ID." })),
+    spEffectChances: Type.Optional(SpEffectChancesSchema),
+    activeSpEffects: Type.Optional(ActiveSpEffectsSchema),
 };
 
 const equipLockerPieceSchema = Type.Object(
@@ -91,7 +94,7 @@ const workspaceFields = {
 };
 
 export const WorkspaceSchema = Type.Object(
-    { ...workspaceFields, trees: Type.Record(IdKey, WorkspaceTreeSchema, strictObject), ...loadoutFields },
+    { ...workspaceFields, trees: Type.Record(IdKey, WorkspaceTreeSchema, strictObject), ...optionalWorkspaceFields },
     strictObject,
 );
 
@@ -110,7 +113,7 @@ export const WorkspaceSchemaWithUncheckedChanges = Type.Object(
             ),
             strictObject,
         ),
-        ...loadoutFields,
+        ...optionalWorkspaceFields,
     },
     strictObject,
 );
@@ -142,6 +145,8 @@ export interface Workspace {
     trees: Record<string, WorkspaceTree>;
     gearLoadouts?: Record<string, GearLoadout>;
     statLoadouts?: Record<string, StatLoadout>;
+    spEffectChances?: SpEffectChances;
+    activeSpEffects?: ActiveSpEffects;
 }
 
 /** The published JSON Schema document for workspace files. */
