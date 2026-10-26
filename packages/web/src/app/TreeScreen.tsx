@@ -1,5 +1,7 @@
+import { spSustainSettingsOf } from "@ro-ratorio-branch/core/platform-neutral";
 import type { NodeComparison, RankingMetric } from "@ro-ratorio-branch/core/platform-neutral";
 import { useRef, useState } from "react";
+import { type SpRowTexts, spRowTextsOf } from "./sp-sustain-view-model.ts";
 import { formatInteger, formatSeconds, formatSignedInteger, formatZeny } from "./format.ts";
 import { BranchIcon, ChevronDownIcon, ChevronRightIcon, CompareIcon, ImportIcon, SpinnerIcon, StarIcon, WarningIcon } from "./Icons.tsx";
 import { rootLabel } from "./labels.ts";
@@ -35,6 +37,8 @@ export function TreeScreen({ workspace, selectedNodeId, onSelect, onCompare, onA
     const fileInput = useRef<HTMLInputElement>(null);
 
     const rootSummary = comparison?.root.state === "ready" ? comparison.root.battleSummary : null;
+    const spSettings = spSustainSettingsOf(workspace.workspace.spEffectChances, workspace.workspace.activeSpEffects);
+    const rootSp = spRowTextsOf(workspace.evaluation?.root, spSettings);
     const visibleRows = comparison === null ? [] : withoutCollapsedBranches(treeRowsOf(tree, comparison, siblingOrder), collapsedNodeIds);
     const selectedComparison = comparison?.nodes.find((nodeComparison) => nodeComparison.id === selectedNodeId);
 
@@ -149,6 +153,7 @@ export function TreeScreen({ workspace, selectedNodeId, onSelect, onCompare, onA
                                     {rootLabel}
                                 </span>
                                 <span className="meta">{t("ROOT · 基準")}</span>
+                                <SpMetaLine sp={rootSp} />
                             </span>
                             <span className="rc">
                                 {rootSummary === null ? (
@@ -186,6 +191,7 @@ export function TreeScreen({ workspace, selectedNodeId, onSelect, onCompare, onA
                                   row={row}
                                   gains={comparison === null ? noGains : gainsOf(row.node, comparison)}
                                   gainDisplay={gainDisplay}
+                                  sp={spRowTextsOf(workspace.evaluation?.nodes.get(row.node.id), spSettings)}
                                   isSelected={row.node.id === selectedNodeId}
                                   isCollapsed={collapsedNodeIds.has(row.node.id)}
                                   onSelect={() => onSelect(row.node.id)}
@@ -262,6 +268,8 @@ interface TreeRowLineProps {
     readonly row: TreeRow;
     readonly gains: RowGains;
     readonly gainDisplay: GainDisplay;
+    /** How long a full SP bar lasts, and SP spent and gained a second; `null` until calculated. */
+    readonly sp: SpRowTexts | null;
     readonly isSelected: boolean;
     readonly isCollapsed: boolean;
     onSelect(): void;
@@ -302,6 +310,7 @@ function TreeRowLine(props: TreeRowLineProps) {
                     <span className="meta num" style={isStale ? { color: "var(--stale)" } : undefined}>
                         {metaTextOf(row)}
                     </span>
+                    <SpMetaLine sp={props.sp} />
                 </span>
                 <span className="rc">
                     <RowBadges comparison={comparison} gains={props.gains} gainDisplay={props.gainDisplay} />
@@ -309,6 +318,14 @@ function TreeRowLine(props: TreeRowLineProps) {
             </button>
         </div>
     );
+}
+
+/** A row's line about SP, spent with a minus and gained with a plus: `SP 16.7 s · −172 +6 /秒`; nothing until calculated. */
+function SpMetaLine({ sp }: { sp: SpRowTexts | null }) {
+    if (sp === null) {
+        return null;
+    }
+    return <span className="meta num">{sp.spent === "—" ? `SP ${sp.bar}` : t("SP {0} · −{1} +{2} /秒", sp.bar, sp.spent, sp.gained)}</span>;
 }
 
 function metaTextOf({ node, comparison, depth }: TreeRow): string {

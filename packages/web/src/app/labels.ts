@@ -1,4 +1,4 @@
-import type { CharacterSection, EquipmentSlot, RankingMetric } from "@ro-ratorio-branch/core/platform-neutral";
+import type { CharacterSection, CompletedItemSetEffects, EquipmentSlot, RankingMetric } from "@ro-ratorio-branch/core/platform-neutral";
 import type { Descriptions } from "../engine-host/host-protocol.ts";
 import { t } from "./text/ui-text.ts";
 
@@ -89,4 +89,11 @@ export function randomOptionTextIn(descriptions: Descriptions, randomOption: { r
 
 export function cardOrEnchantNameIn(descriptions: Descriptions, cardOrEnchantId: number): string {
     return descriptions.cardsOrEnchants[cardOrEnchantId]?.name ?? `#${cardOrEnchantId}`;
+}
+
+/** An item set by what it is made of: `アビスセイバーガーブ + 極限の魔力`. A pet among its members is left out. */
+export function itemSetNameIn(descriptions: Descriptions, { members }: Pick<CompletedItemSetEffects, "members">): string {
+    return members
+        .flatMap((member) => (member.kind === "item" ? [itemNameIn(descriptions, member.id)] : member.kind === "cardOrEnchant" ? [cardOrEnchantNameIn(descriptions, member.id)] : []))
+        .join(" + ");
 }

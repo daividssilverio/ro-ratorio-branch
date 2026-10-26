@@ -12,6 +12,8 @@ import {
     removeCharacter,
     replaceCharacter,
     replaceTreeScenario,
+    setSpEffectActive,
+    setSpEffectChance,
     type Scenario,
     shadowEquipmentSlots,
     type TraitStatName,
@@ -47,6 +49,7 @@ import { Picture } from "../image-pack/Picture.tsx";
 import type { PickerPreview } from "./use-damage-previews.ts";
 import { ColumnResizer, useColumnWidth } from "./ColumnResizer.tsx";
 import { EffectsCard } from "./EffectsCard.tsx";
+import { SpSustainCard } from "./SpSustainCard.tsx";
 
 /** Used until the job's own limits have loaded. */
 const widestLimits = { lowest: 0, highest: 999 };
@@ -367,6 +370,16 @@ export function BuildScreen({ workspace, isWide, treeStrip, editedNode }: BuildS
         />
     );
 
+    const spSustainCard = (
+        <SpSustainCard
+            basis={shownEvaluation?.spSustainBasis}
+            chances={workspace.workspace.spEffectChances}
+            active={workspace.workspace.activeSpEffects}
+            onChanceCommit={(source, percent) => workspace.updateWorkspace(setSpEffectChance(workspace.workspace, source, percent ?? undefined))}
+            onActiveChange={(source, isActive) => workspace.updateWorkspace(setSpEffectActive(workspace.workspace, source, isActive))}
+        />
+    );
+
     const equipmentCard = (
         <section className="card build-card equipment-card">
             <h2>
@@ -502,6 +515,7 @@ export function BuildScreen({ workspace, isWide, treeStrip, editedNode }: BuildS
                 <div className="build-column">
                     {equipmentCard}
                     {effectsCard}
+                    {spSustainCard}
                     {scenarioCard}
                     {editedNode === undefined && <LoadoutsCard workspace={workspace} characterId={characterId} />}
                 </div>
@@ -526,6 +540,7 @@ export function BuildScreen({ workspace, isWide, treeStrip, editedNode }: BuildS
                     {characterCard}
                     {equipmentCard}
                     {effectsCard}
+                    {spSustainCard}
                     {settingsCard}
                     {scenarioCard}
                     {editedNode === undefined && <LoadoutsCard workspace={workspace} characterId={characterId} />}

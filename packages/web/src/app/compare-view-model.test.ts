@@ -1,6 +1,7 @@
+import { noDescriptions } from "../engine-host/host-protocol.ts";
 import type { EvaluationDiff, GearPiece } from "@ro-ratorio-branch/core/platform-neutral";
 import { describe, expect, it } from "vitest";
-import { effectTextLines, gearDiffRowsOf, newlyEquippedIn } from "./compare-view-model.ts";
+import { effectTextLines, gearDiffRowsOf, newlyEquippedIn, itemSetChangeRowsOf } from "./compare-view-model.ts";
 
 const mace: GearPiece = { itemId: 4411, refine: 9, transcendence: 4, sockets: [null, 659, 1381] };
 
@@ -73,5 +74,17 @@ describe("effectTextLines", () => {
 
     it("gives no lines for an empty text", () => {
         expect(effectTextLines("")).toEqual([]);
+    });
+});
+
+describe("itemSetChangeRowsOf", () => {
+    it("names the sets side A completes alone, then those side B completes alone, after their members", () => {
+        const descriptions = { ...noDescriptions, items: { 5483: { name: "アビスセイバーガーブ", effectText: "" } }, cardsOrEnchants: { 2098: { name: "極限の魔力", effectText: "" } } } as unknown as typeof noDescriptions;
+        const abyssSet = { set: { kind: "item", id: 5486 }, members: [{ kind: "item", id: 5483 }, { kind: "cardOrEnchant", id: 2098 }], effects: ["物理・魔法攻撃命中時、一定確率で10秒間、1秒毎にSP + 10%"] } as const;
+        const diff = { itemSets: { lost: [], gained: [abyssSet] } } as unknown as EvaluationDiff;
+
+        expect(itemSetChangeRowsOf(diff, descriptions)).toEqual([
+            { key: "gained:item:5486", change: "gained", name: "アビスセイバーガーブ + 極限の魔力", lines: ["物理・魔法攻撃命中時、一定確率で10秒間、1秒毎にSP + 10%"] },
+        ]);
     });
 });

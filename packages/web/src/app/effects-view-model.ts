@@ -1,7 +1,7 @@
-import { type Character, type EquipmentSlot, equipmentSlots, type GearPiece } from "@ro-ratorio-branch/core/platform-neutral";
+import { type Character, type CompletedItemSetEffects, type EquipmentSlot, equipmentSlots, type GearPiece } from "@ro-ratorio-branch/core/platform-neutral";
 import type { Descriptions, GearDescription } from "../engine-host/host-protocol.ts";
 import { effectTextLines } from "./compare-view-model.ts";
-import { cardOrEnchantNameIn, itemNameIn, randomOptionTextIn } from "./labels.ts";
+import { cardOrEnchantNameIn, itemNameIn, itemSetNameIn, randomOptionTextIn } from "./labels.ts";
 
 /** How something stands against the build the node builds on. Always `same` without one. */
 export type EffectChange = "same" | "added" | "changed" | "lost";
@@ -45,9 +45,9 @@ export function bonusRowsOf(current: Readonly<Record<string, number>>, parent: R
         .map(({ row }) => row);
 }
 
-export type EffectSourceKind = "item" | "cardOrEnchant" | "randomOption";
+export type EffectSourceKind = "item" | "cardOrEnchant" | "randomOption" | "itemSet";
 
-/** Something worn that does something: an item, a card or enchant in it, or a random option on it. */
+/** Something worn that does something: an item, a card or enchant in it, a random option on it, or a set it completes. */
 export interface EffectSource {
     readonly kind: EffectSourceKind;
     readonly slot: EquipmentSlot;
@@ -67,16 +67,46 @@ interface WornSource {
     readonly lines: readonly string[];
 }
 
-function wornSourcesOf(character: Character, descriptions: Descriptions): WornSource[] {
-    return equipmentSlots.flatMap((slot): WornSource[] => {
+function wornSourcesOf(character: Character, itemSets: readonly CompletedItemSetEffects[], descriptions: Descriptions): WornSource[] {
+    const pieceSources = equipmentSlots.flatMap((slot): WornSource[] => {
         const piece = character.equipment[slot];
         return piece === undefined ? [] : sourcesOfPiece(piece, slot, descriptions);
     });
+    return [...pieceSources, ...itemSetSourcesOf(character, itemSets, descriptions)];
 }
 
-/** What one piece does: the item, then its cards and enchants, then its random options. */
-export function pieceEffectSourcesOf(piece: Pick<GearPiece, "itemId" | "sockets" | "randomOptions">, slot: EquipmentSlot, descriptions: Descriptions): EffectSource[] {
-    return sourcesOfPiece(piece, slot, descriptions).map((source, index) => ({ ...withoutIdentity(source), change: "same", key: `${source.identity}#${index}` }));
+/** The sets a build completes, each named after its members and placed in the slot of its first worn member. */
+function itemSetSourcesOf(character: Character, itemSets: readonly CompletedItemSetEffects[], descriptions: Descriptions): WornSource[] {
+    return itemSets.flatMap(({ set, members, effects }): WornSource[] => {
+        const slotOfMember = (member: (typeof members)[number]) =>
+            equipmentSlots.find((slot) => {
+                const piece = character.equipment[slot];
+                return member.kind === "item" ? piece?.itemId === member.id : member.kind === "cardOrEnchant" && (piece?.sockets ?? []).includes(member.id);
+            });
+        const slot = members.map(slotOfMember).find((found) => found !== undefined);
+        return slot === undefined ? [] : [itemSetSourceOf({ set, members, effects }, slot, descriptions)];
+    });
+}
+
+function itemSetSourceOf({ set, members, effects }: CompletedItemSetEffects, slot: EquipmentSlot, descriptions: Descriptions): WornSource {
+    return { kind: "itemSet", slot, identity: `itemSet:${set.kind}:${set.id}`, name: itemSetNameIn(descriptions, { members }), lines: effects };
+}
+
+/**
+ * What one piece does: the item, then its cards and enchants, then its random
+ * options, then the sets it is part of among those given (the ones the build
+ * wearing it completes).
+ */
+export function pieceEffectSourcesOf(
+    piece: Pick<GearPiece, "itemId" | "sockets" | "randomOptions">,
+    slot: EquipmentSlot,
+    descriptions: Descriptions,
+    completedItemSets: readonly CompletedItemSetEffects[] = [],
+): EffectSource[] {
+    const isOfThePiece = (member: CompletedItemSetEffects["members"][number]) =>
+        member.kind === "item" ? member.id === piece.itemId : member.kind === "cardOrEnchant" && (piece.sockets ?? []).includes(member.id);
+    const setSources = completedItemSets.filter((itemSet) => itemSet.members.some(isOfThePiece)).map((itemSet) => itemSetSourceOf(itemSet, slot, descriptions));
+    return [...sourcesOfPiece(piece, slot, descriptions), ...setSources].map((source, index) => ({ ...withoutIdentity(source), change: "same", key: `${source.identity}#${index}` }));
 }
 
 function sourcesOfPiece(piece: Pick<GearPiece, "itemId" | "sockets" | "randomOptions">, slot: EquipmentSlot, descriptions: Descriptions): WornSource[] {
@@ -110,12 +140,17 @@ function sourcesOfPiece(piece: Pick<GearPiece, "itemId" | "sockets" | "randomOpt
  * source it did not wear is added and one it wore that is gone is lost (at
  * the end); the same card twice counts twice.
  */
-export function effectSourcesOf(character: Character, parentCharacter: Character | null, descriptions: Descriptions): EffectSource[] {
-    const worn = wornSourcesOf(character, descriptions);
+export function effectSourcesOf(
+    current: { readonly character: Character; readonly itemSets: readonly CompletedItemSetEffects[] },
+    parent: { readonly character: Character; readonly itemSets: readonly CompletedItemSetEffects[] } | null,
+    descriptions: Descriptions,
+): EffectSource[] {
+    const worn = wornSourcesOf(current.character, current.itemSets, descriptions);
+    const parentCharacter = parent?.character ?? null;
     if (parentCharacter === null) {
         return worn.map((source, index) => ({ ...withoutIdentity(source), change: "same", key: `${source.identity}#${index}` }));
     }
-    const unmatchedOnParent = wornSourcesOf(parentCharacter, descriptions);
+    const unmatchedOnParent = wornSourcesOf(parentCharacter, parent?.itemSets ?? [], descriptions);
     const sources = worn.map((source, index): EffectSource => {
         const matchAt = unmatchedOnParent.findIndex((candidate) => candidate.identity === source.identity);
         if (matchAt >= 0) {

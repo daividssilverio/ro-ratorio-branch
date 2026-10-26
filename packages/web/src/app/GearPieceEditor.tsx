@@ -57,6 +57,9 @@ export function GearPieceEditor({ workspace, gearPieceId, gearData, onRemoved }:
     // A preview needs the piece on the open character: only then is there a build the card would change.
     const { root, scenario } = workspace.tree;
     const openCharacter = workspace.workspace.characters[workspace.workspace.trees[workspace.activeTreeId]?.characterId ?? ""];
+    // The sets the shown build completes belong to this piece only where that build wears it.
+    const isWornByTheShownBuild = Object.values(openCharacter?.equipment ?? {}).includes(gearPieceId);
+    const itemSetsOfThePiece = isWornByTheShownBuild && workspace.evaluation?.root.state === "ready" ? workspace.evaluation.root.itemSets : [];
     const wornInSlot = equipmentSlots.find((slot) => openCharacter?.equipment[slot] === gearPieceId);
     const socketPreview = useMemo((): PickerPreview | undefined => {
         if (wornInSlot === undefined || socketBeingPicked === null) {
@@ -106,7 +109,7 @@ export function GearPieceEditor({ workspace, gearPieceId, gearData, onRemoved }:
 
             <details className="effects-group piece-effects">
                 <summary>{t("このギアの効果")}</summary>
-                <EffectSourceList sources={pieceEffectSourcesOf(lockerPiece, firstSlot ?? "rightHand", descriptions)} showsSlots={false} />
+                <EffectSourceList sources={pieceEffectSourcesOf(lockerPiece, firstSlot ?? "rightHand", descriptions, itemSetsOfThePiece)} showsSlots={false} />
             </details>
 
             {takesRefine && (
