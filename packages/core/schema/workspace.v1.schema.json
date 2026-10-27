@@ -1397,6 +1397,64 @@
             },
             "additionalProperties": false,
             "description": "Named stat allocations, by ID."
+        },
+        "spEffectChances": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^(0|[1-9][0-9]*)$": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 100,
+                            "description": "Percent: 5 is a 5% chance."
+                        }
+                    },
+                    "additionalProperties": false,
+                    "description": "By ratorio item ID."
+                },
+                "cardsOrEnchants": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^(0|[1-9][0-9]*)$": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 100,
+                            "description": "Percent: 5 is a 5% chance."
+                        }
+                    },
+                    "additionalProperties": false,
+                    "description": "By ratorio card or enchant ID."
+                }
+            },
+            "additionalProperties": false,
+            "description": "Chances taken for the SP effects that happen by chance, where the item's wording gives none."
+        },
+        "activeSpEffects": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "ratorio item ID."
+                    },
+                    "uniqueItems": true
+                },
+                "cardsOrEnchants": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "ratorio card or enchant ID."
+                    },
+                    "uniqueItems": true
+                }
+            },
+            "additionalProperties": false,
+            "description": "States of SP effects counted as on all the time, rather than on average."
         }
     },
     "additionalProperties": false

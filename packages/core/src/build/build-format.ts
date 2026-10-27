@@ -9,7 +9,7 @@ export const RatorioId = (description: string) => Type.Integer({ minimum: 0, des
 const InformationalName = Type.Optional(
     Type.String({ description: "Written on export for readers. Ignored on import; the ID next to it decides." }),
 );
-const RatorioIdKey = Type.String({ pattern: "^(0|[1-9][0-9]*)$" });
+export const RatorioIdKey = Type.String({ pattern: "^(0|[1-9][0-9]*)$" });
 export const UpstreamConstantNameKey = Type.String({ pattern: "^[A-Z][A-Z0-9_]*$" });
 const NamedSettings = (description: string) => Type.Record(UpstreamConstantNameKey, Type.Integer(), { additionalProperties: false, description });
 /** For the panels whose buffs upstream knows by nothing but a position; its saves rely on those positions. */

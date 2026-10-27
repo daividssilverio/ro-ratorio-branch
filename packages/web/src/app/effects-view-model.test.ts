@@ -1,7 +1,7 @@
-import type { Character } from "@ro-ratorio-branch/core/platform-neutral";
+import type { Character, CompletedItemSetEffects } from "@ro-ratorio-branch/core/platform-neutral";
 import { describe, expect, it } from "vitest";
 import { noDescriptions } from "../engine-host/host-protocol.ts";
-import { bonusRowsOf, effectLinesOf, effectSourcesOf } from "./effects-view-model.ts";
+import { bonusRowsOf, effectLinesOf, effectSourcesOf, pieceEffectSourcesOf } from "./effects-view-model.ts";
 
 describe("bonusRowsOf", () => {
     it("lists every bonus as it is, in the order given, when there is nothing to compare with", () => {
@@ -39,9 +39,19 @@ describe("effectSourcesOf", () => {
         randomOptionNames: { 20: "Atk+" },
     } as unknown as typeof noDescriptions;
     const character = (equipment: Character["equipment"]): Character => ({ jobId: 51, baseLevel: 200, jobLevel: 70, baseStats: { str: 1, agi: 1, vit: 1, int: 1, dex: 1, luk: 1 }, equipment });
+    const worn = (equipment: Character["equipment"], itemSets: readonly CompletedItemSetEffects[] = []) => ({ character: character(equipment), itemSets });
+    /** The mace worn with the tank card: a set whose effects upstream keeps on an item of its own. */
+    const maceWithTheCard: CompletedItemSetEffects = {
+        set: { kind: "item", id: 9001 },
+        members: [
+            { kind: "item", id: 4411 },
+            { kind: "cardOrEnchant", id: 1262 },
+        ],
+        effects: ["攻撃命中時、SP + 5"],
+    };
 
     it("lists each worn item, then its cards and enchants and its options, with their effect lines", () => {
-        const sources = effectSourcesOf(character({ rightHand: { itemId: 4411, refine: 9, sockets: [1262, null], randomOptions: [{ optionId: 20, value: 30 }] } }), null, descriptions);
+        const sources = effectSourcesOf(worn({ rightHand: { itemId: 4411, refine: 9, sockets: [1262, null], randomOptions: [{ optionId: 20, value: 30 }] } }), null, descriptions);
 
         expect(sources.map(({ kind, name, lines, change }) => ({ kind, name, lines, change }))).toEqual([
             { kind: "item", name: "メロンメイス", lines: ["ATK + 10", "MATK + 5"], change: "same" },
@@ -52,14 +62,38 @@ describe("effectSourcesOf", () => {
     });
 
     it("marks what the parent did not wear as added and what it wore that is gone as lost, counting the same card twice", () => {
-        const parent = character({ rightHand: { itemId: 4411, sockets: [1262, null] }, shield: { itemId: 2101 } });
-        const now = character({ rightHand: { itemId: 4411, refine: 10, sockets: [1262, 1262] } });
+        const parent = worn({ rightHand: { itemId: 4411, sockets: [1262, null] }, shield: { itemId: 2101 } });
+        const now = worn({ rightHand: { itemId: 4411, refine: 10, sockets: [1262, 1262] } });
 
         expect(effectSourcesOf(now, parent, descriptions).map(({ name, change }) => [name, change])).toEqual([
             ["メロンメイス", "same"],
             ["戦車のカード", "same"],
             ["戦車のカード", "added"],
             ["ガード", "lost"],
+        ]);
+    });
+
+    it("lists the sets a build completes after what is worn, named after their members, in the slot of the first one", () => {
+        const sources = effectSourcesOf(worn({ rightHand: { itemId: 4411, sockets: [1262] } }, [maceWithTheCard]), null, descriptions);
+
+        expect(sources.at(-1)).toMatchObject({ kind: "itemSet", slot: "rightHand", name: "メロンメイス + 戦車のカード", lines: ["攻撃命中時、SP + 5"], change: "same" });
+    });
+
+    it("marks a set the parent did not complete as added, and one it completed that is gone as lost", () => {
+        const withTheSet = worn({ rightHand: { itemId: 4411, sockets: [1262] } }, [maceWithTheCard]);
+        const withoutIt = worn({ rightHand: { itemId: 4411 } });
+
+        expect(effectSourcesOf(withTheSet, withoutIt, descriptions).filter((source) => source.kind === "itemSet").map(({ change }) => change)).toEqual(["added"]);
+        expect(effectSourcesOf(withoutIt, withTheSet, descriptions).filter((source) => source.kind === "itemSet").map(({ change }) => change)).toEqual(["lost"]);
+    });
+
+    it("adds to one piece's effects the completed sets it is part of, and no other", () => {
+        const sources = pieceEffectSourcesOf({ itemId: 4411, sockets: [1262] }, "rightHand", descriptions, [maceWithTheCard, { ...maceWithTheCard, set: { kind: "item", id: 9002 }, members: [{ kind: "item", id: 2101 }] }]);
+
+        expect(sources.map(({ kind, name }) => [kind, name])).toEqual([
+            ["item", "メロンメイス"],
+            ["cardOrEnchant", "戦車のカード"],
+            ["itemSet", "メロンメイス + 戦車のカード"],
         ]);
     });
 });

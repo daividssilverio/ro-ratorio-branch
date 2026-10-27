@@ -27,7 +27,7 @@ export function EffectsCard({ evaluation, parent, descriptions }: EffectsCardPro
     const [showsOnlyChanges, setShowsOnlyChanges] = useState(false);
     const bonusRows = evaluation === null ? [] : bonusRowsOf(evaluation.statSnapshot.bonuses, parent?.evaluation.statSnapshot.bonuses ?? null);
     const wordings = useBonusWordings(bonusRows);
-    const sources = evaluation === null ? [] : effectSourcesOf(evaluation.character, parent?.evaluation.character ?? null, descriptions);
+    const sources = evaluation === null ? [] : effectSourcesOf(evaluation, parent?.evaluation ?? null, descriptions);
     // A bonus upstream cannot put into words is a sum of IDs, not an amount; it is left out once the frame says so.
     const shownRows = bonusRows.filter((row) => (!showsOnlyChanges || row.change !== "same") && wordings.get(wordingKeyOf(row)) !== "");
     const shownSources = showsOnlyChanges ? sources.filter((source) => source.change !== "same") : sources;
@@ -89,6 +89,7 @@ export function EffectSourceList({ sources, showsSlots }: { sources: readonly Ef
                         <ChangeMark change={source.change} />
                         <b>{source.name}</b>
                         {showsSlots && <small>{slotLabels[source.slot]}</small>}
+                        {source.kind === "itemSet" && <span className="effect-tag">{t("セット")}</span>}
                         <CopyButton text={[source.name, ...source.lines].join("\n")} label={t("効果をコピー")} />
                     </div>
                     {source.lines.map((line, index) => (

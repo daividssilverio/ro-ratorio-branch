@@ -20,6 +20,9 @@ function countingCalculator() {
                 averageTimeToKill: null,
             },
             statSnapshot: { stats: {}, bonuses: {} },
+            spCostPerUse: 0,
+            itemSets: [],
+            spSustainBasis: null,
         };
         return outcome;
     };

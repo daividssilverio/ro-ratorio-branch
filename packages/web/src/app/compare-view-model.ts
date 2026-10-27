@@ -1,4 +1,6 @@
 import type { EquipmentSlot, EvaluationDiff, GearPiece, GearSlotDiff, RandomOption } from "@ro-ratorio-branch/core/platform-neutral";
+import type { Descriptions } from "../engine-host/host-protocol.ts";
+import { itemSetNameIn } from "./labels.ts";
 
 /** One line of the gear section of the compare sheet. A slot can give several. */
 export type GearDiffRow =
@@ -105,4 +107,19 @@ export function effectTextLines(effectText: string): string[] {
         .split(/<br\s*\/?>/i)
         .map((line) => line.trim())
         .filter((line) => line !== "");
+}
+
+/** A set one side completes and the other does not, as the Compare screen lists it beside the gear. */
+export interface ItemSetChangeRow {
+    readonly key: string;
+    /** On side A only (`lost` going to B), or on side B only (`gained`). */
+    readonly change: "lost" | "gained";
+    readonly name: string;
+    readonly lines: readonly string[];
+}
+
+export function itemSetChangeRowsOf(diff: EvaluationDiff, descriptions: Descriptions): ItemSetChangeRow[] {
+    const rowsOf = (change: ItemSetChangeRow["change"]) =>
+        diff.itemSets[change].map((itemSet): ItemSetChangeRow => ({ key: `${change}:${itemSet.set.kind}:${itemSet.set.id}`, change, name: itemSetNameIn(descriptions, itemSet), lines: itemSet.effects }));
+    return [...rowsOf("lost"), ...rowsOf("gained")];
 }

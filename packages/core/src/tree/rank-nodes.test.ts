@@ -17,6 +17,9 @@ function readyWith(damagePerSecond: number, secondsToKill: number | null = 10): 
             averageTimeToKill: secondsToKill === null ? null : { seconds: secondsToKill, attacks: 1 },
         },
         statSnapshot: { stats: {}, bonuses: {} },
+        spCostPerUse: 0,
+        itemSets: [],
+        spSustainBasis: null,
     };
 }
 

@@ -1,6 +1,6 @@
 import { type AttackMethod, type AttackSource, loadAttackMethodReader } from "./attack-methods.ts";
 import { type BattleSummary, summarizeBattleResult } from "./battle-summary.ts";
-import { type EngineCatalog, loadEngineCatalog } from "./engine-catalog.ts";
+import { type EngineCatalog, loadEngineCatalog, type SkillCostChanges } from "./engine-catalog.ts";
 import { type EngineNames, loadEngineNames } from "./engine-names.ts";
 import { loadRatorioSaveCodec, type RatorioSaveCodec, type RatorioSaveReader, type RatorioSaveWriter } from "./ratorio-save.ts";
 import { loadStatSnapshotReader, type StatSnapshot } from "./stat-snapshot.ts";
@@ -62,6 +62,10 @@ export interface RatorioEngine {
      * auto-spells, each with its levels and options.
      */
     attackMethodsOfLastCalculation(): AttackMethod[];
+    /** The item sets the character of the last `calculateBattleResult` call completes, each once, with its members. */
+    itemSetsOfLastCalculation(): CompletedItemSet[];
+    /** What the character of the last `calculateBattleResult` call wears that changes a skill's SP cost, for `catalog.spCostOfSkill()`. */
+    skillCostChangesOfLastCalculation(skillId: number): SkillCostChanges;
     /** The upstream number of each attack source, as `calcModel.attackMethod.sourceType` takes it. */
     readonly attackSourceTypes: Readonly<Record<AttackSource, number>>;
     isBattleResult(value: unknown): value is RatorioBattleResult;
@@ -73,6 +77,13 @@ export interface RatorioEngine {
     loadSaveReader(): Promise<RatorioSaveReader>;
     /** Loads upstream's save encoder on first use. */
     loadSaveWriter(): Promise<RatorioSaveWriter>;
+}
+
+/** An item set the character completes: what stands for it in upstream's data, and what it is made of. */
+export interface CompletedItemSet {
+    /** Upstream keeps a set's effects on an item or a card of its own. */
+    readonly set: { readonly kind: "item" | "cardOrEnchant"; readonly id: number };
+    readonly members: readonly { readonly kind: "item" | "cardOrEnchant" | "pet"; readonly id: number }[];
 }
 
 /**
@@ -158,6 +169,13 @@ async function importRatorioEngine(): Promise<RatorioEngine> {
     const { SetEquipRndOptTable } = await import("../../../../vendor/ratorio/engine/equip/rndopttype.h.js");
     const { g_rndOptArray } = await import("../../../../vendor/ratorio/engine/equip/rndopt.dat.js");
     const { RND_OPT_SLOT_COUNT } = await import("../../../../vendor/ratorio/engine/const/EnumRndOptTypeDataIndex.js");
+    const { GetCostFixOfSkill, GetCostScalingOfSkill } = await import("../../../../vendor/ratorio/engine/status/skill-cost.js");
+    const lastCalculation = await import("../../../../vendor/ratorio/engine/runtime/ro4-state.js");
+    const wornLastCalculation = await import("../../../../vendor/ratorio/engine/runtime/roro-state.js");
+    const { w_SE, ITEM_SET_PET_ID_OFFSET } = await import("../../../../vendor/ratorio/engine/equip/itemset.dat.js");
+    const { ITEM_ID_NOEQUIP_SET } = await import("../../../../vendor/ratorio/engine/equip/item.dat.js");
+    const { CARD_ID_NONE } = await import("../../../../vendor/ratorio/engine/equip/card.dat.js");
+    const { ITEM_SP_COST_DOWN } = await import("../../../../vendor/ratorio/engine/const/EnumItemSpId.js");
 
     await standInForTheShadowGearPanel();
     const { locations: supportBuffLocations, settings: supportBuffSettings } = await assignAndReadSupportBuffSlotIds();
@@ -286,6 +304,41 @@ async function importRatorioEngine(): Promise<RatorioEngine> {
             return calcFromModel(calcModel);
         },
         attackMethodsOfLastCalculation: readAttackMethods,
+        itemSetsOfLastCalculation() {
+            const { n_A_Equip, n_A_card } = wornLastCalculation;
+            const wornItemIds = new Set(n_A_Equip.slice(0, EQUIP_REGION_ID_COUNT));
+            const wornCardIds = new Set(n_A_card.slice(0, CARD_REGION_ID_COUNT));
+            const completedItemSetIds = new Set(n_A_Equip.slice(EQUIP_REGION_ID_COUNT).filter((itemId) => itemId !== ITEM_ID_NOEQUIP_SET));
+            const completedCardSetIds = new Set(n_A_card.slice(CARD_REGION_ID_COUNT).filter((cardId) => cardId !== CARD_ID_NONE));
+            const memberOf = (memberId: number): CompletedItemSet["members"][number] => {
+                if (memberId > 0) {
+                    return { kind: "item", id: memberId };
+                }
+                return memberId < -ITEM_SET_PET_ID_OFFSET ? { kind: "pet", id: -memberId - ITEM_SET_PET_ID_OFFSET } : { kind: "cardOrEnchant", id: -memberId };
+            };
+            const completed = new Map<string, CompletedItemSet>();
+            for (const [standsFor, ...memberIds] of w_SE) {
+                if (typeof standsFor !== "number" || standsFor === 0) {
+                    continue;
+                }
+                const set = standsFor > 0 ? ({ kind: "item", id: standsFor } as const) : ({ kind: "cardOrEnchant", id: -standsFor } as const);
+                const members = memberIds.filter((memberId): memberId is number => typeof memberId === "number").map(memberOf);
+                // Several definitions can stand for one set; only one whose members are all worn counts.
+                const isComplete =
+                    (set.kind === "item" ? completedItemSetIds : completedCardSetIds).has(set.id) &&
+                    members.every((member) => member.kind === "pet" || (member.kind === "item" ? wornItemIds : wornCardIds).has(member.id));
+                const key = `${set.kind}:${set.id}`;
+                if (isComplete && !completed.has(key)) {
+                    completed.set(key, { set, members });
+                }
+            }
+            return [...completed.values()];
+        },
+        skillCostChangesOfLastCalculation: (skillId) => ({
+            flat: GetCostFixOfSkill(skillId),
+            percentOfThisSkill: GetCostScalingOfSkill(skillId),
+            percentOfEverySkill: lastCalculation.n_tok[ITEM_SP_COST_DOWN] ?? 100,
+        }),
         attackSourceTypes: {
             job: attackSourceTypeConstants.ATTACK_METHOD_SOURCE_TYPE_JOB_LEARN,
             gear: attackSourceTypeConstants.ATTACK_METHOD_SOURCE_TYPE_USABLE_SKILL,

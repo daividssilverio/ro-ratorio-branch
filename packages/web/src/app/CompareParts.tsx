@@ -1,7 +1,7 @@
 import type { GearPiece } from "@ro-ratorio-branch/core/platform-neutral";
 import type { Descriptions } from "../engine-host/host-protocol.ts";
 import type { Baseline, Comparison } from "./compare-model.ts";
-import type { GearDiffRow } from "./compare-view-model.ts";
+import { type GearDiffRow, itemSetChangeRowsOf } from "./compare-view-model.ts";
 import { formatInteger, formatSeconds, formatSignedInteger, formatSignedPercent, formatSignedSeconds, formatZeny } from "./format.ts";
 import { SwapIcon } from "./Icons.tsx";
 import { cardOrEnchantNameIn, itemNameIn, randomOptionTextIn, sectionLabels, slotLabels } from "./labels.ts";
@@ -87,15 +87,29 @@ export function MetricCards({ comparison }: { comparison: Comparison }) {
 
 export function GearSection({ comparison, descriptions }: { comparison: Comparison; descriptions: Descriptions }) {
     const { gearRows, diff } = comparison;
+    const itemSetRows = itemSetChangeRowsOf(diff, descriptions);
     return (
         <section>
             <div className="section-head">
                 <h3>{t("装備の差分")}</h3>
                 <span className="num">{diff.gear.length} slots</span>
             </div>
-            {gearRows.length === 0 && diff.otherInputs.length === 0 && <p className="empty-note">{t("装備の違いはありません。")}</p>}
+            {gearRows.length === 0 && diff.otherInputs.length === 0 && itemSetRows.length === 0 && <p className="empty-note">{t("装備の違いはありません。")}</p>}
             {gearRows.map((row, index) => (
                 <GearRowLine key={index} row={row} descriptions={descriptions} />
+            ))}
+            {itemSetRows.map((row) => (
+                <div className="dr" key={row.key}>
+                    <span className="slot">{t("セット")}</span>
+                    <div className="ab">
+                        <span className={`a${row.change === "lost" ? "" : " num"}`} title={row.change === "lost" ? row.lines.join("\n") : undefined}>
+                            {row.change === "lost" ? row.name : "—"}
+                        </span>
+                        <span className={`b${row.change === "gained" ? "" : " num"}`} title={row.change === "gained" ? row.lines.join("\n") : undefined}>
+                            {row.change === "gained" ? row.name : "—"}
+                        </span>
+                    </div>
+                </div>
             ))}
             {diff.otherInputs.map((input) => (
                 <div className="dr" key={`${input.section}-${input.name}`}>

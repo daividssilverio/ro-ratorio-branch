@@ -123,7 +123,14 @@ export function storeNodeEdit(workspace: Workspace, edit: NodeEdit, editedWorksp
         return { kind: "equipLockerPiece", slot: change.slot, gearPieceId: wornPieceId };
     });
     const nodes = isBuildUnchanged ? tree.nodes : tree.nodes.map((node) => (node.id === edit.nodeId ? { ...node, changes: linkedChanges } : node));
-    return { workspace: { ...workspace, trees: { ...workspace.trees, [edit.treeId]: { ...tree, scenario, nodes } } }, inexpressible };
+    // What the user set about SP effects belongs to the whole workspace, not to the node: the copy's is kept as it is.
+    const { spEffectChances: _storedChances, activeSpEffects: _storedActive, ...storedSettings } = workspace;
+    const withChances = {
+        ...storedSettings,
+        ...(editedWorkspace.spEffectChances === undefined ? {} : { spEffectChances: editedWorkspace.spEffectChances }),
+        ...(editedWorkspace.activeSpEffects === undefined ? {} : { activeSpEffects: editedWorkspace.activeSpEffects }),
+    };
+    return { workspace: { ...withChances, trees: { ...workspace.trees, [edit.treeId]: { ...tree, scenario, nodes } } }, inexpressible };
 }
 
 export interface AddedNode {

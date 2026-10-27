@@ -1,13 +1,25 @@
 import { type AttackMethod, chosenOptionsOf, isOfferedByOption } from "../engine-adapter/attack-methods.ts";
 import type { BattleSummary } from "../engine-adapter/battle-summary.ts";
-import type { RatorioEngine } from "../engine-adapter/ratorio-engine.ts";
+import type { CompletedItemSet, RatorioEngine } from "../engine-adapter/ratorio-engine.ts";
 import type { StatSnapshot } from "../engine-adapter/stat-snapshot.ts";
+import { type SpSustainBasis, spSustainBasisOfCalculation } from "../sp-sustain/sp-sustain.ts";
 import type { Build, Scenario } from "./build-format.ts";
 import { BuildConversionError, type BuildConversionIssue, convertBuildToCalcModel, randomOptionsOfSlot } from "./convert-build.ts";
+
+/** An item set the build completes, with what it does in upstream's words, one effect per line. */
+export interface CompletedItemSetEffects extends CompletedItemSet {
+    readonly effects: readonly string[];
+}
 
 export interface BuildCalculation {
     readonly battleSummary: BattleSummary;
     readonly statSnapshot: StatSnapshot;
+    /** The SP one use of the scenario's attack costs, with what the character wears; 0 for an auto-spell, which casts itself. */
+    readonly spCostPerUse: number;
+    /** The item sets the build completes; their numbers are in `statSnapshot` already, as the engine counts them. */
+    readonly itemSets: readonly CompletedItemSetEffects[];
+    /** What how SP holds up rests on, the chances aside; `null` when the attack never kills. */
+    readonly spSustainBasis: SpSustainBasis | null;
 }
 
 /**
@@ -48,10 +60,19 @@ export function calculateBuildInDetail(build: Build, engine: RatorioEngine): Bui
         calcModel.attackMethod = { ...calcModel.attackMethod, optionValueArray: attack.optionValues };
         battleResult = engine.calculateBattleResult(calcModel, build.scenario.targetMonsterId, randomOptions);
     }
-    return {
+    const { skillId, skillLevel, skillSource } = build.scenario;
+    const calculation = {
         battleSummary: engine.summarizeBattleResult(battleResult),
         statSnapshot: engine.snapshotStats(battleResult),
+        spCostPerUse: skillSource === "autoSpell" ? 0 : engine.catalog.spCostOfSkill(skillId, skillLevel, engine.skillCostChangesOfLastCalculation(skillId)),
     };
+    const itemSets = engine.itemSetsOfLastCalculation().map(
+        (itemSet): CompletedItemSetEffects => ({
+            ...itemSet,
+            effects: itemSet.set.kind === "item" ? engine.catalog.effectsOfItem(itemSet.set.id) : engine.catalog.effectsOfCardOrEnchant(itemSet.set.id),
+        }),
+    );
+    return { ...calculation, itemSets, spSustainBasis: spSustainBasisOfCalculation(build, { ...calculation, itemSets }, engine.catalog, engine.names) };
 }
 
 /**

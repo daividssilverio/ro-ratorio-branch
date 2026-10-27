@@ -12,6 +12,8 @@ import {
     removeCharacter,
     replaceCharacter,
     replaceTreeScenario,
+    setSpEffectActive,
+    setSpEffectChance,
     type Scenario,
     shadowEquipmentSlots,
     type TraitStatName,
@@ -46,13 +48,15 @@ import { ConfirmedAction, NodeIdLine, NodeMergeButtons, RemoveNodeButton } from 
 import { Picture } from "../image-pack/Picture.tsx";
 import type { PickerPreview } from "./use-damage-previews.ts";
 import { ColumnResizer, useColumnWidth } from "./ColumnResizer.tsx";
+import { CharacterManager } from "./CharacterManager.tsx";
 import { EffectsCard } from "./EffectsCard.tsx";
+import { SpSustainCard } from "./SpSustainCard.tsx";
 
 /** Used until the job's own limits have loaded. */
 const widestLimits = { lowest: 0, highest: 999 };
 const highestSkillLevel = 100;
 
-type OpenPicker = "attackSkill" | "targetMonster" | "targetSettings" | "newCharacterJob" | "skillsAndBuffs";
+type OpenPicker = "attackSkill" | "targetMonster" | "targetSettings" | "newCharacterJob" | "skillsAndBuffs" | "characters";
 
 /** The build editor: the open tree's root character, what it wears, and what it attacks. Every change recalculates the tree. */
 /** The node of the tree an editor is open on, in place of the root. */
@@ -161,6 +165,9 @@ export function BuildScreen({ workspace, isWide, treeStrip, editedNode }: BuildS
             <button type="button" className="btn" onClick={() => setOpenPicker("newCharacterJob")}>
                 <PlusIcon />
                 {t("新しいキャラ")}
+            </button>
+            <button type="button" className="btn" data-testid="open-character-manager" onClick={() => setOpenPicker("characters")}>
+                {t("管理")} <span className="num">{Object.keys(characters).length}</span>
             </button>
         </div>
     );
@@ -367,6 +374,16 @@ export function BuildScreen({ workspace, isWide, treeStrip, editedNode }: BuildS
         />
     );
 
+    const spSustainCard = (
+        <SpSustainCard
+            basis={shownEvaluation?.spSustainBasis}
+            chances={workspace.workspace.spEffectChances}
+            active={workspace.workspace.activeSpEffects}
+            onChanceCommit={(source, percent) => workspace.updateWorkspace(setSpEffectChance(workspace.workspace, source, percent ?? undefined))}
+            onActiveChange={(source, isActive) => workspace.updateWorkspace(setSpEffectActive(workspace.workspace, source, isActive))}
+        />
+    );
+
     const equipmentCard = (
         <section className="card build-card equipment-card">
             <h2>
@@ -470,6 +487,7 @@ export function BuildScreen({ workspace, isWide, treeStrip, editedNode }: BuildS
             )}
             {openPicker === "targetSettings" && <TargetSettingsEditor scenario={scenario} jobSettings={jobSettings} onChange={updateScenario} onClose={() => setOpenPicker(null)} />}
             {openPicker === "skillsAndBuffs" && <SettingsEditor character={character} skillIdsGearRewards={skillIdsGearRewards} onChange={updateCharacter} onClose={() => setOpenPicker(null)} />}
+            {openPicker === "characters" && <CharacterManager workspace={workspace} onClose={() => setOpenPicker(null)} />}
             {openPicker === "newCharacterJob" && (
                 <Picker
                     title={t("新しいキャラの職業")}
@@ -502,6 +520,7 @@ export function BuildScreen({ workspace, isWide, treeStrip, editedNode }: BuildS
                 <div className="build-column">
                     {equipmentCard}
                     {effectsCard}
+                    {spSustainCard}
                     {scenarioCard}
                     {editedNode === undefined && <LoadoutsCard workspace={workspace} characterId={characterId} />}
                 </div>
@@ -526,6 +545,7 @@ export function BuildScreen({ workspace, isWide, treeStrip, editedNode }: BuildS
                     {characterCard}
                     {equipmentCard}
                     {effectsCard}
+                    {spSustainCard}
                     {settingsCard}
                     {scenarioCard}
                     {editedNode === undefined && <LoadoutsCard workspace={workspace} characterId={characterId} />}

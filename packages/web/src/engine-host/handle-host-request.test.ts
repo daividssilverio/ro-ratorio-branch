@@ -92,6 +92,20 @@ describe("handleHostRequest", () => {
         expect(response.kind === "bonusesWorded" && response.wordings[0]).not.toBe("");
     });
 
+    it("answers a calculation with what its SP sustain rests on, as plain data a frame can post", async () => {
+        const melonMaceItemId = 4411;
+        const response = await handleHostRequest(engine, { kind: "calculate", requestId: 21, build: mechanicBuild });
+        const basis = response.kind === "calculated" && response.outcome.state === "ready" ? response.outcome.spSustainBasis : undefined;
+
+        expect(basis).toMatchObject({ maxSp: 5608, spCostPerUse: 60, attackKind: "physical" });
+        expect(basis?.effects.map((counted) => [counted.source, counted.name, counted.effect.kind])).toEqual([
+            [{ kind: "item", id: melonMaceItemId }, "メロンメイス", "proc"],
+            // A set the build completes: its effects are kept on an item of its own.
+            [{ kind: "item", id: 4360 }, "剛勇無双の神輿 + 剛勇無双の紋帽子", "onHit"],
+        ]);
+        expect(structuredClone(response)).toEqual(response);
+    });
+
     it("lists the skills and buffs a job can set", async () => {
         const response = await handleHostRequest(engine, { kind: "listJobSettings", requestId: 14, jobId: 51 });
         const jobSettings = response.kind === "jobSettingsListed" ? response.jobSettings : undefined;

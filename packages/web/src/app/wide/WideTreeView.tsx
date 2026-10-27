@@ -1,5 +1,8 @@
+import { spSustainSettingsOf } from "@ro-ratorio-branch/core/platform-neutral";
 import type { NodeComparison, RankingMetric } from "@ro-ratorio-branch/core/platform-neutral";
 import { useRef, useState } from "react";
+import { CharacterManager } from "../CharacterManager.tsx";
+import { type SpRowTexts, spRowTextsOf } from "../sp-sustain-view-model.ts";
 import { ApplyToLockerButton } from "../ApplyToLockerButton.tsx";
 import { type Baseline, comparisonOf } from "../compare-model.ts";
 import { MetricCards, PairPicker, PathSection } from "../CompareParts.tsx";
@@ -31,11 +34,13 @@ interface WideTreeViewProps {
 
 export function WideTreeView({ workspace, selectedNodeId, onSelect, onOpenDetail, onAddBranch }: WideTreeViewProps) {
     const { tree, comparison, descriptions } = workspace;
+    const spSettings = spSustainSettingsOf(workspace.workspace.spEffectChances, workspace.workspace.activeSpEffects);
     const [siblingOrder, setSiblingOrder] = useState<RankingMetric>("damagePerSecondGain");
     const comparePanel = useColumnWidth("tree-compare", 380, { narrowest: 300, widest: 760 }, "right");
     const [gainDisplay, setGainDisplay] = useGainDisplay();
     const [collapsedNodeIds, setCollapsedNodeIds] = useState<ReadonlySet<string>>(new Set());
     const [importFailure, setImportFailure] = useState<TreeImportFailure | null>(null);
+    const [isManagingCharacters, setIsManagingCharacters] = useState(false);
     const [baseline, setBaseline] = useState<Baseline>("root");
     const [isSwapped, setIsSwapped] = useState(false);
     const fileInput = useRef<HTMLInputElement>(null);
@@ -90,6 +95,9 @@ export function WideTreeView({ workspace, selectedNodeId, onSelect, onOpenDetail
                             ))}
                         </div>
                         <GainDisplaySwitch value={gainDisplay} onChange={setGainDisplay} />
+                        <button type="button" className="btn" data-testid="open-character-manager" onClick={() => setIsManagingCharacters(true)}>
+                            {t("管理")}
+                        </button>
                         <button type="button" className="btn" onClick={() => fileInput.current?.click()}>
                             <ImportIcon />
                             {t("読み込む")}
@@ -141,6 +149,9 @@ export function WideTreeView({ workspace, selectedNodeId, onSelect, onOpenDetail
                             <span className="r">Δ DPS</span>
                             <span className="r">{t("討伐時間")}</span>
                             <span className="r">{t("Δ 時間")}</span>
+                            <span className="r">{t("SP 消費/秒")}</span>
+                            <span className="r">{t("SP 回復/秒")}</span>
+                            <span className="r" title={t("満タンから使い切るまで")}>SP</span>
                             <span />
                         </div>
                         <div className="cols tr">
@@ -160,6 +171,7 @@ export function WideTreeView({ workspace, selectedNodeId, onSelect, onOpenDetail
                                 {rootSummary?.averageTimeToKill == null ? "—" : `${formatSeconds(rootSummary.averageTimeToKill.seconds)} s`}
                             </span>
                             <span className="c">—</span>
+                            <SpCells sp={spRowTextsOf(workspace.evaluation?.root, spSettings)} />
                             <span />
                         </div>
                         {comparison === null
@@ -169,7 +181,7 @@ export function WideTreeView({ workspace, selectedNodeId, onSelect, onOpenDetail
                                           <span className="g" />
                                           <span className="nm">{node.label}</span>
                                       </span>
-                                      <span className="skel" style={{ height: 18, gridColumn: "2 / 7" }} />
+                                      <span className="skel" style={{ height: 18, gridColumn: "2 / 10" }} />
                                       <span />
                                   </div>
                               ))
@@ -179,6 +191,7 @@ export function WideTreeView({ workspace, selectedNodeId, onSelect, onOpenDetail
                                       row={row}
                                       gains={comparison === null ? noGains : gainsOf(row.node, comparison)}
                                       gainDisplay={gainDisplay}
+                                      sp={spRowTextsOf(workspace.evaluation?.nodes.get(row.node.id), spSettings)}
                                       isSelected={row.node.id === selectedNodeId}
                                       isCollapsed={collapsedNodeIds.has(row.node.id)}
                                       onSelect={() => onSelect(row.node.id)}
@@ -223,6 +236,7 @@ export function WideTreeView({ workspace, selectedNodeId, onSelect, onOpenDetail
                     </div>
                 </aside>
             </main>
+            {isManagingCharacters && <CharacterManager workspace={workspace} onClose={() => setIsManagingCharacters(false)} />}
         </>
     );
 }
@@ -231,6 +245,8 @@ interface OutlineRowProps {
     readonly row: TreeRow;
     readonly gains: RowGains;
     readonly gainDisplay: GainDisplay;
+    /** How long a full SP bar lasts, and SP spent and gained a second; `null` until calculated. */
+    readonly sp: SpRowTexts | null;
     readonly isSelected: boolean;
     readonly isCollapsed: boolean;
     onSelect(): void;
@@ -262,7 +278,7 @@ function OutlineRow(props: OutlineRowProps) {
                     </span>
                 </button>
             </span>
-            <OutlineCells comparison={comparison} row={row} gains={props.gains} gainDisplay={props.gainDisplay} />
+            <OutlineCells comparison={comparison} row={row} gains={props.gains} gainDisplay={props.gainDisplay} sp={props.sp} />
             <button
                 type="button"
                 className={`tw ${node.favorite === true ? "favorite" : ""}`}
@@ -276,13 +292,13 @@ function OutlineRow(props: OutlineRowProps) {
     );
 }
 
-function OutlineCells({ comparison, row, gains, gainDisplay }: { comparison: NodeComparison; row: TreeRow; gains: RowGains; gainDisplay: GainDisplay }) {
+function OutlineCells({ comparison, row, gains, gainDisplay, sp }: { comparison: NodeComparison; row: TreeRow; gains: RowGains; gainDisplay: GainDisplay; sp: SpRowTexts | null }) {
     const costText = row.node.zenyCost === undefined ? t("未設定") : `${row.depth > 1 ? "+" : ""}${formatZeny(row.node.zenyCost)}`;
     if (comparison.state !== "ready") {
         return (
             <>
                 <span className="c num">{costText}</span>
-                <span className="c" style={{ gridColumn: "3 / 7", color: comparison.state === "stale" ? "var(--stale)" : "var(--loss)" }}>
+                <span className="c" style={{ gridColumn: "3 / 10", color: comparison.state === "stale" ? "var(--stale)" : "var(--loss)" }}>
                     {comparison.state === "stale" ? t("要確認 · 適用できない変更があります") : t("計算できません")}
                 </span>
             </>
@@ -300,6 +316,18 @@ function OutlineCells({ comparison, row, gains, gainDisplay }: { comparison: Nod
             <span className="r">
                 <GainBadges gains={gains} display={gainDisplay} metric="secondsToKill" isStacked />
             </span>
+            <SpCells sp={sp} />
+        </>
+    );
+}
+
+/** SP spent and gained a second and how long a full bar lasts, three cells; `…` until calculated. */
+function SpCells({ sp }: { sp: SpRowTexts | null }) {
+    return (
+        <>
+            <span className="r num">{sp?.spent ?? "…"}</span>
+            <span className="r num">{sp?.gained ?? "…"}</span>
+            <span className="r num">{sp?.bar ?? "…"}</span>
         </>
     );
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { resolveTree } from "../tree/resolve-tree.ts";
-import { replaceCharacter, replaceLockerPiece, replaceTreeScenario, wearLockerPiece } from "./edit-workspace.ts";
+import { replaceCharacter, replaceLockerPiece, replaceTreeScenario, setSpEffectActive, setSpEffectChance, wearLockerPiece } from "./edit-workspace.ts";
 import { addEmptyTreeNode, startNodeEdit, storeNodeEdit } from "./node-edit.ts";
 import { parseWorkspace } from "./parse-workspace.ts";
 import { characterOf, treeOf } from "./resolve-workspace.ts";
@@ -117,6 +117,17 @@ describe("storeNodeEdit", () => {
 
         expect(stored.trees.upgrades?.scenario).toEqual(scenario);
         expect(changesOfNode(stored, "shield")).toEqual(changesOfNode(workspace, "shield"));
+    });
+
+    it("keeps the chances taken for SP effects on the workspace, since every tree shares them", () => {
+        const edit = editOf(workspace, "shield");
+        const melonMace = { kind: "item", id: 4411 } as const;
+        const stored = storeNodeEdit(workspace, edit, setSpEffectActive(setSpEffectChance(edit.workspace, melonMace, 5), melonMace, true)).workspace;
+
+        expect(stored.spEffectChances).toEqual({ items: { "4411": 5 } });
+        expect(stored.activeSpEffects).toEqual({ items: [4411] });
+        expect(changesOfNode(stored, "shield")).toEqual(changesOfNode(workspace, "shield"));
+        expect(storeNodeEdit(stored, editOf(stored, "shield"), setSpEffectChance(editOf(stored, "shield").workspace, melonMace, undefined)).workspace.spEffectChances).toBeUndefined();
     });
 
     it("says what a node cannot hold and leaves the node as it was in that respect", () => {

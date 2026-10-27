@@ -34,6 +34,17 @@ describe("diffEvaluations", () => {
         expect(diff.damage.averageDamagePerSecond.after).toBe(diff.damage.averageDamagePerSecond.before);
     });
 
+    it("tells the item sets one side completes and the other does not", async () => {
+        const [root] = await evaluateRootAndNodeWith([]);
+        const itemSet = { set: { kind: "item", id: 4360 }, members: [{ kind: "item", id: 4351 }], effects: ["攻撃命中時、SP + 5"] } as const;
+        const withTheSet = { ...root, itemSets: [itemSet] };
+        const withoutIt = { ...root, itemSets: [] };
+
+        expect(diffEvaluations(withoutIt, withTheSet).itemSets).toEqual({ lost: [], gained: [itemSet] });
+        expect(diffEvaluations(withTheSet, withoutIt).itemSets).toEqual({ lost: [itemSet], gained: [] });
+        expect(diffEvaluations(withTheSet, withTheSet).itemSets).toEqual({ lost: [], gained: [] });
+    });
+
     it("shows a refined weapon as the one gear slot that differs, with the piece before and after", async () => {
         const diff = await diffRootAgainstNodeWith([refineMaceToTen]);
 

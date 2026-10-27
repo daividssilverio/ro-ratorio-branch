@@ -1,5 +1,6 @@
 import type { Scenario } from "../build/build-format.ts";
 import type { EquipmentSlot } from "../character-vocabulary.ts";
+import type { SpEffectSource } from "../sp-sustain/sp-sustain.ts";
 import { firstUnusedId } from "./add-to-workspace.ts";
 import { UnknownWorkspaceEntryError } from "./resolve-workspace.ts";
 import type { LockerPiece, Workspace, WorkspaceCharacter } from "./workspace-format.ts";
@@ -135,6 +136,49 @@ export function removeCharacter(workspace: Workspace, characterId: string): Char
     return { workspace: { ...workspace, characters, trees }, removedTreeIds };
 }
 
+/**
+ * The workspace without several characters and their trees, as `removeCharacter`
+ * takes them one by one; `undefined` when no tree would be left to open.
+ * @throws {UnknownWorkspaceEntryError} when the workspace has no such character.
+ */
+export function removeCharacters(workspace: Workspace, characterIds: readonly string[]): CharacterRemoval | undefined {
+    let removal: CharacterRemoval = { workspace, removedTreeIds: [] };
+    for (const characterId of new Set(characterIds)) {
+        const next = removeCharacter(removal.workspace, characterId);
+        removal = { workspace: next.workspace, removedTreeIds: [...removal.removedTreeIds, ...next.removedTreeIds] };
+    }
+    return Object.keys(removal.workspace.trees).length === 0 ? undefined : removal;
+}
+
+export interface TreeRemoval {
+    readonly workspace: Workspace;
+    /** The character the tree was the last one of, which went with it; `null` when it has other trees. */
+    readonly removedCharacterId: string | null;
+}
+
+/**
+ * The workspace without a tree; a character left without trees goes too,
+ * since nothing shows it any more. The locker and loadouts stay.
+ * `undefined` for the last tree, which the app needs to have one open.
+ * @throws {UnknownWorkspaceEntryError} when the workspace has no such tree.
+ */
+export function removeTree(workspace: Workspace, treeId: string): TreeRemoval | undefined {
+    const tree = workspace.trees[treeId];
+    if (tree === undefined) {
+        throw new UnknownWorkspaceEntryError("tree", treeId);
+    }
+    const { [treeId]: _removedTree, ...trees } = workspace.trees;
+    if (Object.keys(trees).length === 0) {
+        return undefined;
+    }
+    const isCharacterLeftWithoutTrees = Object.values(trees).every((otherTree) => otherTree.characterId !== tree.characterId);
+    if (!isCharacterLeftWithoutTrees) {
+        return { workspace: { ...workspace, trees }, removedCharacterId: null };
+    }
+    const { [tree.characterId]: _removedCharacter, ...characters } = workspace.characters;
+    return { workspace: { ...workspace, characters, trees }, removedCharacterId: tree.characterId };
+}
+
 /** @throws {UnknownWorkspaceEntryError} when the workspace has no such tree. */
 export function replaceTreeScenario(workspace: Workspace, treeId: string, scenario: Scenario): Workspace {
     const tree = workspace.trees[treeId];
@@ -172,4 +216,33 @@ export function descendantCountOf(workspace: Workspace, treeId: string, nodeId: 
     const nodeCount = workspace.trees[treeId]?.nodes.length ?? 0;
     const hasNode = workspace.trees[treeId]?.nodes.some((node) => node.id === nodeId) ?? false;
     return hasNode ? nodeCount - (removeTreeNode(workspace, treeId, nodeId).trees[treeId]?.nodes.length ?? 0) - 1 : 0;
+}
+
+/**
+ * Sets the chance taken for the SP effects of an item, card or enchant that
+ * happen by chance, in percent; `undefined` goes back to the one assumed.
+ * @throws {RangeError} for a chance below 0% or above 100%.
+ */
+export function setSpEffectChance(workspace: Workspace, source: SpEffectSource, percent: number | undefined): Workspace {
+    if (percent !== undefined && !(percent >= 0 && percent <= 100)) {
+        throw new RangeError(`A chance is from 0 to 100 percent, not ${percent}`);
+    }
+    const group = source.kind === "item" ? "items" : "cardsOrEnchants";
+    const { [String(source.id)]: _earlierChance, ...otherChances } = workspace.spEffectChances?.[group] ?? {};
+    const chancesOfGroup = percent === undefined ? otherChances : { ...otherChances, [String(source.id)]: percent };
+    const { [group]: _earlierGroup, ...otherGroups } = workspace.spEffectChances ?? {};
+    const spEffectChances = Object.keys(chancesOfGroup).length === 0 ? otherGroups : { ...otherGroups, [group]: chancesOfGroup };
+    const { spEffectChances: _earlierChances, ...rest } = workspace;
+    return Object.keys(spEffectChances).length === 0 ? rest : { ...rest, spEffectChances };
+}
+
+/** Counts the state an item, card or enchant sets off as on all the time, or again on average. */
+export function setSpEffectActive(workspace: Workspace, source: SpEffectSource, isActive: boolean): Workspace {
+    const group = source.kind === "item" ? "items" : "cardsOrEnchants";
+    const others = (workspace.activeSpEffects?.[group] ?? []).filter((id) => id !== source.id);
+    const idsOfGroup = isActive ? [...others, source.id] : others;
+    const { [group]: _earlierGroup, ...otherGroups } = workspace.activeSpEffects ?? {};
+    const activeSpEffects = idsOfGroup.length === 0 ? otherGroups : { ...otherGroups, [group]: idsOfGroup };
+    const { activeSpEffects: _earlier, ...rest } = workspace;
+    return Object.keys(activeSpEffects).length === 0 ? rest : { ...rest, activeSpEffects };
 }
